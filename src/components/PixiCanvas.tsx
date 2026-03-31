@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import * as particles from 'pixi-particles'
-import { useEffect, useRef, useState, type PropsWithChildren } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   type ParticleConfig,
   configToEmitterConfig,
@@ -16,24 +16,18 @@ const PixiCanvas = ({
   config,
   backgroundColor,
   onStatsUpdate,
-}: PropsWithChildren<PixiCanvasProp>) => {
+}: PixiCanvasProp) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const pixiAppRef = useRef<unknown>(null)
   const emitterRef = useRef<unknown>(null)
   const elapsedRef = useRef(0)
   const particleCountRef = useRef(0)
-  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
     if (!containerRef.current || typeof window === 'undefined') return
 
     let mounted = true
-    const animationFrameId: number|null = null
-    let ticker: {
-      add: (fn: (delta: number) => void) => void
-      remove: (fn: (delta: number) => void) => void
-    }
-    let updateFn: (delta: number) => void
+    const animationFrameId: number | null = null
 
     if (!mounted || !containerRef.current) return
 
@@ -48,16 +42,15 @@ const PixiCanvas = ({
       resolution: window.devicePixelRatio || 1,
       autoDensity: true,
     })
-    globalThis.__PIXI_APP__ = app;
+    globalThis.__PIXI_APP__ = app
 
     container.appendChild(app.view as HTMLCanvasElement)
     pixiAppRef.current = app
 
     const emitterContainer = new PIXI.Container()
-    emitterContainer.name = "emitterContainer";
+    emitterContainer.name = 'emitterContainer'
     app.stage.addChild(emitterContainer)
 
-    
     const graphics = new PIXI.Graphics()
     graphics.beginFill(0xffffff)
     graphics.drawCircle(32, 32, 32)
@@ -74,12 +67,16 @@ const PixiCanvas = ({
       pos: { x: width / 2, y: height / 2 },
     })
 
-    const emitter = new particles.Emitter(emitterContainer, [texture], emitterConfig)
+    const emitter = new particles.Emitter(
+      emitterContainer,
+      [texture],
+      emitterConfig,
+    )
     emitter.emit = true
     emitterRef.current = emitter
 
-    ticker = app.ticker
-    updateFn = (delta: number) => {
+    const ticker = app.ticker
+    const updateFn = (delta: number) => {
       const deltaTime = delta / 60
       elapsedRef.current += deltaTime
       emitter.update(deltaTime)
@@ -91,14 +88,13 @@ const PixiCanvas = ({
     }
 
     ticker.add(updateFn)
-    setIsLoaded(true)
 
     const handleResize = () => {
       if (!containerRef.current) return
       const newWidth = containerRef.current.clientWidth
       const newHeight = containerRef.current.clientHeight
       app.renderer.resize(newWidth, newHeight)
-      emitter.updateSpawnPos(newWidth/2, newHeight/2)
+      emitter.updateSpawnPos(newWidth / 2, newHeight / 2)
       emitter.updateOwnerPos(0, 0)
     }
 
@@ -107,8 +103,8 @@ const PixiCanvas = ({
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect()
-      const x = e.clientX - rect.width/2
-      const y = e.clientY - rect.height/2
+      const x = e.clientX - rect.width / 2
+      const y = e.clientY - rect.height / 2
       emitter.updateOwnerPos(x, y)
     }
 
@@ -154,14 +150,13 @@ const PixiCanvas = ({
     }
   }, [backgroundColor])
 
-      return (
-      <div
-        ref={containerRef}
-        className="w-full h-full"
-        style={{ touchAction: 'none' }}
-      />
-    )
-
+  return (
+    <div
+      ref={containerRef}
+      className="w-full h-full"
+      style={{ touchAction: 'none' }}
+    />
+  )
 }
 
 export default PixiCanvas
