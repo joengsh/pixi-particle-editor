@@ -1,4 +1,4 @@
-import type { EmitterConfig } from "pixi-particles"
+import type { EmitterConfig } from 'pixi-particles'
 
 export interface ParticleConfig {
   alpha: {

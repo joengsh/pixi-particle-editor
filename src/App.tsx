@@ -3,14 +3,17 @@ import './App.css'
 import { Activity, Layers } from 'lucide-react'
 import PixiCanvas from './components/PixiCanvas'
 import { DEFAULT_CONFIG, type ParticleConfig } from './lib/particle-config'
+import ControlPanel from './components/ControlPanel'
 
 function App() {
   const [config, setConfig] = useState<ParticleConfig>(DEFAULT_CONFIG)
   const [backgroundColor, setBackgroundColor] = useState('#1a1a2e')
   const [fps, setFps] = useState(0)
   const [particleCount, setParticleCount] = useState(0)
-  const [isPortrait, setIsPortrait] = useState(false)
-  const canvasRef = useRef<{ restart: () => void; getParticleCount: () => number }>(null)
+  const canvasRef = useRef<{
+    restart: () => void
+    getParticleCount: () => number
+  }>(null)
 
   const handleStatsUpdate = (newFps: number, newParticleCount: number) => {
     setFps(newFps)
@@ -19,9 +22,7 @@ function App() {
 
   return (
     <>
-      <div
-        className={`h-screen flex flex-col md:flex-row bg-background`}
-      >
+      <div className={`h-screen flex flex-col md:flex-row bg-background`}>
         {/* Canvas Area */}
         <div className={`relative flex-1 items-stretch overflow-hidden`}>
           {/* Stats Bar */}
@@ -56,7 +57,12 @@ function App() {
         <div
           className={`relative h-[45vh] w-full border-t md:h-full md:w-90 md:border-l md:border-t-0 border-border bg-card basis-90 flex-0 shrink-0`}
         >
-          Control Panel
+          <ControlPanel
+            config={config}
+            onChange={setConfig}
+            backgroundColor={backgroundColor}
+            onBackgroundChange={setBackgroundColor}
+          />
         </div>
       </div>
     </>
