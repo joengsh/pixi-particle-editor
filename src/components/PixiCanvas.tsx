@@ -10,6 +10,8 @@ type PixiCanvasProp = {
   config: ParticleConfig
   backgroundColor: string
   backgroundTextureUrl: string | null
+  resolution: [number, number]
+  backgroundScale: number
   onStatsUpdate?: (fps: number, particleCount: number) => void
 }
 
@@ -17,6 +19,8 @@ const PixiCanvas = ({
   config,
   backgroundColor,
   backgroundTextureUrl,
+  resolution,
+  backgroundScale,
   onStatsUpdate,
 }: PixiCanvasProp) => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -24,6 +28,7 @@ const PixiCanvas = ({
   const emitterRef = useRef<particles.Emitter>(null)
   const elapsedRef = useRef(0)
   const particleCountRef = useRef(0)
+  const gameContainerRef = useRef<PIXI.Container>(null)
   const backgroundSpriteRef = useRef<PIXI.Sprite>(null)
 
   useEffect(() => {
@@ -35,8 +40,8 @@ const PixiCanvas = ({
     if (!mounted || !containerRef.current) return
 
     const container = containerRef.current
-    const width = container.clientWidth || 800
-    const height = container.clientHeight || 600
+    const width = resolution[0]
+    const height = resolution[1]    
 
     const app = new PIXI.Application({
       width,
@@ -50,9 +55,16 @@ const PixiCanvas = ({
     container.appendChild(app.view as HTMLCanvasElement)
     pixiAppRef.current = app
 
+    const rootContainer = new PIXI.Container()
+    rootContainer.name = 'gameContainer'
+    rootContainer.x = width / 2;
+    rootContainer.y = height / 2;
+    app.stage.addChild(rootContainer)
+    gameContainerRef.current = rootContainer
+
     const emitterContainer = new PIXI.Container()
     emitterContainer.name = 'emitterContainer'
-    app.stage.addChild(emitterContainer)
+    rootContainer.addChild(emitterContainer)
 
     const graphics = new PIXI.Graphics()
     graphics.beginFill(0xffffff)
@@ -66,8 +78,7 @@ const PixiCanvas = ({
     )
 
     const emitterConfig = configToEmitterConfig({
-      ...config,
-      pos: { x: width / 2, y: height / 2 },
+      ...config
     })
 
     const emitter = new particles.Emitter(
@@ -92,31 +103,8 @@ const PixiCanvas = ({
 
     ticker.add(updateFn)
 
-    const handleResize = () => {
-      if (!containerRef.current) return
-      const newWidth = containerRef.current.clientWidth
-      const newHeight = containerRef.current.clientHeight
-      app.renderer.resize(newWidth, newHeight)
-      emitter.updateSpawnPos(newWidth / 2, newHeight / 2)
-      emitter.updateOwnerPos(0, 0)
-    }
-
-    const resizeObserver = new ResizeObserver(handleResize)
-    resizeObserver.observe(container)
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect()
-      const x = e.clientX - rect.width / 2
-      const y = e.clientY - rect.height / 2
-      emitter.updateOwnerPos(x, y)
-    }
-
-    container.addEventListener('mousemove', handleMouseMove)
-
     return () => {
       mounted = false
-      resizeObserver.disconnect()
-      container.removeEventListener('mousemove', handleMouseMove)
 
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId)
@@ -124,14 +112,12 @@ const PixiCanvas = ({
       if (ticker && updateFn) {
         ticker.remove(updateFn)
       }
-      const app = pixiAppRef.current as {
-        destroy: (removeView: boolean) => void
-      } | null
+      const app = pixiAppRef.current
       if (app) {
         app.destroy(true)
         pixiAppRef.current = null
       }
-      const emitter = emitterRef.current as { destroy: () => void } | null
+      const emitter = emitterRef.current
       if (emitter) {
         emitter.destroy()
         emitterRef.current = null
@@ -153,6 +139,8 @@ const PixiCanvas = ({
   useEffect(() => {
     const app = pixiAppRef.current
     if (app) {
+      const rootContainer = gameContainerRef.current!;
+
       const bgSprite = backgroundSpriteRef.current
       if (bgSprite ) {
         bgSprite.parent.removeChild(bgSprite);
@@ -168,17 +156,67 @@ const PixiCanvas = ({
         const sprite = new PIXI.Sprite(texture)
         sprite.zIndex = -1;
         sprite.anchor.set(0.5)
-        sprite.position.set(app.renderer.width / 2, app.renderer.height / 2)
-        app.stage.addChildAt(sprite, 0)
+        sprite.scale.set(backgroundScale)
+        rootContainer.addChildAt(sprite, 0)
         backgroundSpriteRef.current = sprite
       }
     }
-  }, [backgroundTextureUrl])
+  }, [backgroundTextureUrl, backgroundScale])
+
+  useEffect(()=>{
+    const app = pixiAppRef.current
+    const emitter = emitterRef.current
+    const container = containerRef.current
+
+    if (!app || !emitter || !container) {
+      return
+    }
+
+    const rootContainer = gameContainerRef.current!;
+
+    const handleResize = () => {
+      if (!containerRef.current) return
+      const newWidth = containerRef.current.clientWidth
+      const newHeight = containerRef.current.clientHeight
+      app.renderer.resize(resolution[0], resolution[1])
+      rootContainer.x = resolution[0] / 2
+      rootContainer.y = resolution[1] / 2
+      emitter.updateOwnerPos(0, 0)
+
+      const scaleX = newWidth / resolution[0]
+      const scaleY = newHeight /resolution[1]
+      const scale = Math.min(scaleX, scaleY)
+      app.view.style.width = `${resolution[0]*scale}px`
+      app.view.style.height = `${resolution[1]*scale}px`
+    }
+
+    const resizeObserver = new ResizeObserver(handleResize)
+    resizeObserver.observe(container)
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = app.view.getBoundingClientRect()
+      const scaleX = resolution[0] / rect.width
+      const scaleY = resolution[1] / rect.height
+      const scale = Math.max(scaleX, scaleY)
+
+      const x = (e.clientX - rect.left) * scale - resolution[0] / 2
+      const y = (e.clientY - rect.top) * scale - resolution[1] / 2
+      emitter.updateOwnerPos(x, y)
+    }
+
+    app.view.addEventListener('mousemove', handleMouseMove)
+
+    handleResize();
+    return () => {
+      resizeObserver.disconnect()
+    }
+
+  }, [resolution])
 
   return (
     <div
       ref={containerRef}
-      className="w-full h-full"
+      className="w-full h-full flex justify-center items-center"
       style={{ touchAction: 'none' }}
     />
   )

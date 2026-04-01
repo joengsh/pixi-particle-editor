@@ -13,6 +13,10 @@ type ControlPanelProps = {
   onBackgroundChange: (color: string) => void
   backgroundTextureUrl: string | null
   onBackgroundTextureChange: (url: string | null) => void
+  resolution: [number, number]
+  setResolution: (value: [number, number]) => void
+  backgroundScale: number
+  setBackgroundScale: (value: number) => void
 }
 
 const ControlPanel = ({
@@ -22,6 +26,10 @@ const ControlPanel = ({
   onBackgroundChange,
   backgroundTextureUrl,
   onBackgroundTextureChange,
+  resolution,
+  setResolution,
+  backgroundScale,
+  setBackgroundScale
 }: ControlPanelProps) => {
   const handleBackgroundTextureUpload = () => {
     const input = document.createElement('input')
@@ -60,7 +68,7 @@ const ControlPanel = ({
           </Button>
         </div>
       </div>
-      <ScrollArea className="flex-1 overflow-scroll">
+      <ScrollArea className="flex-1 overflow-hidden">
         <div className="p-4">
           <Accordion type="multiple" defaultValue={['particle', 'advanced', 'emitter', 'stage']} className="space-y-2">
             {/* Particle Properties */}
@@ -96,6 +104,29 @@ const ControlPanel = ({
                 Stage Properties
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-4">
+                <div className="flex flex-col gap-3">
+                  <Label className="text-xs">Resolution:</Label>
+                  <div className="flex items-center gap-3">
+                    <div className="flex flex-1 items-center gap-3">
+                      <Label className="text-xs">W:</Label>
+                      <Input
+                        type="number"
+                        className="flex-1 h-8 p-0.5 cursor-pointer"
+                        value={resolution[0]}
+                        onChange={(e)=> setResolution([parseInt(e.target.value, 10), resolution[1]])}
+                      />
+                    </div>
+                    <div className="flex flex-1 items-center gap-3">
+                      <Label className="text-xs">H:</Label>
+                      <Input
+                        type="number"
+                        className="flex-1 h-8 p-0.5 cursor-pointer"
+                        value={resolution[1]}
+                        onChange={(e)=> setResolution([resolution[0], parseInt(e.target.value, 10)])}
+                      />
+                    </div>
+                  </div>
+                </div>
                 <div className="flex items-center gap-3">
                   <Label className="text-xs">Background:</Label>
                   <Input
@@ -138,6 +169,16 @@ const ControlPanel = ({
                       </Button>
                     </div>
                   )}
+                </div>
+                <div className="flex items-center gap-3">
+                  <Label className="text-xs">Background Scale:</Label>
+                  <Input
+                    type="number"
+                    step={0.05}
+                    className="flex-1 h-8 p-0.5 cursor-pointer"
+                    value={backgroundScale}
+                    onChange={(e)=> setBackgroundScale(parseFloat(e.target.value))}
+                  />
                 </div>
               </AccordionContent>
             </AccordionItem>
