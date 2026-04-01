@@ -169,7 +169,7 @@ const PixiCanvas = ({
         sprite.zIndex = -1;
         sprite.anchor.set(0.5)
         sprite.position.set(app.renderer.width / 2, app.renderer.height / 2)
-        app.stage.addChild(sprite)
+        app.stage.addChildAt(sprite, 0)
         backgroundSpriteRef.current = sprite
       }
     }

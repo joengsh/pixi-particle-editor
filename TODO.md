@@ -9,7 +9,7 @@ Tasks
 
 ## Basic layout
 
-- [] setup tailwind color theme
+- [x] setup tailwind color theme
 - [x] complete responsive layout (canvas container and sidebar)
 
 ## Pixijs v5 canvas and particle emitter
@@ -22,7 +22,7 @@ Tasks
 - [] add textures upload feature
 - [] add canvas resolution setting
 - [x] add canvas background colour setting
-- [] add canvas background texture and scale setting
+- [x] add canvas background texture
 - [] add particle emitter settings
 - [] add basic particle settings
 - [] add animated particle settings

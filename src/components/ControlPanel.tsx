@@ -125,7 +125,6 @@ const ControlPanel = ({
                           <X className="w-3 h-3" />
                         </Button>
                       </div>
-                      <p className="text-xs text-muted-foreground">Click X to use default circle texture</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
