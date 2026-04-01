@@ -4,13 +4,15 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Download, Upload } from 'lucide-react'
+import { Download, Upload, ImagePlus, X } from 'lucide-react'
 
 type ControlPanelProps = {
   config: ParticleConfig
   onChange: (config: ParticleConfig) => void
   backgroundColor: string
   onBackgroundChange: (color: string) => void
+  backgroundTextureUrl: string | null
+  onBackgroundTextureChange: (url: string | null) => void
 }
 
 const ControlPanel = ({
@@ -18,7 +20,31 @@ const ControlPanel = ({
   onChange,
   backgroundColor,
   onBackgroundChange,
+  backgroundTextureUrl,
+  onBackgroundTextureChange,
 }: ControlPanelProps) => {
+  const handleBackgroundTextureUpload = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) {
+        const reader = new FileReader()
+        reader.onload = (event) => {
+          const dataUrl = event.target?.result as string
+          onBackgroundTextureChange(dataUrl)
+        }
+        reader.readAsDataURL(file)
+      }
+    }
+    input.click()
+  }
+
+    const handleClearTexture = () => {
+      onBackgroundTextureChange(null)
+    }
+
   return (
     <div className="h-full flex flex-col bg-card">
       <div className="px-4 pt-4 flex flex-row justify-between">
@@ -36,11 +62,20 @@ const ControlPanel = ({
       </div>
       <ScrollArea className="flex-1 overflow-scroll">
         <div className="p-4">
-          <Accordion type="multiple" defaultValue={['particle', 'emitter', 'stage']} className="space-y-2">
+          <Accordion type="multiple" defaultValue={['particle', 'advanced', 'emitter', 'stage']} className="space-y-2">
             {/* Particle Properties */}
             <AccordionItem value="particle" className="border border-border rounded-lg overflow-hidden">
               <AccordionTrigger className="px-4 py-3 bg-secondary/50 hover:bg-secondary/70 text-sm font-medium">
                 Particle Properties
+              </AccordionTrigger>
+              <AccordionContent className="p-4 space-y-5">
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Emitter Properties */}
+            <AccordionItem value="advanced" className="border border-border rounded-lg overflow-hidden">
+              <AccordionTrigger className="px-4 py-3 bg-secondary/50 hover:bg-secondary/70 text-sm font-medium">
+                Advanced Particle Properties
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-5">
               </AccordionContent>
@@ -70,6 +105,40 @@ const ControlPanel = ({
                     className="w-10 h-8 p-0.5 cursor-pointer"
                   />
                   <span className="text-xs text-muted-foreground">{backgroundColor}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Label className="text-xs">Background Texture:</Label>
+                  {backgroundTextureUrl ? (
+                    <div className="space-y-3">
+                      <div className="relative w-full aspect-square max-w-[120px] bg-secondary/50 rounded-lg overflow-hidden border border-border">
+                        <img
+                          src={backgroundTextureUrl}
+                          alt="Particle texture"
+                          className="w-full h-full object-contain"
+                        />
+                        <Button
+                          size="icon"
+                          variant="destructive"
+                          className="absolute top-1 right-1 w-6 h-6"
+                          onClick={handleClearTexture}
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Click X to use default circle texture</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <Button
+                        variant="outline"
+                        className="w-full gap-2"
+                        onClick={handleBackgroundTextureUpload}
+                      >
+                        <ImagePlus className="w-4 h-4" />
+                        Upload
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </AccordionContent>
             </AccordionItem>

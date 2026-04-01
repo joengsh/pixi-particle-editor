@@ -8,6 +8,7 @@ import ControlPanel from './components/ControlPanel'
 function App() {
   const [config, setConfig] = useState<ParticleConfig>(DEFAULT_CONFIG)
   const [backgroundColor, setBackgroundColor] = useState('#1a1a2e')
+  const [backgroundTextureUrl, setBackgroundTextureUrl] = useState<string | null>(null)
   const [fps, setFps] = useState(0)
   const [particleCount, setParticleCount] = useState(0)
   const canvasRef = useRef<{
@@ -49,6 +50,7 @@ function App() {
             <PixiCanvas
               config={config}
               backgroundColor={backgroundColor}
+              backgroundTextureUrl={backgroundTextureUrl}
               onStatsUpdate={handleStatsUpdate}
             />
           </div>
@@ -62,6 +64,8 @@ function App() {
             onChange={setConfig}
             backgroundColor={backgroundColor}
             onBackgroundChange={setBackgroundColor}
+            backgroundTextureUrl={backgroundTextureUrl}
+            onBackgroundTextureChange={setBackgroundTextureUrl}
           />
         </div>
       </div>

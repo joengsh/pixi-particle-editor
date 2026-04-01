@@ -9,19 +9,22 @@ import {
 type PixiCanvasProp = {
   config: ParticleConfig
   backgroundColor: string
+  backgroundTextureUrl: string | null
   onStatsUpdate?: (fps: number, particleCount: number) => void
 }
 
 const PixiCanvas = ({
   config,
   backgroundColor,
+  backgroundTextureUrl,
   onStatsUpdate,
 }: PixiCanvasProp) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const pixiAppRef = useRef<unknown>(null)
-  const emitterRef = useRef<unknown>(null)
+  const pixiAppRef = useRef<PIXI.Application>(null)
+  const emitterRef = useRef<particles.Emitter>(null)
   const elapsedRef = useRef(0)
   const particleCountRef = useRef(0)
+  const backgroundSpriteRef = useRef<PIXI.Sprite>(null)
 
   useEffect(() => {
     if (!containerRef.current || typeof window === 'undefined') return
@@ -137,10 +140,7 @@ const PixiCanvas = ({
   }, [])
 
   useEffect(() => {
-    const app = pixiAppRef.current as {
-      renderer: { backgroundColor: number }
-      stage: { children: unknown[] }
-    } | null
+    const app = pixiAppRef.current
 
     if (app) {
       app.renderer.backgroundColor = parseInt(
@@ -149,6 +149,31 @@ const PixiCanvas = ({
       )
     }
   }, [backgroundColor])
+
+  useEffect(() => {
+    const app = pixiAppRef.current
+    if (app) {
+      const bgSprite = backgroundSpriteRef.current
+      if (bgSprite ) {
+        bgSprite.parent.removeChild(bgSprite);
+        bgSprite.destroy({
+          texture: true,
+          baseTexture: true,
+        })
+        backgroundSpriteRef.current = null
+      }
+
+      if (backgroundTextureUrl) {
+        const texture = PIXI.Texture.from(backgroundTextureUrl)
+        const sprite = new PIXI.Sprite(texture)
+        sprite.zIndex = -1;
+        sprite.anchor.set(0.5)
+        sprite.position.set(app.renderer.width / 2, app.renderer.height / 2)
+        app.stage.addChild(sprite)
+        backgroundSpriteRef.current = sprite
+      }
+    }
+  }, [backgroundTextureUrl])
 
   return (
     <div
