@@ -22,7 +22,7 @@ function App() {
 
   return (
     <>
-      <div className={`h-screen flex flex-col md:flex-row bg-background`}>
+      <div className={`h-screen flex flex-col md:flex-row bg-background overflow-hidden`}>
         {/* Canvas Area */}
         <div className={`relative flex-1 items-stretch overflow-hidden`}>
           {/* Stats Bar */}
@@ -55,7 +55,7 @@ function App() {
         </div>
         {/* Control Panel */}
         <div
-          className={`relative h-[45vh] w-full border-t md:h-full md:w-90 md:border-l md:border-t-0 border-border bg-card basis-90 flex-0 shrink-0`}
+          className={`relative h-[45vh] w-full border-t md:h-full md:w-90 md:border-l md:border-t-0 border-border bg-card basis-[45vh] md:basis-90 flex-0 shrink-0 grow-0`}
         >
           <ControlPanel
             config={config}
