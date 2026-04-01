@@ -19,8 +19,9 @@ Tasks
 
 ## Particle emitter config
 
+- [] add textures upload feature
 - [] add canvas resolution setting
-- [] add canvas background colour setting
+- [x] add canvas background colour setting
 - [] add canvas background texture and scale setting
 - [] add particle emitter settings
 - [] add basic particle settings
@@ -31,11 +32,3 @@ Tasks
 
 - [] config json export
 - [] config json import
-
-## Pixi v7 support
-
-- [] setup Pixijs v7 and particle container
-- [] add config and ui to switch pixi version
-- [] map setting to v7 particle container
-- [] export config to v7 particle format
-- [] import v7 particle config json
