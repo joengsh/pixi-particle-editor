@@ -1,11 +1,8 @@
 import type { ParticleConfig } from '@/lib/particle-config'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Download, Upload, ImagePlus, X } from 'lucide-react'
 import { BackgroundColorControl, BackgroundScaleControl, BackgroundTextureControl, ResolutionControl } from './StageControl'
+import { ExportButton, LoadButton, SaveButton } from './GeneralControl'
 
 type ControlPanelProps = {
   config: ParticleConfig
@@ -22,18 +19,9 @@ const ControlPanel = ({
       <div className="px-4 pt-4 flex flex-row justify-between md:flex-col md:justify-start">
         <h2 className="text-lg font-semibold text-foreground mb-3">Particle Editor</h2>
         <div className="flex flex-wrap gap-2 justify-end md:justify-start">
-          <Button size="sm" variant="outline" onClick={()=>{}} className="gap-1.5">
-            <Upload className="w-3.5 h-3.5" />
-            Save
-          </Button>
-          <Button size="sm" variant="outline" onClick={()=>{}} className="gap-1.5">
-            <Upload className="w-3.5 h-3.5" />
-            Load
-          </Button>
-          <Button size="sm" variant="outline" onClick={()=>{}} className="gap-1.5">
-            <Download className="w-3.5 h-3.5" />
-            Export
-          </Button>
+          <SaveButton/>
+          <LoadButton/>
+          <ExportButton/>
         </div>
       </div>
       <ScrollArea className="flex-1 overflow-hidden">

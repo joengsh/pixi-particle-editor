@@ -14,7 +14,7 @@ Tasks
 
 ## Pixijs v5 canvas and particle emitter
 
-- [x] setup Pixijs v5 and particle-emitter
+- [x] setup Pixijs v6 and particle-emitter
 - [x] show a basic particle emitter on the canvas
 
 ## Particle emitter config
@@ -30,5 +30,12 @@ Tasks
 
 ## config import and export
 
-- [] config json export
-- [] config json import
+- [] project save
+    - [] save stage config
+    - [] save textures
+    - [] save particle system config
+- [] project load
+    - [] load stage config
+    - [] load textures
+    - [] load particle system config
+- [] config json export, export both textures and particle system config
