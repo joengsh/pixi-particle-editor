@@ -24,8 +24,10 @@ const useStageConfigStore = create<StageConfigStore>((set) => ({
   backgroundScale: 1,
   setBackgroundColor: (color) => set(() => ({ backgroundColor: color })),
   setBackgroundTextureUrl: (url) => set(() => ({ backgroundTextureUrl: url })),
-  setResolution: (value: [number, number]) => set(() => ({ resolution: value })),
-  setBackgroundScale: (value: number) => set(() => ({ backgroundScale: value }))
+  setResolution: (value: [number, number]) =>
+    set(() => ({ resolution: value })),
+  setBackgroundScale: (value: number) =>
+    set(() => ({ backgroundScale: value })),
 }))
 
-export default useStageConfigStore;
+export default useStageConfigStore

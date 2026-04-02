@@ -6,7 +6,9 @@ import { useShallow } from 'zustand/shallow'
 import { ImagePlus, X } from 'lucide-react'
 
 export const ResolutionControl = () => {
-  const [resolution, setResolution] = useStageConfigStore(useShallow(state => [state.resolution, state.setResolution]))
+  const [resolution, setResolution] = useStageConfigStore(
+    useShallow((state) => [state.resolution, state.setResolution]),
+  )
   return (
     <div className="flex flex-col gap-3">
       <Label className="text-xs">Resolution:</Label>
@@ -17,7 +19,9 @@ export const ResolutionControl = () => {
             type="number"
             className="flex-1 h-8 p-0.5 cursor-pointer"
             value={resolution[0]}
-            onChange={(e)=> setResolution([parseInt(e.target.value, 10), resolution[1]])}
+            onChange={(e) =>
+              setResolution([parseInt(e.target.value, 10), resolution[1]])
+            }
           />
         </div>
         <div className="flex flex-1 items-center gap-3">
@@ -26,7 +30,9 @@ export const ResolutionControl = () => {
             type="number"
             className="flex-1 h-8 p-0.5 cursor-pointer"
             value={resolution[1]}
-            onChange={(e)=> setResolution([resolution[0], parseInt(e.target.value, 10)])}
+            onChange={(e) =>
+              setResolution([resolution[0], parseInt(e.target.value, 10)])
+            }
           />
         </div>
       </div>
@@ -35,7 +41,9 @@ export const ResolutionControl = () => {
 }
 
 export const BackgroundScaleControl = () => {
-  const [backgroundScale, setBackgroundScale] = useStageConfigStore(useShallow(state => [state.backgroundScale, state.setBackgroundScale]))
+  const [backgroundScale, setBackgroundScale] = useStageConfigStore(
+    useShallow((state) => [state.backgroundScale, state.setBackgroundScale]),
+  )
   return (
     <div className="flex items-center gap-3">
       <Label className="text-xs">Background Scale:</Label>
@@ -44,14 +52,16 @@ export const BackgroundScaleControl = () => {
         step={0.05}
         className="flex-1 h-8 p-0.5 cursor-pointer"
         value={backgroundScale}
-        onChange={(e)=> setBackgroundScale(parseFloat(e.target.value))}
+        onChange={(e) => setBackgroundScale(parseFloat(e.target.value))}
       />
     </div>
   )
 }
 
 export const BackgroundColorControl = () => {
-  const [backgroundColor, setBackgroundColor] = useStageConfigStore(useShallow(state => [state.backgroundColor, state.setBackgroundColor]))
+  const [backgroundColor, setBackgroundColor] = useStageConfigStore(
+    useShallow((state) => [state.backgroundColor, state.setBackgroundColor]),
+  )
   return (
     <div className="flex items-center gap-3">
       <Label className="text-xs">Background:</Label>
@@ -67,7 +77,12 @@ export const BackgroundColorControl = () => {
 }
 
 export const BackgroundTextureControl = () => {
-  const [backgroundTextureUrl, setBackgroundTextureUrl] = useStageConfigStore(useShallow(state => [state.backgroundTextureUrl, state.setBackgroundTextureUrl]))
+  const [backgroundTextureUrl, setBackgroundTextureUrl] = useStageConfigStore(
+    useShallow((state) => [
+      state.backgroundTextureUrl,
+      state.setBackgroundTextureUrl,
+    ]),
+  )
 
   const handleBackgroundTextureUpload = () => {
     const input = document.createElement('input')
@@ -87,9 +102,9 @@ export const BackgroundTextureControl = () => {
     input.click()
   }
 
-    const handleClearTexture = () => {
-      setBackgroundTextureUrl(null)
-    }
+  const handleClearTexture = () => {
+    setBackgroundTextureUrl(null)
+  }
 
   return (
     <div className="flex items-center gap-3">

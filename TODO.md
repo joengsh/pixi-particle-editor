@@ -31,11 +31,11 @@ Tasks
 ## config import and export
 
 - [] project save
-    - [] save stage config
-    - [] save textures
-    - [] save particle system config
+  - [] save stage config
+  - [] save textures
+  - [] save particle system config
 - [] project load
-    - [] load stage config
-    - [] load textures
-    - [] load particle system config
+  - [] load stage config
+  - [] load textures
+  - [] load particle system config
 - [] config json export, export both textures and particle system config

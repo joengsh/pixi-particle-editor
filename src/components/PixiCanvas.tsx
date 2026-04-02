@@ -12,14 +12,13 @@ type PixiCanvasProp = {
   onStatsUpdate?: (fps: number, particleCount: number) => void
 }
 
-const PixiCanvas = ({
-  config,
-  onStatsUpdate,
-}: PixiCanvasProp) => {
-  const resolution = useStageConfigStore(state => state.resolution)
-  const backgroundScale = useStageConfigStore(state => state.backgroundScale)
-  const backgroundColor = useStageConfigStore(state => state.backgroundColor)
-  const backgroundTextureUrl = useStageConfigStore(state => state.backgroundTextureUrl)
+const PixiCanvas = ({ config, onStatsUpdate }: PixiCanvasProp) => {
+  const resolution = useStageConfigStore((state) => state.resolution)
+  const backgroundScale = useStageConfigStore((state) => state.backgroundScale)
+  const backgroundColor = useStageConfigStore((state) => state.backgroundColor)
+  const backgroundTextureUrl = useStageConfigStore(
+    (state) => state.backgroundTextureUrl,
+  )
 
   const containerRef = useRef<HTMLDivElement>(null)
   const pixiAppRef = useRef<PIXI.Application>(null)
@@ -39,7 +38,7 @@ const PixiCanvas = ({
 
     const container = containerRef.current
     const width = resolution[0]
-    const height = resolution[1]    
+    const height = resolution[1]
 
     const app = new PIXI.Application({
       width,
@@ -55,8 +54,8 @@ const PixiCanvas = ({
 
     const rootContainer = new PIXI.Container()
     rootContainer.name = 'gameContainer'
-    rootContainer.x = width / 2;
-    rootContainer.y = height / 2;
+    rootContainer.x = width / 2
+    rootContainer.y = height / 2
     app.stage.addChild(rootContainer)
     gameContainerRef.current = rootContainer
 
@@ -76,7 +75,7 @@ const PixiCanvas = ({
     )
 
     const emitterConfig = configToEmitterConfig({
-      ...config
+      ...config,
     })
 
     const emitter = new particles.Emitter(
@@ -137,11 +136,11 @@ const PixiCanvas = ({
   useEffect(() => {
     const app = pixiAppRef.current
     if (app) {
-      const rootContainer = gameContainerRef.current!;
+      const rootContainer = gameContainerRef.current!
 
       const bgSprite = backgroundSpriteRef.current
-      if (bgSprite ) {
-        bgSprite.parent.removeChild(bgSprite);
+      if (bgSprite) {
+        bgSprite.parent.removeChild(bgSprite)
         bgSprite.destroy({
           texture: true,
           baseTexture: true,
@@ -152,7 +151,7 @@ const PixiCanvas = ({
       if (backgroundTextureUrl) {
         const texture = PIXI.Texture.from(backgroundTextureUrl)
         const sprite = new PIXI.Sprite(texture)
-        sprite.zIndex = -1;
+        sprite.zIndex = -1
         sprite.anchor.set(0.5)
         sprite.scale.set(backgroundScale)
         rootContainer.addChildAt(sprite, 0)
@@ -161,7 +160,7 @@ const PixiCanvas = ({
     }
   }, [backgroundTextureUrl, backgroundScale])
 
-  useEffect(()=>{
+  useEffect(() => {
     const app = pixiAppRef.current
     const emitter = emitterRef.current
     const container = containerRef.current
@@ -170,7 +169,7 @@ const PixiCanvas = ({
       return
     }
 
-    const rootContainer = gameContainerRef.current!;
+    const rootContainer = gameContainerRef.current!
 
     const handleResize = () => {
       if (!containerRef.current) return
@@ -182,10 +181,10 @@ const PixiCanvas = ({
       emitter.updateOwnerPos(0, 0)
 
       const scaleX = newWidth / resolution[0]
-      const scaleY = newHeight /resolution[1]
+      const scaleY = newHeight / resolution[1]
       const scale = Math.min(scaleX, scaleY)
-      app.view.style.width = `${resolution[0]*scale}px`
-      app.view.style.height = `${resolution[1]*scale}px`
+      app.view.style.width = `${resolution[0] * scale}px`
+      app.view.style.height = `${resolution[1] * scale}px`
     }
 
     const resizeObserver = new ResizeObserver(handleResize)
@@ -204,11 +203,10 @@ const PixiCanvas = ({
 
     app.view.addEventListener('mousemove', handleMouseMove)
 
-    handleResize();
+    handleResize()
     return () => {
       resizeObserver.disconnect()
     }
-
   }, [resolution])
 
   return (
