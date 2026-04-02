@@ -1,0 +1,88 @@
+import type { ParticleConfig } from '@/lib/particle-config'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Download, Upload, ImagePlus, X } from 'lucide-react'
+import { BackgroundColorControl, BackgroundScaleControl, BackgroundTextureControl, ResolutionControl } from './StageControl'
+
+type ControlPanelProps = {
+  config: ParticleConfig
+  onChange: (config: ParticleConfig) => void
+}
+
+const ControlPanel = ({
+  config,
+  onChange,
+}: ControlPanelProps) => {
+
+  return (
+    <div className="h-full flex flex-col bg-card">
+      <div className="px-4 pt-4 flex flex-row justify-between md:flex-col md:justify-start">
+        <h2 className="text-lg font-semibold text-foreground mb-3">Particle Editor</h2>
+        <div className="flex flex-wrap gap-2 justify-end md:justify-start">
+          <Button size="sm" variant="outline" onClick={()=>{}} className="gap-1.5">
+            <Upload className="w-3.5 h-3.5" />
+            Save
+          </Button>
+          <Button size="sm" variant="outline" onClick={()=>{}} className="gap-1.5">
+            <Upload className="w-3.5 h-3.5" />
+            Load
+          </Button>
+          <Button size="sm" variant="outline" onClick={()=>{}} className="gap-1.5">
+            <Download className="w-3.5 h-3.5" />
+            Export
+          </Button>
+        </div>
+      </div>
+      <ScrollArea className="flex-1 overflow-hidden">
+        <div className="p-4">
+          <Accordion type="multiple" defaultValue={['particle', 'advanced', 'emitter', 'stage']} className="space-y-2">
+            {/* Particle Properties */}
+            <AccordionItem value="particle" className="border border-border rounded-lg overflow-hidden">
+              <AccordionTrigger className="px-4 py-3 bg-secondary/50 hover:bg-secondary/70 text-sm font-medium">
+                Particle Properties
+              </AccordionTrigger>
+              <AccordionContent className="p-4 space-y-5">
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Emitter Properties */}
+            <AccordionItem value="advanced" className="border border-border rounded-lg overflow-hidden">
+              <AccordionTrigger className="px-4 py-3 bg-secondary/50 hover:bg-secondary/70 text-sm font-medium">
+                Advanced Particle Properties
+              </AccordionTrigger>
+              <AccordionContent className="p-4 space-y-5">
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Emitter Properties */}
+            <AccordionItem value="emitter" className="border border-border rounded-lg overflow-hidden">
+              <AccordionTrigger className="px-4 py-3 bg-secondary/50 hover:bg-secondary/70 text-sm font-medium">
+                Emitter Properties
+              </AccordionTrigger>
+              <AccordionContent className="p-4 space-y-5">
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Stage Properties */}
+            <AccordionItem value="stage" className="border border-border rounded-lg overflow-hidden">
+              <AccordionTrigger className="px-4 py-3 bg-secondary/50 hover:bg-secondary/70 text-sm font-medium">
+                Stage Properties
+              </AccordionTrigger>
+              <AccordionContent className="p-4 space-y-4">
+                <ResolutionControl/>
+                <BackgroundColorControl/>
+                <BackgroundTextureControl/>
+                <BackgroundScaleControl/>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </ScrollArea>
+    </div>
+  )
+}
+
+export default ControlPanel

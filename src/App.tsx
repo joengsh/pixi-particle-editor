@@ -3,14 +3,10 @@ import './App.css'
 import { Activity, Layers } from 'lucide-react'
 import PixiCanvas from './components/PixiCanvas'
 import { DEFAULT_CONFIG, type ParticleConfig } from './lib/particle-config'
-import ControlPanel from './components/ControlPanel'
+import ControlPanel from './components/controls/ControlPanel'
 
 function App() {
   const [config, setConfig] = useState<ParticleConfig>(DEFAULT_CONFIG)
-  const [backgroundColor, setBackgroundColor] = useState('#1a1a2e')
-  const [backgroundTextureUrl, setBackgroundTextureUrl] = useState<string | null>(null)
-  const [backgroundScale, setBackgroundScale] = useState<number>(1)
-  const [resolution, setResolution] = useState<[number, number]>([1920, 1080])
   const [fps, setFps] = useState(0)
   const [particleCount, setParticleCount] = useState(0)
   const canvasRef = useRef<{
@@ -51,10 +47,6 @@ function App() {
           <div className="w-full h-full">
             <PixiCanvas
               config={config}
-              backgroundColor={backgroundColor}
-              backgroundTextureUrl={backgroundTextureUrl}
-              resolution={resolution}
-              backgroundScale={backgroundScale}
               onStatsUpdate={handleStatsUpdate}
             />
           </div>
@@ -66,14 +58,6 @@ function App() {
           <ControlPanel
             config={config}
             onChange={setConfig}
-            backgroundColor={backgroundColor}
-            onBackgroundChange={setBackgroundColor}
-            backgroundTextureUrl={backgroundTextureUrl}
-            onBackgroundTextureChange={setBackgroundTextureUrl}
-            resolution={resolution}
-            setResolution={setResolution}
-            backgroundScale={backgroundScale}
-            setBackgroundScale={setBackgroundScale}
           />
         </div>
       </div>

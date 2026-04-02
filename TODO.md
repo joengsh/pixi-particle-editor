@@ -20,7 +20,7 @@ Tasks
 ## Particle emitter config
 
 - [] add textures upload feature
-- [] add canvas resolution setting
+- [x] add canvas resolution setting
 - [x] add canvas background colour setting
 - [x] add canvas background texture
 - [] add particle emitter settings

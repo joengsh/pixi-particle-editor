@@ -5,24 +5,22 @@ import {
   type ParticleConfig,
   configToEmitterConfig,
 } from '@/lib/particle-config'
+import useStageConfigStore from '@/stores/StageConfigStore'
 
 type PixiCanvasProp = {
   config: ParticleConfig
-  backgroundColor: string
-  backgroundTextureUrl: string | null
-  resolution: [number, number]
-  backgroundScale: number
   onStatsUpdate?: (fps: number, particleCount: number) => void
 }
 
 const PixiCanvas = ({
   config,
-  backgroundColor,
-  backgroundTextureUrl,
-  resolution,
-  backgroundScale,
   onStatsUpdate,
 }: PixiCanvasProp) => {
+  const resolution = useStageConfigStore(state => state.resolution)
+  const backgroundScale = useStageConfigStore(state => state.backgroundScale)
+  const backgroundColor = useStageConfigStore(state => state.backgroundColor)
+  const backgroundTextureUrl = useStageConfigStore(state => state.backgroundTextureUrl)
+
   const containerRef = useRef<HTMLDivElement>(null)
   const pixiAppRef = useRef<PIXI.Application>(null)
   const emitterRef = useRef<particles.Emitter>(null)
