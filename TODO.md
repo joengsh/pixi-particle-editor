@@ -24,18 +24,47 @@ Tasks
 - [x] add canvas background colour setting
 - [x] add canvas background texture
 - [] add particle emitter settings
+  - [] BurstSpawn
+  - [] PointSpawn
+  - [] ShapeSpawn
+  - [] min max Lifetime
+  - [] max Particles
+  - [] emitterLifetime
+  - [] particlesPerWave
+  - [] rotation
+  - [] addAtBack
+  - [] customEase
+  - [] frequency
 - [] add basic particle settings
-- [] add animated particle settings
+  - [] Acceleration
+  - [] Alpha
+  - [] BlendMode
+  - [] Color
+  - [] NoRotation
+  - [] Rotation
+  - [] Scale
+  - [] Speed
+  - [] StaticAlpha
+  - [] StaticColor
+  - [] StaticRotation
+  - [] StaticScale
+  - [] StaticSpeed
+- [] add particle texture settings
+  - [] OrderedTexture
+  - [] RandomTexture
+  - [] RandomAnimatedTexture
+  - [] SingleTexture
+  - [] SingleAnimatedTexture
 - [] add path particle settings
+  - [] Path
 
 ## config import and export
 
-- [*] project save
-  - [x] save stage config
-  - [] save textures
-  - [] save particle system config
-- [*] project load
-  - [x] load stage config
-  - [] load textures
-  - [] load particle system config
-- [] config json export, export both textures and particle system config
+- [*] config json export
+  - [] export stage config
+  - [] export textures
+  - [] export particle system config
+- [*] config json import
+  - [] import stage config
+  - [] import textures
+  - [] import particle system config
