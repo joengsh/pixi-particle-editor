@@ -13,6 +13,7 @@ import {
   ResolutionControl,
 } from './StageControl'
 import { ExportButton, LoadButton, SaveButton } from './GeneralControl'
+import TextureList from '../TextureList'
 
 type ControlPanelProps = {
   config: ParticleConfig
@@ -36,9 +37,28 @@ const ControlPanel = ({ config, onChange }: ControlPanelProps) => {
         <div className="p-4">
           <Accordion
             type="multiple"
-            defaultValue={['particle', 'advanced', 'emitter', 'stage']}
+            defaultValue={[
+              'texture',
+              'particle',
+              'advanced',
+              'emitter',
+              'stage',
+            ]}
             className="space-y-2"
           >
+            {/* Texture Management */}
+            <AccordionItem
+              value="texture"
+              className="border border-border rounded-lg overflow-hidden"
+            >
+              <AccordionTrigger className="px-4 py-3 bg-secondary/50 hover:bg-secondary/70 text-sm font-medium">
+                Textures
+              </AccordionTrigger>
+              <AccordionContent className="p-4 space-y-5">
+                <TextureList />
+              </AccordionContent>
+            </AccordionItem>
+
             {/* Particle Properties */}
             <AccordionItem
               value="particle"
