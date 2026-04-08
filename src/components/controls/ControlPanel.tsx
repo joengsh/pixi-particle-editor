@@ -14,6 +14,7 @@ import {
 } from './StageControl'
 import { ExportButton, LoadButton, SaveButton } from './GeneralControl'
 import TextureList from '../TextureList'
+import { TextureUpload } from './TextureControl'
 
 type ControlPanelProps = {
   config: ParticleConfig
@@ -22,7 +23,7 @@ type ControlPanelProps = {
 
 const ControlPanel = ({ config, onChange }: ControlPanelProps) => {
   return (
-    <div className="h-full flex flex-col bg-card">
+    <div className="h-full flex flex-col bg-card items-stretch">
       <div className="px-4 pt-4 flex flex-row justify-between md:flex-col md:justify-start">
         <h2 className="text-lg font-semibold text-foreground mb-3">
           Particle Editor
@@ -33,7 +34,7 @@ const ControlPanel = ({ config, onChange }: ControlPanelProps) => {
           <ExportButton />
         </div>
       </div>
-      <ScrollArea className="flex-1 overflow-hidden">
+      <ScrollArea className="flex-1 overflow-hidden [&>div>div]:block!">
         <div className="p-4">
           <Accordion
             type="multiple"
@@ -55,6 +56,7 @@ const ControlPanel = ({ config, onChange }: ControlPanelProps) => {
                 Textures
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-5">
+                <TextureUpload />
                 <TextureList />
               </AccordionContent>
             </AccordionItem>

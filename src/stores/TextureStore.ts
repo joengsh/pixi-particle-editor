@@ -9,7 +9,7 @@ export type TextureStoreState = {
 export type TextureStoreAction = {
   addTexture: (textureName: string, textureUrl: string) => void
   removeTexture: (textureName: string) => void
-  addTextures: (textures: { textureName: string; textureUrl: string }) => void
+  addTextures: (textures: { textureName: string; textureUrl: string }[]) => void
   removeAllTexture: () => void
 }
 
@@ -23,7 +23,10 @@ const useTextureStore = create<TextureStore>((set) => ({
     set((state) => {
       // check existance of the texture
       if (Object.keys(state.textureData).includes(textureName)) {
-        return state
+        const texture = state.textureInstances[textureName]
+        if (texture) {
+          texture.destroy(true)
+        }
       }
       // create new texture instance
       const texture = PIXI.Texture.from(textureUrl)
@@ -65,11 +68,14 @@ const useTextureStore = create<TextureStore>((set) => ({
     set((state) => {
       const newTextureData = { ...state.textureData }
       const newTextureInstances = { ...state.textureInstances }
-      for (const entry of Object.entries(textures)) {
-        const [textureName, textureUrl] = entry
+      for (const textureData of textures) {
+        const { textureName, textureUrl } = textureData
         // check existance of the texture
         if (Object.keys(state.textureData).includes(textureName)) {
-          continue
+          const texture = state.textureInstances[textureName]
+          if (texture) {
+            texture.destroy(true)
+          }
         }
         // create new texture instance
         const texture = PIXI.Texture.from(textureUrl)

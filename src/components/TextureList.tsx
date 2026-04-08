@@ -15,10 +15,10 @@ const TextureListItem = ({
   onRemove,
 }: TextureListItemProps) => {
   return (
-    <li className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors">
+    <li className="w-full flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors">
       <HoverCard openDelay={200} closeDelay={100}>
         <HoverCardTrigger asChild>
-          <button className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md border bg-muted cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+          <button className="relative h-6 w-6 shrink-0 overflow-hidden rounded-md border bg-muted cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
             <img
               src={textureUrl}
               alt={textureName}
