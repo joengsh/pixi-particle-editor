@@ -61,10 +61,10 @@ Tasks
 ## config import and export
 
 - [*] config json export
-  - [] export stage config
-  - [] export textures
+  - [x] export stage config
+  - [x] export textures
   - [] export particle system config
 - [*] config json import
-  - [] import stage config
-  - [] import textures
+  - [x] import stage config
+  - [x] import textures
   - [] import particle system config

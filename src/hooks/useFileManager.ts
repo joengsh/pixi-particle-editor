@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import JSZip from 'jszip'
 import useStageConfigStore from '@/stores/StageConfigStore'
 import { useCallback } from 'react'
-import { gzip, ungzip } from 'pako'
 import { ProjectDataSchema, type ProjectData } from '@/types/projectData'
+import { showOpenFilePicker, showSaveFilePicker } from '@/lib/file'
+import useTextureStore from '@/stores/TextureStore'
+import { useShallow } from 'zustand/shallow'
 
 const useFileManager = () => {
   const stageConfigStore = useStageConfigStore()
@@ -12,6 +15,11 @@ const useFileManager = () => {
     setBackgroundTextureUrl,
     setResolution,
   } = stageConfigStore
+  const textureData = useTextureStore(useShallow((state) => state.textureData))
+  const addTextures = useTextureStore(useShallow((state) => state.addTextures))
+  const removeAllTexture = useTextureStore(
+    useShallow((state) => state.removeAllTexture),
+  )
 
   const saveProject = useCallback(async () => {
     const {
@@ -28,21 +36,31 @@ const useFileManager = () => {
     }
     const projectData = ProjectDataSchema.parse(data)
     try {
-      const json = JSON.stringify(projectData, null, 2)
-      const gzipped = gzip(json)
+      const zip = new JSZip()
 
-      const fileHandle = await (window as any).showSaveFilePicker({
-        suggestedName: 'project.json.gz',
+      for (const [fileName, blobUrl] of Object.entries(textureData)) {
+        const response = await fetch(blobUrl)
+        const blob = await response.blob()
+
+        zip.file(fileName, blob)
+      }
+
+      const json = JSON.stringify(projectData, null, 2)
+      zip.file('project.json', json)
+      const zipBlob = await zip.generateAsync({ type: 'blob' })
+
+      const fileHandle = await showSaveFilePicker({
+        suggestedName: 'export.zip',
         types: [
           {
-            description: 'Gzipped JSON File',
-            accept: { 'application/gzip': ['.gz'] },
+            description: 'ZIP archive',
+            accept: { 'application/zip': ['.zip'] },
           },
         ],
       })
 
       const writable = await fileHandle.createWritable()
-      await writable.write(new Blob([gzipped], { type: 'application/gzip' }))
+      await writable.write(zipBlob)
       await writable.close()
     } catch (err: any) {
       if (err.name === 'AbortError') {
@@ -51,26 +69,46 @@ const useFileManager = () => {
         console.error('Error saving project:', err)
       }
     }
-  }, [stageConfigStore])
+  }, [stageConfigStore, textureData])
 
   const loadProject = useCallback(async () => {
     try {
-      const [handle] = await (window as any).showOpenFilePicker({
+      const files = await showOpenFilePicker({
         multiple: false,
         types: [
           {
-            description: 'Gzipped JSON File',
-            accept: { 'application/gzip': ['.gz'] },
+            description: 'ZIP archive',
+            accept: { 'application/zip': ['.zip'] },
           },
         ],
       })
 
-      const file = await handle.getFile()
-      const arrayBuffer = await file.arrayBuffer()
+      const file = files[0]
+      const zip = await JSZip.loadAsync(file)
+      const textureMap: {
+        textureName: string
+        textureUrl: string
+      }[] = []
 
-      const jsonText = new TextDecoder().decode(
-        ungzip(new Uint8Array(arrayBuffer)),
+      const entries = Object.values(zip.files).filter(
+        (f) => !f.dir && !f.name.endsWith('.json'),
       )
+
+      await Promise.all(
+        entries.map(async (entry) => {
+          const blob = await entry.async('blob')
+          const blobUrl = URL.createObjectURL(blob)
+          textureMap.push({
+            textureName: entry.name,
+            textureUrl: blobUrl,
+          })
+        }),
+      )
+
+      removeAllTexture()
+      addTextures(textureMap)
+
+      const jsonText = await zip.files['project.json'].async('string')
       const data = JSON.parse(jsonText)
       const projectData = ProjectDataSchema.parse(data)
 
@@ -94,6 +132,8 @@ const useFileManager = () => {
     setBackgroundColor,
     setBackgroundTextureUrl,
     setResolution,
+    addTextures,
+    removeAllTexture,
   ])
 
   return {
