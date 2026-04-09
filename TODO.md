@@ -53,7 +53,7 @@ Tasks
   - [] OrderedTexture
   - [] RandomTexture
   - [] RandomAnimatedTexture
-  - [] SingleTexture
+  - [*] SingleTexture
   - [] SingleAnimatedTexture
 - [] add path particle settings
   - [] Path
