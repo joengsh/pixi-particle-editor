@@ -1,22 +1,22 @@
 import z from 'zod'
 
-const BasicPointSchema = z.object({
+export const BasicPointSchema = z.object({
   x: z.number(),
   y: z.number(),
 })
 
-const RandNumberSchema = z.object({
+export const RandNumberSchema = z.object({
   max: z.number(),
   min: z.number(),
 })
 
-const ValueStepSchema = <T extends z.ZodTypeAny>(valueSchema: T) =>
+export const ValueStepSchema = <T extends z.ZodTypeAny>(valueSchema: T) =>
   z.object({
     value: valueSchema,
     time: z.number(),
   })
 
-const ValueListSchema = <T extends z.ZodTypeAny>(valueSchema: T) =>
+export const ValueListSchema = <T extends z.ZodTypeAny>(valueSchema: T) =>
   z.object({
     list: ValueStepSchema(valueSchema),
     isStepped: z.boolean(),
@@ -67,7 +67,7 @@ export const EmitterConfigSchema = z.object({
       x: z.number(),
       y: z.number(),
       r: z.number(),
-      minR: z.number(),
+      minR: z.number().optional(),
     })
     .optional(),
   particleSpacing: z.number().optional(),
@@ -139,7 +139,7 @@ export const OldEmitterConfigSchema = z.object({
       x: z.number(),
       y: z.number(),
       r: z.number(),
-      minR: z.number(),
+      minR: z.number().optional(),
     })
     .optional(),
   particleSpacing: z.number().optional(),
@@ -160,7 +160,7 @@ export const OldEmitterConfigSchema = z.object({
 
 export type OldEmitterConfig = z.infer<typeof OldEmitterConfigSchema>
 
-const AnimatedArtDataSchema = z.object({
+export const AnimatedArtDataSchema = z.object({
   framerate: z.union([z.literal('matchLife'), z.number()]),
   loop: z.boolean().default(false),
   textures: z.union([

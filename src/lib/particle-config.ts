@@ -1,70 +1,7 @@
+import type { OldEmitterConfig } from '@/types/particle/particleConfig'
 import type { EmitterConfig } from 'pixi-particles'
 
-export interface ParticleConfig {
-  alpha: {
-    start: number
-    end: number
-  }
-  scale: {
-    start: number
-    end: number
-    minimumScaleMultiplier: number
-  }
-  color: {
-    start: string
-    end: string
-  }
-  speed: {
-    start: number
-    end: number
-    minimumSpeedMultiplier: number
-  }
-  acceleration: {
-    x: number
-    y: number
-  }
-  maxSpeed: number
-  startRotation: {
-    min: number
-    max: number
-  }
-  noRotation: boolean
-  rotationSpeed: {
-    min: number
-    max: number
-  }
-  lifetime: {
-    min: number
-    max: number
-  }
-  blendMode: string
-  frequency: number
-  emitterLifetime: number
-  maxParticles: number
-  pos: {
-    x: number
-    y: number
-  }
-  addAtBack: boolean
-  spawnType: 'point' | 'rect' | 'circle' | 'ring' | 'burst'
-  spawnRect?: {
-    x: number
-    y: number
-    w: number
-    h: number
-  }
-  spawnCircle?: {
-    x: number
-    y: number
-    r: number
-    minR?: number
-  }
-  particlesPerWave?: number
-  particleSpacing?: number
-  angleStart?: number
-}
-
-export const DEFAULT_CONFIG: ParticleConfig = {
+export const DEFAULT_CONFIG: OldEmitterConfig = {
   alpha: {
     start: 1,
     end: 0,
@@ -128,7 +65,7 @@ export const DEFAULT_CONFIG: ParticleConfig = {
   angleStart: 0,
 }
 
-export const PRESETS: Record<string, Partial<ParticleConfig>> = {
+export const PRESETS: Record<string, Partial<OldEmitterConfig>> = {
   fire: {
     alpha: { start: 1, end: 0 },
     scale: { start: 0.5, end: 0.1, minimumScaleMultiplier: 1 },
@@ -203,34 +140,34 @@ export const PRESETS: Record<string, Partial<ParticleConfig>> = {
   },
 }
 
-export function configToEmitterConfig(config: ParticleConfig): EmitterConfig {
+export function configToEmitterConfig(config: OldEmitterConfig): EmitterConfig {
   const emitterConfig: EmitterConfig = {
     alpha: {
       list: [
-        { value: config.alpha.start, time: 0 },
-        { value: config.alpha.end, time: 1 },
+        { value: config.alpha!.start, time: 0 },
+        { value: config.alpha!.end, time: 1 },
       ],
     },
     scale: {
       list: [
-        { value: config.scale.start, time: 0 },
-        { value: config.scale.end, time: 1 },
+        { value: config.scale!.start, time: 0 },
+        { value: config.scale!.end, time: 1 },
       ],
     },
-    minimumScaleMultiplier: config.scale.minimumScaleMultiplier,
+    minimumScaleMultiplier: config.scale!.minimumScaleMultiplier,
     color: {
       list: [
-        { value: config.color.start.replace('#', ''), time: 0 },
-        { value: config.color.end.replace('#', ''), time: 1 },
+        { value: config.color!.start.replace('#', ''), time: 0 },
+        { value: config.color!.end.replace('#', ''), time: 1 },
       ],
     },
     speed: {
       list: [
-        { value: config.speed.start, time: 0 },
-        { value: config.speed.end, time: 1 },
+        { value: config.speed!.start, time: 0 },
+        { value: config.speed!.end, time: 1 },
       ],
     },
-    minimumSpeedMultiplier: config.speed.minimumSpeedMultiplier,
+    minimumSpeedMultiplier: config.speed!.minimumSpeedMultiplier,
     acceleration: config.acceleration,
     maxSpeed: config.maxSpeed,
     startRotation: config.startRotation,
