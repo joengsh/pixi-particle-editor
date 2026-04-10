@@ -1,25 +1,38 @@
 import type { OldEmitterConfig } from '@/types/particle/particleConfig'
+import type { ParticleConfigUI } from '@/types/particleConfigUIData'
 import type { EmitterConfig } from 'pixi-particles'
 
-export const DEFAULT_CONFIG: OldEmitterConfig = {
+export const DEFAULT_CONFIG: ParticleConfigUI = {
   alpha: {
-    start: 1,
-    end: 0,
+    list: [
+      { value: 1, time: 0 },
+      { value: 0, time: 1 },
+    ],
+    isStepped: false,
   },
   scale: {
-    start: 1,
-    end: 0.3,
-    minimumScaleMultiplier: 1,
+    list: [
+      { value: 1, time: 0 },
+      { value: 0.3, time: 1 },
+    ],
+    isStepped: false,
   },
+  minimumScaleMultiplier: 1,
   color: {
-    start: '#ffffff',
-    end: '#ff8800',
+    list: [
+      { value: 'ffffff', time: 0 },
+      { value: 'ff8800', time: 1 },
+    ],
+    isStepped: false,
   },
   speed: {
-    start: 200,
-    end: 100,
-    minimumSpeedMultiplier: 1,
+    list: [
+      { value: 200, time: 0 },
+      { value: 100, time: 1 },
+    ],
+    isStepped: false,
   },
+  minimumSpeedMultiplier: 1,
   acceleration: {
     x: 0,
     y: 0,
@@ -47,100 +60,78 @@ export const DEFAULT_CONFIG: OldEmitterConfig = {
     y: 0,
   },
   addAtBack: false,
-  spawnType: 'point',
-  spawnRect: {
-    x: 0,
-    y: 0,
-    w: 100,
-    h: 100,
+  particleType: {
+    type: 'basic',
+    art: [],
+    orderedArt: false,
   },
-  spawnCircle: {
-    x: 0,
-    y: 0,
-    r: 50,
-    minR: 0,
+  emitterType: {
+    type: 'point',
   },
-  particlesPerWave: 10,
-  particleSpacing: 0,
-  angleStart: 0,
+  rotationAcceleration: 0,
+  spawnChance: 1,
+  emit: true,
 }
 
-export const PRESETS: Record<string, Partial<OldEmitterConfig>> = {
-  fire: {
-    alpha: { start: 1, end: 0 },
-    scale: { start: 0.5, end: 0.1, minimumScaleMultiplier: 1 },
-    color: { start: '#ffff00', end: '#ff0000' },
-    speed: { start: 300, end: 50, minimumSpeedMultiplier: 1 },
-    acceleration: { x: 0, y: -100 },
-    startRotation: { min: 260, max: 280 },
-    lifetime: { min: 0.5, max: 1 },
-    blendMode: 'add',
-    frequency: 0.004,
-    maxParticles: 500,
-  },
-  snow: {
-    alpha: { start: 1, end: 0.5 },
-    scale: { start: 0.3, end: 0.3, minimumScaleMultiplier: 0.5 },
-    color: { start: '#ffffff', end: '#ffffff' },
-    speed: { start: 50, end: 50, minimumSpeedMultiplier: 0.7 },
-    acceleration: { x: 0, y: 50 },
-    startRotation: { min: 70, max: 110 },
-    rotationSpeed: { min: 50, max: 100 },
-    lifetime: { min: 3, max: 5 },
-    blendMode: 'normal',
-    frequency: 0.05,
-    maxParticles: 200,
-    spawnType: 'rect',
-    spawnRect: { x: -200, y: -100, w: 400, h: 50 },
-  },
-  explosion: {
-    alpha: { start: 1, end: 0 },
-    scale: { start: 0.8, end: 0.2, minimumScaleMultiplier: 1 },
-    color: { start: '#ffffff', end: '#ff6600' },
-    speed: { start: 500, end: 100, minimumSpeedMultiplier: 1 },
-    acceleration: { x: 0, y: 0 },
-    startRotation: { min: 0, max: 360 },
-    lifetime: { min: 0.3, max: 0.8 },
-    blendMode: 'add',
-    frequency: 0.001,
-    emitterLifetime: 0.1,
-    maxParticles: 100,
-    spawnType: 'burst',
-    particlesPerWave: 50,
-  },
-  bubbles: {
-    alpha: { start: 0.7, end: 0 },
-    scale: { start: 0.2, end: 0.5, minimumScaleMultiplier: 0.5 },
-    color: { start: '#88ccff', end: '#88ccff' },
-    speed: { start: 100, end: 100, minimumSpeedMultiplier: 0.8 },
-    acceleration: { x: 0, y: -50 },
-    startRotation: { min: 250, max: 290 },
-    rotationSpeed: { min: 0, max: 0 },
-    lifetime: { min: 2, max: 4 },
-    blendMode: 'normal',
-    frequency: 0.1,
-    maxParticles: 100,
-    spawnType: 'rect',
-    spawnRect: { x: -100, y: 50, w: 200, h: 20 },
-  },
-  sparkle: {
-    alpha: { start: 1, end: 0 },
-    scale: { start: 0.5, end: 0, minimumScaleMultiplier: 0.5 },
-    color: { start: '#ffff88', end: '#ffffff' },
-    speed: { start: 0, end: 0, minimumSpeedMultiplier: 1 },
-    acceleration: { x: 0, y: 0 },
-    startRotation: { min: 0, max: 360 },
-    rotationSpeed: { min: 0, max: 200 },
-    lifetime: { min: 0.3, max: 0.6 },
-    blendMode: 'add',
-    frequency: 0.02,
-    maxParticles: 300,
-    spawnType: 'circle',
-    spawnCircle: { x: 0, y: 0, r: 100 },
-  },
+export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
+  const emitterConfig: EmitterConfig = {
+    alpha: config.alpha,
+    scale: config.scale,
+    minimumScaleMultiplier: config.minimumScaleMultiplier,
+    color: config.color,
+    speed: config.speed,
+    minimumSpeedMultiplier: config.minimumSpeedMultiplier,
+    acceleration: config.acceleration,
+    maxSpeed: config.maxSpeed,
+    startRotation: config.startRotation,
+    noRotation: config.noRotation,
+    rotationSpeed: config.rotationSpeed,
+    lifetime: config.lifetime,
+    blendMode: config.blendMode,
+    frequency: config.frequency,
+    emitterLifetime: config.emitterLifetime,
+    maxParticles: config.maxParticles,
+    pos: config.pos,
+    addAtBack: config.addAtBack,
+  }
+
+  switch (config.emitterType.type) {
+    case 'burst':
+      emitterConfig.particlesPerWave = config.emitterType.particlesPerWave
+      emitterConfig.particleSpacing = config.emitterType.particleSpacing
+      emitterConfig.angleStart = config.emitterType.angleStart
+      break
+    case 'circle':
+    case 'ring':
+      emitterConfig.spawnCircle = config.emitterType.spawnCircle
+      break
+    case 'polygonalChain':
+      // TODO
+      break
+    case 'rect':
+      emitterConfig.spawnRect = config.emitterType.spawnRect
+      break
+    case 'point':
+    default:
+      break
+  }
+
+  switch (config.particleType.type) {
+    case 'animated':
+      break
+    case 'basic':
+      emitterConfig.orderedArt = config.particleType.orderedArt
+      break
+    default:
+      break
+  }
+
+  return emitterConfig
 }
 
-export function configToEmitterConfig(config: OldEmitterConfig): EmitterConfig {
+export function oldEmitterConfigToEmitterConfig(
+  config: OldEmitterConfig,
+): EmitterConfig {
   const emitterConfig: EmitterConfig = {
     alpha: {
       list: [

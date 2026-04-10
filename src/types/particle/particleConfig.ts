@@ -18,8 +18,8 @@ export const ValueStepSchema = <T extends z.ZodTypeAny>(valueSchema: T) =>
 
 export const ValueListSchema = <T extends z.ZodTypeAny>(valueSchema: T) =>
   z.object({
-    list: ValueStepSchema(valueSchema),
-    isStepped: z.boolean(),
+    list: z.array(ValueStepSchema(valueSchema)),
+    isStepped: z.boolean().default(false),
     ease: z
       .function({
         input: [z.number()],
