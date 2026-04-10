@@ -1,72 +1,82 @@
 import z from 'zod'
-import { AnimatedArtDataSchema, BasicPointSchema, RandNumberSchema, ValueListSchema } from './particle/particleConfig'
+import {
+  AnimatedArtDataSchema,
+  BasicPointSchema,
+  RandNumberSchema,
+  ValueListSchema,
+} from './particle/particleConfig'
 
-/**================ Particle Types ================*/ 
+/**================ Particle Types ================*/
 
 const BasicParticleTypeSchema = z.object({
-  type: z.literal("basic"),
+  type: z.literal('basic'),
   art: z.array(z.string()),
   orderedArt: z.boolean(),
 })
 
 const AnimatedParticleTypeSchema = z.object({
-  type: z.literal("animated"),
-  art: z.array(AnimatedArtDataSchema)
+  type: z.literal('animated'),
+  art: z.array(AnimatedArtDataSchema),
 })
 
 const PathParticleTypeSchema = BasicParticleTypeSchema.extend({
-  path: z.string()
+  path: z.string(),
 })
 
 /**================ Emitter Types ================*/
 const RectEmitterTypeSchema = z.object({
-  type: z.literal("rect"),
+  type: z.literal('rect'),
   spawnRect: z.object({
     x: z.number(),
     y: z.number(),
     w: z.number(),
     h: z.number(),
-  })
+  }),
 })
 
 const CircleEmitterTypeSchema = z.object({
-  type: z.literal("circle"),
+  type: z.literal('circle'),
   spawnCircle: z.object({
     x: z.number(),
     y: z.number(),
     r: z.number(),
-  })
+  }),
 })
 
 const RingEmitterTypeSchema = z.object({
-  type: z.literal("ring"),
+  type: z.literal('ring'),
   spawnCircle: z.object({
     x: z.number(),
     y: z.number(),
     r: z.number(),
     minR: z.number(),
-  })
+  }),
 })
 
 const BurstEmitterTypeSchema = z.object({
-  type: z.literal("burst"),
+  type: z.literal('burst'),
   particleSpacing: z.number(),
   particlesPerWave: z.number(),
   angleStart: z.number(),
 })
 
 const PointEmitterTypeSchema = z.object({
-  type: z.literal("point")
+  type: z.literal('point'),
 })
 
 const PolygonalChainEmitterTypeSchema = z.object({
-  type: z.literal("polygonalChain"),
-  spawnPolygon: z.array(z.array(BasicPointSchema))
+  type: z.literal('polygonalChain'),
+  spawnPolygon: z.array(z.array(BasicPointSchema)),
 })
 
 export const ParticleConfigUISchema = z.object({
-  particleType: z.union([BasicParticleTypeSchema, AnimatedParticleTypeSchema, PathParticleTypeSchema]),
-  emitterType: z.union([PointEmitterTypeSchema, RectEmitterTypeSchema, CircleEmitterTypeSchema, RingEmitterTypeSchema, BurstEmitterTypeSchema, PolygonalChainEmitterTypeSchema]),
+  // particle type config
+  particleType: z.union([
+    BasicParticleTypeSchema,
+    AnimatedParticleTypeSchema,
+    PathParticleTypeSchema,
+  ]),
+  // particle config
   alpha: ValueListSchema(z.number()),
   speed: ValueListSchema(z.number()),
   minimumSpeedMultiplier: z.number(),
@@ -82,6 +92,15 @@ export const ParticleConfigUISchema = z.object({
   lifetime: RandNumberSchema,
   blendMode: z.string(),
   extraData: z.any().optional(),
+  // emitter config
+  emitterType: z.union([
+    PointEmitterTypeSchema,
+    RectEmitterTypeSchema,
+    CircleEmitterTypeSchema,
+    RingEmitterTypeSchema,
+    BurstEmitterTypeSchema,
+    PolygonalChainEmitterTypeSchema,
+  ]),
   frequency: z.number(),
   spawnChance: z.number(),
   emitterLifetime: z.number(),
