@@ -2,11 +2,9 @@ import { useRef, useState } from 'react'
 import './App.css'
 import { Activity, Layers } from 'lucide-react'
 import PixiCanvas from './components/PixiCanvas'
-import { DEFAULT_CONFIG, type ParticleConfig } from './lib/particle-config'
 import ControlPanel from './components/controls/ControlPanel'
 
 function App() {
-  const [config, setConfig] = useState<ParticleConfig>(DEFAULT_CONFIG)
   const [fps, setFps] = useState(0)
   const [particleCount, setParticleCount] = useState(0)
   const canvasRef = useRef<{
@@ -47,14 +45,14 @@ function App() {
           </div>
           {/* Pixi Canvas */}
           <div className="w-full h-full">
-            <PixiCanvas config={config} onStatsUpdate={handleStatsUpdate} />
+            <PixiCanvas onStatsUpdate={handleStatsUpdate} />
           </div>
         </div>
         {/* Control Panel */}
         <div
           className={`relative h-[45vh] w-full border-t md:h-full md:w-90 md:border-l md:border-t-0 border-border bg-card basis-[45vh] md:basis-90 flex-0 shrink-0 grow-0`}
         >
-          <ControlPanel config={config} onChange={setConfig} />
+          <ControlPanel />
         </div>
       </div>
     </>

@@ -1,4 +1,3 @@
-import type { ParticleConfig } from '@/lib/particle-config'
 import {
   Accordion,
   AccordionContent,
@@ -16,12 +15,7 @@ import { ExportButton, LoadButton, SaveButton } from './GeneralControl'
 import TextureList from '../TextureList'
 import { TextureUpload } from './TextureControl'
 
-type ControlPanelProps = {
-  config: ParticleConfig
-  onChange: (config: ParticleConfig) => void
-}
-
-const ControlPanel = ({ config, onChange }: ControlPanelProps) => {
+const ControlPanel = () => {
   return (
     <div className="h-full flex flex-col bg-card items-stretch">
       <div className="px-4 pt-4 flex flex-row justify-between md:flex-col md:justify-start">

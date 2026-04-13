@@ -1,24 +1,73 @@
 import * as PIXI from 'pixi.js'
 import * as particles from 'pixi-particles'
-import { useEffect, useRef } from 'react'
-import {
-  type ParticleConfig,
-  configToEmitterConfig,
-} from '@/lib/particle-config'
+import { useEffect, useMemo, useRef } from 'react'
 import useStageConfigStore from '@/stores/StageConfigStore'
+import useParticleConfigStore from '@/stores/ParticleConfigStore'
+import { useShallow } from 'zustand/shallow'
+import useTextureStore from '@/stores/TextureStore'
+import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
+
+const mapAnimatedArtTextures = (
+  config: AnimatedArtConfig,
+  textureInstances: Record<string, PIXI.Texture>,
+) => {
+  const textures = config.textures
+  return textures
+    .map((data) => {
+      if (typeof data === 'string') {
+        return textureInstances[data]
+      } else {
+        return textureInstances[data.texture]
+      }
+    })
+    .filter((texture) => !!texture)
+}
 
 type PixiCanvasProp = {
-  config: ParticleConfig
   onStatsUpdate?: (fps: number, particleCount: number) => void
 }
 
-const PixiCanvas = ({ config, onStatsUpdate }: PixiCanvasProp) => {
-  const resolution = useStageConfigStore((state) => state.resolution)
-  const backgroundScale = useStageConfigStore((state) => state.backgroundScale)
-  const backgroundColor = useStageConfigStore((state) => state.backgroundColor)
-  const backgroundTextureUrl = useStageConfigStore(
-    (state) => state.backgroundTextureUrl,
+const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
+  const resolution = useStageConfigStore(
+    useShallow((state) => state.resolution),
   )
+  const backgroundScale = useStageConfigStore(
+    useShallow((state) => state.backgroundScale),
+  )
+  const backgroundColor = useStageConfigStore(
+    useShallow((state) => state.backgroundColor),
+  )
+  const backgroundTextureUrl = useStageConfigStore(
+    useShallow((state) => state.backgroundTextureUrl),
+  )
+  const [emitterConfig, textureConfig] = useParticleConfigStore(
+    useShallow((state) => [state.emitterConfig, state.textureConfig]),
+  )
+  const textureInstances = useTextureStore(
+    useShallow((state) => state.textureInstances),
+  )
+  const mappedTextureData = useMemo(() => {
+    // map all the texture names to texture instance
+    if (Array.isArray(textureConfig)) {
+      return textureConfig
+        .map((textureName) => textureInstances[textureName])
+        .filter((texture) => !!texture)
+    } else if (textureConfig.art) {
+      if (Array.isArray(textureConfig.art)) {
+        return {
+          art: textureConfig.art.map((config) =>
+            mapAnimatedArtTextures(config, textureInstances),
+          ),
+        }
+      } else {
+        return {
+          art: mapAnimatedArtTextures(textureConfig.art, textureInstances),
+        }
+      }
+    } else {
+      throw new Error('Invalid textureConfig')
+    }
+  }, [textureInstances, textureConfig])
 
   const containerRef = useRef<HTMLDivElement>(null)
   const pixiAppRef = useRef<PIXI.Application>(null)
@@ -73,10 +122,6 @@ const PixiCanvas = ({ config, onStatsUpdate }: PixiCanvasProp) => {
       PIXI.SCALE_MODES.LINEAR,
       2,
     )
-
-    const emitterConfig = configToEmitterConfig({
-      ...config,
-    })
 
     const emitter = new particles.Emitter(
       emitterContainer,

@@ -1,4 +1,7 @@
-import type { OldEmitterConfig } from '@/types/particle/particleConfig'
+import type {
+  OldEmitterConfig,
+  ParticleArtConfig,
+} from '@/types/particle/particleConfig'
 import type { ParticleConfigUI } from '@/types/particleConfigUIData'
 import type { EmitterConfig } from 'pixi-particles'
 
@@ -127,6 +130,10 @@ export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
   }
 
   return emitterConfig
+}
+
+export function configToArtConfig(config: ParticleConfigUI): ParticleArtConfig {
+  return config.particleType.art
 }
 
 export function oldEmitterConfigToEmitterConfig(

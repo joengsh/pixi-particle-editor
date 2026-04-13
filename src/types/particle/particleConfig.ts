@@ -160,7 +160,7 @@ export const OldEmitterConfigSchema = z.object({
 
 export type OldEmitterConfig = z.infer<typeof OldEmitterConfigSchema>
 
-export const AnimatedArtDataSchema = z.object({
+export const AnimatedArtConfigSchema = z.object({
   framerate: z.union([z.literal('matchLife'), z.number()]),
   loop: z.boolean().default(false),
   textures: z.union([
@@ -174,76 +174,14 @@ export const AnimatedArtDataSchema = z.object({
   ]),
 })
 
-const BasicParticleArtDataSchema = z.array(z.string())
-const AnimatedParticleArtDataSchema = z.object({
-  art: z.union([AnimatedArtDataSchema, z.array(AnimatedArtDataSchema)]),
+const BasicParticleArtConfigSchema = z.array(z.string())
+const AnimatedParticleArtConfigSchema = z.object({
+  art: z.union([AnimatedArtConfigSchema, z.array(AnimatedArtConfigSchema)]),
 })
 
-export const ParticleArtDataSchema = z.union([
-  BasicParticleArtDataSchema,
-  AnimatedParticleArtDataSchema,
+export const ParticleArtConfigSchema = z.union([
+  BasicParticleArtConfigSchema,
+  AnimatedParticleArtConfigSchema,
 ])
 
-export type ParticleArtData = z.infer<typeof ParticleArtDataSchema>
-
-// schema for v5.x particle emitter
-// import {
-//   AnimatedRandomSchema,
-//   AnimatedSingleSchema,
-//   TextureOrderedSchema,
-//   TextureRandomSchema,
-// } from './particleTextureConfig'
-// import {
-//   AlphaSchema,
-//   AlphaStaticSchema,
-//   BlendModeSchema,
-//   ColorSchema,
-//   ColorStaticSchema,
-//   MoveAccelerationSchema,
-//   MoveSpeedSchema,
-//   MoveSpeedStaticSchema,
-//   NoRotationSchema,
-//   RotationSchema,
-//   RotationStaticSchema,
-//   ScaleSchema,
-//   ScaleStaticSchema,
-// } from './particleGeneralConfig'
-
-// export const ParticleConfigSchema = z.object({
-//   lifetime: z.object({
-//     min: z.number,
-//     max: z.number,
-//   }),
-//   frequency: z.number(),
-//   emitterLifetime: z.number(),
-//   addAtBack: z.boolean(),
-//   maxParticles: z.number(),
-//   particlesPerWave: z.number().optional(),
-//   pos: z.object({
-//     x: z.number(),
-//     y: z.number(),
-//   }),
-//   behaviours: z.array(
-//     z.discriminatedUnion('type', [
-//       TextureRandomSchema,
-//       TextureOrderedSchema,
-//       AnimatedRandomSchema,
-//       AnimatedSingleSchema,
-//       MoveAccelerationSchema,
-//       AlphaSchema,
-//       BlendModeSchema,
-//       ColorSchema,
-//       NoRotationSchema,
-//       RotationSchema,
-//       ScaleSchema,
-//       MoveSpeedSchema,
-//       AlphaStaticSchema,
-//       ColorStaticSchema,
-//       RotationStaticSchema,
-//       ScaleStaticSchema,
-//       MoveSpeedStaticSchema,
-//     ]),
-//   ),
-// })
-
-// export type ParticleConfig = z.infer<typeof ParticleConfigSchema>
+export type ParticleArtConfig = z.infer<typeof ParticleArtConfigSchema>
