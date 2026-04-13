@@ -6,6 +6,7 @@ import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { useShallow } from 'zustand/shallow'
 import useTextureStore from '@/stores/TextureStore'
 import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
+import { PropertyNode } from 'pixi-particles'
 
 const mapAnimatedArtTextures = (
   config: AnimatedArtConfig,
@@ -243,7 +244,35 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     emitter.particleImages = mappedTextureData
   }, [mappedTextureData])
 
-  useEffect(() => {}, [emitterConfig])
+  useEffect(() => {
+    const emitter = emitterRef.current
+    if (!emitter) return
+
+    emitter.startSpeed = PropertyNode.createList(emitterConfig.speed!)
+    emitter.startAlpha = PropertyNode.createList(emitterConfig.alpha!)
+    emitter.startColor = PropertyNode.createList(emitterConfig.color!)
+    emitter.startScale = PropertyNode.createList(emitterConfig.scale!)
+    emitter.acceleration = new PIXI.Point(
+      emitterConfig.acceleration!.x,
+      emitterConfig.acceleration!.y,
+    )
+    emitter.maxParticles = emitterConfig.maxParticles!
+    emitter.maxSpeed = emitterConfig.maxSpeed!
+    emitter.minimumSpeedMultiplier = emitterConfig.minimumSpeedMultiplier!
+    emitter.minimumScaleMultiplier = emitterConfig.minimumScaleMultiplier!
+    emitter.minLifetime = emitterConfig.lifetime!.min
+    emitter.maxLifetime = emitterConfig.lifetime!.max
+    emitter.minRotationSpeed = emitterConfig.rotationSpeed!.min
+    emitter.maxRotationSpeed = emitterConfig.rotationSpeed!.max
+    emitter.minStartRotation = emitterConfig.startRotation!.min
+    emitter.maxStartRotation = emitterConfig.startRotation!.max
+    emitter.frequency = emitterConfig.frequency
+    emitter.addAtBack = emitterConfig.addAtBack!
+    emitter.noRotation = emitterConfig.noRotation!
+    emitter.orderedArt = emitterConfig.orderedArt || false
+
+    // TODO
+  }, [emitterConfig])
 
   return (
     <div
