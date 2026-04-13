@@ -17,7 +17,10 @@ const mapAnimatedArtTextures = (
       if (typeof data === 'string') {
         return textureInstances[data]
       } else {
-        return textureInstances[data.texture]
+        return {
+          ...data,
+          texture: textureInstances[data.texture],
+        }
       }
     })
     .filter((texture) => !!texture)
@@ -48,25 +51,15 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   )
   const mappedTextureData = useMemo(() => {
     // map all the texture names to texture instance
-    if (Array.isArray(textureConfig)) {
-      return textureConfig
-        .map((textureName) => textureInstances[textureName])
-        .filter((texture) => !!texture)
-    } else if (textureConfig.art) {
-      if (Array.isArray(textureConfig.art)) {
-        return {
-          art: textureConfig.art.map((config) =>
-            mapAnimatedArtTextures(config, textureInstances),
-          ),
+    return textureConfig
+      .map((data) => {
+        if (typeof data === 'string') {
+          return textureInstances[data]
+        } else {
+          return mapAnimatedArtTextures(data, textureInstances)
         }
-      } else {
-        return {
-          art: mapAnimatedArtTextures(textureConfig.art, textureInstances),
-        }
-      }
-    } else {
-      throw new Error('Invalid textureConfig')
-    }
+      })
+      .filter((texture) => !!texture)
   }, [textureInstances, textureConfig])
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -112,20 +105,9 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     emitterContainer.name = 'emitterContainer'
     rootContainer.addChild(emitterContainer)
 
-    const graphics = new PIXI.Graphics()
-    graphics.beginFill(0xffffff)
-    graphics.drawCircle(32, 32, 32)
-    graphics.endFill()
-
-    const texture = app.renderer.generateTexture(
-      graphics,
-      PIXI.SCALE_MODES.LINEAR,
-      2,
-    )
-
     const emitter = new particles.Emitter(
       emitterContainer,
-      [texture],
+      mappedTextureData,
       emitterConfig,
     )
     emitter.emit = true
@@ -253,6 +235,15 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
       resizeObserver.disconnect()
     }
   }, [resolution])
+
+  useEffect(() => {
+    const emitter = emitterRef.current
+    if (!emitter) return
+
+    emitter.particleImages = mappedTextureData
+  }, [mappedTextureData])
+
+  useEffect(() => {}, [emitterConfig])
 
   return (
     <div

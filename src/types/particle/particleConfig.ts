@@ -175,9 +175,7 @@ export const AnimatedArtConfigSchema = z.object({
 })
 
 const BasicParticleArtConfigSchema = z.array(z.string())
-const AnimatedParticleArtConfigSchema = z.object({
-  art: z.union([AnimatedArtConfigSchema, z.array(AnimatedArtConfigSchema)]),
-})
+const AnimatedParticleArtConfigSchema = z.array(AnimatedArtConfigSchema)
 
 export const ParticleArtConfigSchema = z.union([
   BasicParticleArtConfigSchema,

@@ -23,8 +23,13 @@ export const TextureUpload = () => {
             new Promise((resolve) => {
               const reader = new FileReader()
               reader.onload = () => {
+                const lastDotIndex = file.name.lastIndexOf('.')
+                const textureName =
+                  lastDotIndex <= 0
+                    ? file.name
+                    : file.name.substring(0, lastDotIndex)
                 resolve({
-                  textureName: file.name,
+                  textureName: textureName,
                   textureUrl: reader.result as string,
                 })
               }

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import * as PIXI from 'pixi.js'
+import { DEFAULT_PARTICLE_IMAGE_URL } from '@/lib/particle-config'
 
 export type TextureStoreState = {
   textureData: Record<string, string>
@@ -17,8 +18,12 @@ export type TextureStore = TextureStoreState & TextureStoreAction
 
 // Create your store, which includes both state and (optionally) actions
 const useTextureStore = create<TextureStore>((set) => ({
-  textureData: {},
-  textureInstances: {},
+  textureData: {
+    particle: DEFAULT_PARTICLE_IMAGE_URL,
+  },
+  textureInstances: {
+    particle: PIXI.Texture.from(DEFAULT_PARTICLE_IMAGE_URL),
+  },
   addTexture: (textureName, textureUrl) => {
     set((state) => {
       // check existance of the texture

@@ -42,7 +42,7 @@ const useFileManager = () => {
         const response = await fetch(blobUrl)
         const blob = await response.blob()
 
-        zip.file(fileName, blob)
+        zip.file(`${fileName}.png`, blob)
       }
 
       const json = JSON.stringify(projectData, null, 2)
