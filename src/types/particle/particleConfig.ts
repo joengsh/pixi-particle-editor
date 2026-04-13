@@ -184,4 +184,5 @@ export const ParticleArtConfigSchema = z.union([
   AnimatedParticleArtConfigSchema,
 ])
 
+export type AnimatedArtConfig = z.infer<typeof AnimatedArtConfigSchema>
 export type ParticleArtConfig = z.infer<typeof ParticleArtConfigSchema>
