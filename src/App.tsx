@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import './App.css'
 import { Activity, Layers } from 'lucide-react'
 import PixiCanvas from './components/PixiCanvas'
@@ -12,10 +12,13 @@ function App() {
     getParticleCount: () => number
   }>(null)
 
-  const handleStatsUpdate = (newFps: number, newParticleCount: number) => {
-    setFps(newFps)
-    setParticleCount(newParticleCount)
-  }
+  const handleStatsUpdate = useCallback(
+    (newFps: number, newParticleCount: number) => {
+      setFps(newFps)
+      setParticleCount(newParticleCount)
+    },
+    [setFps, setParticleCount],
+  )
 
   return (
     <>

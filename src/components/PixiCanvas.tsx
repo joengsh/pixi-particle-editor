@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 import * as particles from 'pixi-particles'
-import { useEffect, useMemo, useRef } from 'react'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import useStageConfigStore from '@/stores/StageConfigStore'
 import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { useShallow } from 'zustand/shallow'
@@ -12,19 +12,21 @@ const mapAnimatedArtTextures = (
   config: AnimatedArtConfig,
   textureInstances: Record<string, PIXI.Texture>,
 ) => {
-  const textures = config.textures
-  return textures
-    .map((data) => {
-      if (typeof data === 'string') {
-        return textureInstances[data]
-      } else {
-        return {
-          ...data,
-          texture: textureInstances[data.texture],
+  return {
+    ...config,
+    textures: config.textures
+      .map((data) => {
+        if (typeof data === 'string') {
+          return textureInstances[data]
+        } else {
+          return {
+            ...data,
+            texture: textureInstances[data.texture],
+          }
         }
-      }
-    })
-    .filter((texture) => !!texture)
+      })
+      .filter((texture) => !!texture),
+  }
 }
 
 type PixiCanvasProp = {
@@ -69,6 +71,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   const elapsedRef = useRef(0)
   const particleCountRef = useRef(0)
   const gameContainerRef = useRef<PIXI.Container>(null)
+  const emitterContainerRef = useRef<PIXI.Container>(null)
   const backgroundSpriteRef = useRef<PIXI.Sprite>(null)
 
   useEffect(() => {
@@ -105,12 +108,40 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     const emitterContainer = new PIXI.Container()
     emitterContainer.name = 'emitterContainer'
     rootContainer.addChild(emitterContainer)
+    emitterContainerRef.current = emitterContainer
+
+    return () => {
+      mounted = false
+
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId)
+      }
+      const app = pixiAppRef.current
+      if (app) {
+        app.destroy(true)
+        pixiAppRef.current = null
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    const app = pixiAppRef.current!
+    const emitterContainer = emitterContainerRef.current!
 
     const emitter = new particles.Emitter(
       emitterContainer,
       mappedTextureData,
       emitterConfig,
     )
+    if (
+      mappedTextureData.length > 0 &&
+      !(mappedTextureData[0] instanceof PIXI.Texture)
+    ) {
+      emitter.particleConstructor = particles.AnimatedParticle
+    } else {
+      emitter.particleConstructor = particles.Particle
+    }
+
     emitter.emit = true
     emitterRef.current = emitter
 
@@ -129,26 +160,17 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     ticker.add(updateFn)
 
     return () => {
-      mounted = false
-
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId)
-      }
-      if (ticker && updateFn) {
+      if (pixiAppRef.current === app && ticker && updateFn) {
         ticker.remove(updateFn)
-      }
-      const app = pixiAppRef.current
-      if (app) {
-        app.destroy(true)
-        pixiAppRef.current = null
       }
       const emitter = emitterRef.current
       if (emitter) {
         emitter.destroy()
+        emitterContainer?.removeChildren()
         emitterRef.current = null
       }
     }
-  }, [])
+  }, [mappedTextureData])
 
   useEffect(() => {
     const app = pixiAppRef.current
@@ -234,15 +256,11 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     handleResize()
     return () => {
       resizeObserver.disconnect()
+      if (pixiAppRef.current === app) {
+        app.view.removeEventListener('mousemove', handleMouseMove)
+      }
     }
-  }, [resolution])
-
-  useEffect(() => {
-    const emitter = emitterRef.current
-    if (!emitter) return
-
-    emitter.particleImages = mappedTextureData
-  }, [mappedTextureData])
+  }, [resolution, mappedTextureData])
 
   useEffect(() => {
     const emitter = emitterRef.current
@@ -283,4 +301,4 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   )
 }
 
-export default PixiCanvas
+export default memo(PixiCanvas)

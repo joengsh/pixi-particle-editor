@@ -14,6 +14,7 @@ import {
 import { ExportButton, LoadButton, SaveButton } from './GeneralControl'
 import TextureList from '../TextureList'
 import { TextureUpload } from './TextureControl'
+import ParticleTypeControl from './ParticleTypeControl'
 
 const ControlPanel = () => {
   return (
@@ -35,7 +36,7 @@ const ControlPanel = () => {
             defaultValue={[
               'texture',
               'particle',
-              'advanced',
+              'typeConfig',
               'emitter',
               'stage',
             ]}
@@ -66,15 +67,17 @@ const ControlPanel = () => {
               <AccordionContent className="p-4 space-y-5"></AccordionContent>
             </AccordionItem>
 
-            {/* Emitter Properties */}
+            {/* Particle Type Config */}
             <AccordionItem
-              value="advanced"
+              value="typeConfig"
               className="border border-border rounded-lg overflow-hidden"
             >
               <AccordionTrigger className="px-4 py-3 bg-secondary/50 hover:bg-secondary/70 text-sm font-medium">
-                Advanced Particle Properties
+                Particle Type Config
               </AccordionTrigger>
-              <AccordionContent className="p-4 space-y-5"></AccordionContent>
+              <AccordionContent className="p-4 space-y-5">
+                <ParticleTypeControl />
+              </AccordionContent>
             </AccordionItem>
 
             {/* Emitter Properties */}

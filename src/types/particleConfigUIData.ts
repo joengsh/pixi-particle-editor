@@ -1,6 +1,6 @@
 import z from 'zod'
 import {
-  AnimatedArtDataSchema,
+  AnimatedArtConfigSchema,
   BasicPointSchema,
   RandNumberSchema,
   ValueListSchema,
@@ -16,7 +16,7 @@ const BasicParticleTypeSchema = z.object({
 
 const AnimatedParticleTypeSchema = z.object({
   type: z.literal('animated'),
-  art: z.array(AnimatedArtDataSchema),
+  art: z.array(AnimatedArtConfigSchema),
 })
 
 const PathParticleTypeSchema = BasicParticleTypeSchema.extend({
@@ -69,13 +69,15 @@ const PolygonalChainEmitterTypeSchema = z.object({
   spawnPolygon: z.array(z.array(BasicPointSchema)),
 })
 
+const ParticleTypeSchema = z.union([
+  BasicParticleTypeSchema,
+  AnimatedParticleTypeSchema,
+  PathParticleTypeSchema,
+])
+
 export const ParticleConfigUISchema = z.object({
   // particle type config
-  particleType: z.union([
-    BasicParticleTypeSchema,
-    AnimatedParticleTypeSchema,
-    PathParticleTypeSchema,
-  ]),
+  particleType: ParticleTypeSchema,
   // particle config
   alpha: ValueListSchema(z.number()),
   speed: ValueListSchema(z.number()),
@@ -111,3 +113,4 @@ export const ParticleConfigUISchema = z.object({
 })
 
 export type ParticleConfigUI = z.infer<typeof ParticleConfigUISchema>
+export type ParticleTypeData = z.infer<typeof ParticleTypeSchema>

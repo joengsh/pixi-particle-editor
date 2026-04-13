@@ -15,7 +15,7 @@ export type ParticleConfigStoreState = {
 }
 
 export type ParticleConfigStoreAction = {
-  setConfigUI: (configUI: ParticleConfigUI) => void
+  setConfigUI: (data: Partial<ParticleConfigUI>) => void
   importData: (
     emitterConfig: EmitterConfig,
     textureConfig: ParticleArtConfig,
@@ -30,7 +30,18 @@ const useParticleConfigStore = create<ParticleConfigStore>((set) => ({
   configUI: DEFAULT_CONFIG,
   emitterConfig: configToEmitterConfig(DEFAULT_CONFIG),
   textureConfig: configToArtConfig(DEFAULT_CONFIG),
-  setConfigUI: (configUI) => set(() => ({ configUI })),
+  setConfigUI: (data) => {
+    set((state) => {
+      const newConfigUI = { ...state.configUI, ...data }
+      const newEmitterConfig = configToEmitterConfig(newConfigUI)
+      const newTextureConfig = configToArtConfig(newConfigUI)
+      return {
+        configUI: newConfigUI,
+        emitterConfig: newEmitterConfig,
+        textureConfig: newTextureConfig,
+      }
+    })
+  },
   importData: (emitterConfig, textureConfig) => {
     // TODO
   },
