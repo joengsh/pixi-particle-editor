@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import useFileManager from '@/hooks/useFileManager'
-import { Download, Upload, Save } from 'lucide-react'
+import { Upload, Save } from 'lucide-react'
 
 export const SaveButton = () => {
   const { saveProject } = useFileManager()
@@ -28,15 +28,6 @@ export const LoadButton = () => {
     >
       <Upload className="w-3.5 h-3.5" />
       Load
-    </Button>
-  )
-}
-
-export const ExportButton = () => {
-  return (
-    <Button size="sm" variant="outline" onClick={() => {}} className="gap-1.5">
-      <Download className="w-3.5 h-3.5" />
-      Export
     </Button>
   )
 }

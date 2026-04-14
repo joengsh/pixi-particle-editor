@@ -11,7 +11,7 @@ import {
   BackgroundTextureControl,
   ResolutionControl,
 } from './StageControl'
-import { ExportButton, LoadButton, SaveButton } from './GeneralControl'
+import { LoadButton, SaveButton } from './GeneralControl'
 import TextureList from '../TextureList'
 import { TextureUpload } from './TextureControl'
 import ParticleTypeControl from './ParticleTypeControl'
@@ -26,7 +26,6 @@ const ControlPanel = () => {
         <div className="flex flex-wrap gap-2 justify-end md:justify-start">
           <SaveButton />
           <LoadButton />
-          <ExportButton />
         </div>
       </div>
       <ScrollArea className="flex-1 overflow-hidden [&>div>div]:block!">

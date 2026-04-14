@@ -6,6 +6,7 @@ import { ProjectDataSchema, type ProjectData } from '@/types/projectData'
 import { showOpenFilePicker, showSaveFilePicker } from '@/lib/file'
 import useTextureStore from '@/stores/TextureStore'
 import { useShallow } from 'zustand/shallow'
+import useParticleConfigStore from '@/stores/ParticleConfigStore'
 
 const useFileManager = () => {
   const stageConfigStore = useStageConfigStore()
@@ -17,6 +18,16 @@ const useFileManager = () => {
   } = stageConfigStore
   const textureData = useTextureStore(useShallow((state) => state.textureData))
   const addTextures = useTextureStore(useShallow((state) => state.addTextures))
+  const [configUI, emitterConfig, textureConfig] = useParticleConfigStore(
+    useShallow((state) => [
+      state.configUI,
+      state.emitterConfig,
+      state.textureConfig,
+    ]),
+  )
+  const setConfigUI = useParticleConfigStore(
+    useShallow((state) => state.setConfigUI),
+  )
   const removeAllTexture = useTextureStore(
     useShallow((state) => state.removeAllTexture),
   )
@@ -35,6 +46,10 @@ const useFileManager = () => {
       resolution,
     }
     const projectData = ProjectDataSchema.parse(data)
+    const particleData = {
+      emitterConfig,
+      textureConfig,
+    }
     try {
       const zip = new JSZip()
 
@@ -47,6 +62,13 @@ const useFileManager = () => {
 
       const json = JSON.stringify(projectData, null, 2)
       zip.file('project.json', json)
+
+      const particleJson = JSON.stringify(particleData, null, 2)
+      zip.file('particle.json', particleJson)
+
+      const configJson = JSON.stringify(configUI, null, 2)
+      zip.file('config.json', configJson)
+
       const zipBlob = await zip.generateAsync({ type: 'blob' })
 
       const fileHandle = await showSaveFilePicker({
@@ -69,7 +91,7 @@ const useFileManager = () => {
         console.error('Error saving project:', err)
       }
     }
-  }, [stageConfigStore, textureData])
+  }, [stageConfigStore, textureData, configUI, emitterConfig, textureConfig])
 
   const loadProject = useCallback(async () => {
     try {
@@ -124,6 +146,10 @@ const useFileManager = () => {
         setBackgroundTextureUrl(projectData.backgroundTextureUrl)
       }
       setResolution(projectData.resolution)
+
+      const configJsonText = await zip.files['config.json'].async('string')
+      const configData = JSON.parse(configJsonText)
+      setConfigUI(configData)
     } catch (err: any) {
       if (err.name === 'AbortError') {
         console.log('User cancelled open dialog.')
@@ -139,6 +165,7 @@ const useFileManager = () => {
     setResolution,
     addTextures,
     removeAllTexture,
+    setConfigUI,
   ])
 
   return {

@@ -1,6 +1,5 @@
 import type {
   AnimatedArtConfig,
-  OldEmitterConfig,
   ParticleArtConfig,
 } from '@/types/particle/particleConfig'
 import type { ParticleConfigUI } from '@/types/particleConfigUIData'
@@ -224,68 +223,4 @@ export function getTextureListFromAnimationName(
     }
   }
   return output
-}
-
-// TODO: use this function together with a new function importConfig(emitterConfig, artConfig) to import project
-export function oldEmitterConfigToEmitterConfig(
-  config: OldEmitterConfig,
-): EmitterConfig {
-  const emitterConfig: EmitterConfig = {
-    alpha: {
-      list: [
-        { value: config.alpha!.start, time: 0 },
-        { value: config.alpha!.end, time: 1 },
-      ],
-    },
-    scale: {
-      list: [
-        { value: config.scale!.start, time: 0 },
-        { value: config.scale!.end, time: 1 },
-      ],
-    },
-    minimumScaleMultiplier: config.scale!.minimumScaleMultiplier,
-    color: {
-      list: [
-        { value: config.color!.start.replace('#', ''), time: 0 },
-        { value: config.color!.end.replace('#', ''), time: 1 },
-      ],
-    },
-    speed: {
-      list: [
-        { value: config.speed!.start, time: 0 },
-        { value: config.speed!.end, time: 1 },
-      ],
-    },
-    minimumSpeedMultiplier: config.speed!.minimumSpeedMultiplier,
-    acceleration: config.acceleration,
-    maxSpeed: config.maxSpeed,
-    startRotation: config.startRotation,
-    noRotation: config.noRotation,
-    rotationSpeed: config.rotationSpeed,
-    lifetime: config.lifetime,
-    blendMode: config.blendMode,
-    frequency: config.frequency,
-    emitterLifetime: config.emitterLifetime,
-    maxParticles: config.maxParticles,
-    pos: config.pos,
-    addAtBack: config.addAtBack,
-    spawnType: config.spawnType,
-  }
-
-  if (config.spawnType === 'rect' && config.spawnRect) {
-    emitterConfig.spawnRect = config.spawnRect
-  }
-  if (
-    (config.spawnType === 'circle' || config.spawnType === 'ring') &&
-    config.spawnCircle
-  ) {
-    emitterConfig.spawnCircle = config.spawnCircle
-  }
-  if (config.spawnType === 'burst') {
-    emitterConfig.particlesPerWave = config.particlesPerWave
-    emitterConfig.particleSpacing = config.particleSpacing
-    emitterConfig.angleStart = config.angleStart
-  }
-
-  return emitterConfig
 }

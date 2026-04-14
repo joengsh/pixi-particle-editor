@@ -51,10 +51,11 @@ const ParticleBasicTypeControl = () => {
         orderedArt: false,
       },
     })
-  }, [values])
+  }, [values, setConfigUI])
 
   return (
-    <>
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Textures:</Label>
       <MultiSelect
         defaultValue={values}
         options={options}
@@ -62,7 +63,7 @@ const ParticleBasicTypeControl = () => {
         onValueChange={setValue}
         placeholder="Choose textures..."
       />
-    </>
+    </div>
   )
 }
 
@@ -220,14 +221,7 @@ const ParticleAnimatedTypeControl = () => {
       setFrameRate('matchLife')
       setLoop(false)
     },
-    [
-      setConfigUI,
-      setAnimationName,
-      setRanges,
-      setFrameRate,
-      setLoop,
-      particleType,
-    ],
+    [setConfigUI, setRanges, setFrameRate, setLoop, particleType],
   )
 
   const onRemove = useCallback(
@@ -341,20 +335,23 @@ const ParticleTypeControl = () => {
   )
   return (
     <>
-      <Select value={particleTypeConfig.type} onValueChange={onTypeChange}>
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select a type" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {particleTypes.map((type) => (
-              <SelectItem key={type} value={type}>
-                {type}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      <div className="flex items-center gap-3">
+        <Label className="text-xs">Type:</Label>
+        <Select value={particleTypeConfig.type} onValueChange={onTypeChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {particleTypes.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
       <Separator />
       {particleTypeConfig.type === 'basic' ? (
         <ParticleBasicTypeControl />
