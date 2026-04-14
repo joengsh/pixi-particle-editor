@@ -44,27 +44,22 @@ Tasks
   - [] Rotation
   - [] Scale
   - [] Speed
-  - [] StaticAlpha
-  - [] StaticColor
-  - [] StaticRotation
-  - [] StaticScale
-  - [] StaticSpeed
-- [] add particle texture settings
+- [*] add particle texture settings
   - [] OrderedTexture
-  - [] RandomTexture
-  - [] RandomAnimatedTexture
-  - [*] SingleTexture
-  - [] SingleAnimatedTexture
+  - [x] RandomTexture
+  - [x] RandomAnimatedTexture
+  - [x] SingleTexture
+  - [x] SingleAnimatedTexture
 - [] add path particle settings
   - [] Path
 
 ## config import and export
 
-- [*] config json export
+- [x] config json export
   - [x] export stage config
   - [x] export textures
-  - [] export particle system config
-- [*] config json import
+  - [x] export particle system config
+- [x] config json import
   - [x] import stage config
   - [x] import textures
-  - [] import particle system config
+  - [x] import particle system config
