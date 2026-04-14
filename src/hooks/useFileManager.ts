@@ -15,6 +15,7 @@ const useFileManager = () => {
     setBackgroundScale,
     setBackgroundTextureUrl,
     setResolution,
+    setTickerSpeed,
   } = stageConfigStore
   const textureData = useTextureStore(useShallow((state) => state.textureData))
   const addTextures = useTextureStore(useShallow((state) => state.addTextures))
@@ -38,12 +39,14 @@ const useFileManager = () => {
       backgroundScale,
       backgroundTextureUrl,
       resolution,
+      tickerSpeed,
     } = stageConfigStore
     const data: ProjectData = {
       backgroundColor,
       backgroundScale,
       backgroundTextureUrl,
       resolution,
+      tickerSpeed,
     }
     const projectData = ProjectDataSchema.parse(data)
     const particleData = {
@@ -146,6 +149,7 @@ const useFileManager = () => {
         setBackgroundTextureUrl(projectData.backgroundTextureUrl)
       }
       setResolution(projectData.resolution)
+      setTickerSpeed(projectData.tickerSpeed)
 
       const configJsonText = await zip.files['config.json'].async('string')
       const configData = JSON.parse(configJsonText)
@@ -163,6 +167,7 @@ const useFileManager = () => {
     setBackgroundColor,
     setBackgroundTextureUrl,
     setResolution,
+    setTickerSpeed,
     addTextures,
     removeAllTexture,
     setConfigUI,

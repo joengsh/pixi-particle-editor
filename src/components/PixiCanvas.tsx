@@ -46,6 +46,10 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   const backgroundTextureUrl = useStageConfigStore(
     useShallow((state) => state.backgroundTextureUrl),
   )
+  const tickerSpeed = useStageConfigStore(
+    useShallow((state) => state.tickerSpeed),
+  )
+
   const [emitterConfig, textureConfig] = useParticleConfigStore(
     useShallow((state) => [state.emitterConfig, state.textureConfig]),
   )
@@ -262,6 +266,12 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     }
   }, [resolution, mappedTextureData])
 
+  useEffect(() => {
+    const app = pixiAppRef.current
+    if (app) {
+      app.ticker.speed = tickerSpeed
+    }
+  }, [tickerSpeed])
   useEffect(() => {
     const emitter = emitterRef.current
     if (!emitter) return

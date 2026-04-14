@@ -142,3 +142,22 @@ export const BackgroundTextureControl = () => {
     </div>
   )
 }
+
+export const TickerSpeedControl = () => {
+  const [tickerSpeed, setTickerSpeed] = useStageConfigStore(
+    useShallow((state) => [state.tickerSpeed, state.setTickerSpeed]),
+  )
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Ticker Speed:</Label>
+      <Input
+        type="number"
+        step={0.1}
+        className="flex-1 h-8 p-0.5 cursor-pointer"
+        value={tickerSpeed}
+        min={0}
+        onChange={(e) => setTickerSpeed(parseFloat(e.target.value))}
+      />
+    </div>
+  )
+}

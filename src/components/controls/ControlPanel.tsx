@@ -10,6 +10,7 @@ import {
   BackgroundScaleControl,
   BackgroundTextureControl,
   ResolutionControl,
+  TickerSpeedControl,
 } from './StageControl'
 import { LoadButton, SaveButton } from './GeneralControl'
 import TextureList from '../TextureList'
@@ -103,6 +104,7 @@ const ControlPanel = () => {
                 <BackgroundColorControl />
                 <BackgroundTextureControl />
                 <BackgroundScaleControl />
+                <TickerSpeedControl />
               </AccordionContent>
             </AccordionItem>
           </Accordion>

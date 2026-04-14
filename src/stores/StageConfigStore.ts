@@ -5,6 +5,7 @@ export type StageConfigStoreState = {
   backgroundTextureUrl: string | null
   resolution: [number, number]
   backgroundScale: number
+  tickerSpeed: number
 }
 
 export type StageConfigStoreAction = {
@@ -12,6 +13,7 @@ export type StageConfigStoreAction = {
   setBackgroundTextureUrl: (url: string | null) => void
   setResolution: (value: [number, number]) => void
   setBackgroundScale: (value: number) => void
+  setTickerSpeed: (value: number) => void
 }
 
 export type StageConfigStore = StageConfigStoreState & StageConfigStoreAction
@@ -22,12 +24,14 @@ const useStageConfigStore = create<StageConfigStore>((set) => ({
   backgroundTextureUrl: null,
   resolution: [1920, 1080],
   backgroundScale: 1,
+  tickerSpeed: 1,
   setBackgroundColor: (color) => set(() => ({ backgroundColor: color })),
   setBackgroundTextureUrl: (url) => set(() => ({ backgroundTextureUrl: url })),
   setResolution: (value: [number, number]) =>
     set(() => ({ resolution: value })),
   setBackgroundScale: (value: number) =>
     set(() => ({ backgroundScale: value })),
+  setTickerSpeed: (value: number) => set(() => ({ tickerSpeed: value })),
 }))
 
 export default useStageConfigStore
