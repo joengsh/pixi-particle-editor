@@ -98,8 +98,13 @@ const useFileManager = () => {
         entries.map(async (entry) => {
           const blob = await entry.async('blob')
           const blobUrl = URL.createObjectURL(blob)
+          const lastDotIndex = entry.name.lastIndexOf('.')
+          const textureName =
+            lastDotIndex <= 0
+              ? entry.name
+              : entry.name.substring(0, lastDotIndex)
           textureMap.push({
-            textureName: entry.name,
+            textureName,
             textureUrl: blobUrl,
           })
         }),

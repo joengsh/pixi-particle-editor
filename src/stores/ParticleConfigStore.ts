@@ -7,6 +7,7 @@ import {
   configToEmitterConfig,
   DEFAULT_CONFIG,
 } from '@/lib/particle-config'
+import useTextureStore from './TextureStore'
 
 export type ParticleConfigStoreState = {
   configUI: ParticleConfigUI
@@ -29,12 +30,18 @@ export type ParticleConfigStore = ParticleConfigStoreState &
 const useParticleConfigStore = create<ParticleConfigStore>((set) => ({
   configUI: DEFAULT_CONFIG,
   emitterConfig: configToEmitterConfig(DEFAULT_CONFIG),
-  textureConfig: configToArtConfig(DEFAULT_CONFIG),
+  textureConfig: configToArtConfig(
+    DEFAULT_CONFIG,
+    Object.keys(useTextureStore.getState().textureData),
+  ),
   setConfigUI: (data) => {
     set((state) => {
       const newConfigUI = { ...state.configUI, ...data }
       const newEmitterConfig = configToEmitterConfig(newConfigUI)
-      const newTextureConfig = configToArtConfig(newConfigUI)
+      const newTextureConfig = configToArtConfig(
+        newConfigUI,
+        Object.keys(useTextureStore.getState().textureData),
+      )
       return {
         configUI: newConfigUI,
         emitterConfig: newEmitterConfig,

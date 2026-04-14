@@ -1,4 +1,5 @@
 import type {
+  AnimatedArtConfig,
   OldEmitterConfig,
   ParticleArtConfig,
 } from '@/types/particle/particleConfig'
@@ -135,10 +136,97 @@ export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
   return emitterConfig
 }
 
-export function configToArtConfig(config: ParticleConfigUI): ParticleArtConfig {
-  return config.particleType.art
+export function configToArtConfig(
+  config: ParticleConfigUI,
+  textureList: string[],
+): ParticleArtConfig {
+  if (config.particleType.type === 'basic') {
+    return config.particleType.art
+  } else {
+    const result: AnimatedArtConfig[] = []
+    for (const data of config.particleType.art) {
+      const textures = getTextureListFromAnimationName(
+        data.animationName,
+        data.ranges,
+        textureList,
+      )
+      const config: AnimatedArtConfig = {
+        loop: data.loop,
+        framerate:
+          (data.framerate === 'matchLife'
+            ? data.framerate
+            : parseInt(data.framerate, 10)) || 24,
+        textures,
+      }
+      result.push(config)
+    }
+    return result
+  }
 }
 
+/**
+ * convert animationName and range to list of textures
+ * @param {string} animationName - animation name
+ * @param {string} ranges - string of indices separated by ",", e.g. "1,2,6-10,12", "1-20", "20-1"
+ * @param {string[]} textureList - texture name list
+ * @returns {string[]}
+ */
+export function getTextureListFromAnimationName(
+  animationName: string,
+  ranges = '',
+  textureList: string[],
+) {
+  const indexRanges = ranges.replace(/\s/g, '').split(',')
+  const output = []
+  function findTexture(range: string | number) {
+    const regex = new RegExp(`${animationName}(-|_)?([0]*${range})`)
+    const result = textureList.filter((textureName) => textureName.match(regex))
+    if (result.length > 0) {
+      return result[0]
+    }
+    return null
+  }
+  if (ranges === '') {
+    // return all textures in textureList with animationName
+    const regex = new RegExp(`${animationName}(-|_)?([0]*\\d+)`)
+    return textureList
+      .filter((textureName) => textureName.match(regex))
+      .sort((a, b) => {
+        // get texture index
+        const aMatch = a.match(regex)
+        const bMatch = b.match(regex)
+        if (!aMatch || !bMatch || !aMatch[2] || !bMatch[2]) return 0
+        const aIndex = parseInt(aMatch[2], 10)
+        const bIndex = parseInt(bMatch[2], 10)
+        return aIndex - bIndex
+      })
+  } else {
+    for (const range of indexRanges) {
+      const indices = range.split('-').map((str) => parseInt(str, 10))
+      if (indices.length > 1) {
+        const isAscending = indices[1] >= indices[0]
+        for (
+          let i = indices[0];
+          isAscending ? i <= indices[1] : i >= indices[1];
+          isAscending ? i++ : i--
+        ) {
+          const texture = findTexture(i)
+          if (texture) {
+            output.push(texture)
+          }
+        }
+      } else {
+        const texture = findTexture(range)
+        if (texture) {
+          output.push(texture)
+        }
+      }
+    }
+  }
+  return output
+}
+
+// TODO: use this function together with a new function importConfig(emitterConfig, artConfig) to import project
 export function oldEmitterConfigToEmitterConfig(
   config: OldEmitterConfig,
 ): EmitterConfig {

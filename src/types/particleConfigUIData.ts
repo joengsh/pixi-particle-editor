@@ -1,6 +1,5 @@
 import z from 'zod'
 import {
-  AnimatedArtConfigSchema,
   BasicPointSchema,
   RandNumberSchema,
   ValueListSchema,
@@ -14,9 +13,16 @@ const BasicParticleTypeSchema = z.object({
   orderedArt: z.boolean(),
 })
 
+const AnimationParticleArtSchema = z.object({
+  animationName: z.string(),
+  ranges: z.string(),
+  framerate: z.union([z.literal('matchLife'), z.string()]),
+  loop: z.boolean().default(false),
+})
+
 const AnimatedParticleTypeSchema = z.object({
   type: z.literal('animated'),
-  art: z.array(AnimatedArtConfigSchema),
+  art: z.array(AnimationParticleArtSchema),
 })
 
 const PathParticleTypeSchema = BasicParticleTypeSchema.extend({
@@ -114,3 +120,6 @@ export const ParticleConfigUISchema = z.object({
 
 export type ParticleConfigUI = z.infer<typeof ParticleConfigUISchema>
 export type ParticleTypeData = z.infer<typeof ParticleTypeSchema>
+export type AnimationParticleArtData = z.infer<
+  typeof AnimationParticleArtSchema
+>

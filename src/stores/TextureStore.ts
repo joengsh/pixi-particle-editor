@@ -5,6 +5,7 @@ import { DEFAULT_PARTICLE_IMAGE_URL } from '@/lib/particle-config'
 export type TextureStoreState = {
   textureData: Record<string, string>
   textureInstances: Record<string, PIXI.Texture>
+  animationList: string[]
 }
 
 export type TextureStoreAction = {
@@ -24,6 +25,7 @@ const useTextureStore = create<TextureStore>((set) => ({
   textureInstances: {
     particle: PIXI.Texture.from(DEFAULT_PARTICLE_IMAGE_URL),
   },
+  animationList: [],
   addTexture: (textureName, textureUrl) => {
     set((state) => {
       // check existance of the texture
@@ -35,15 +37,22 @@ const useTextureStore = create<TextureStore>((set) => ({
       }
       // create new texture instance
       const texture = PIXI.Texture.from(textureUrl)
+      const newTextureData = { ...state.textureData }
+      const newTextureInstances = { ...state.textureInstances }
+      newTextureData[textureName] = textureUrl
+      newTextureInstances[textureName] = texture
+
+      // update animationList
+      const textureNames = Object.keys(newTextureData)
+      const regex = new RegExp(/(.+)(-|_)([0]*\d+)/)
+      const temp = textureNames
+        .filter((textureName) => textureName.match(regex) !== null)
+        .map((textureName) => textureName.match(regex)?.[1] as string)
+      const newAnimationList = [...new Set(temp)]
       return {
-        textureData: {
-          ...state.textureData,
-          [textureName]: textureUrl,
-        },
-        textureInstances: {
-          ...state.textureInstances,
-          [textureName]: texture,
-        },
+        textureData: newTextureData,
+        textureInstances: newTextureInstances,
+        animationList: newAnimationList,
       }
     })
   },
@@ -63,9 +72,19 @@ const useTextureStore = create<TextureStore>((set) => ({
       delete newTextureData[textureName]
       const newTextureInstances = { ...state.textureInstances }
       delete newTextureInstances[textureName]
+
+      // update animationList
+      const textureNames = Object.keys(newTextureData)
+      const regex = new RegExp(/(.+)(-|_)([0]*\d+)/)
+      const temp = textureNames
+        .filter((textureName) => textureName.match(regex) !== null)
+        .map((textureName) => textureName.match(regex)?.[1] as string)
+      const newAnimationList = [...new Set(temp)]
+
       return {
         textureData: newTextureData,
         textureInstances: newTextureInstances,
+        animationList: newAnimationList,
       }
     })
   },
@@ -87,9 +106,19 @@ const useTextureStore = create<TextureStore>((set) => ({
         newTextureData[textureName] = textureUrl
         newTextureInstances[textureName] = texture
       }
+
+      // update animationList
+      const textureNames = Object.keys(newTextureData)
+      const regex = new RegExp(/(.+)(-|_)([0]*\d+)/)
+      const temp = textureNames
+        .filter((textureName) => textureName.match(regex) !== null)
+        .map((textureName) => textureName.match(regex)?.[1] as string)
+      const newAnimationList = [...new Set(temp)]
+
       return {
         textureData: newTextureData,
         textureInstances: newTextureInstances,
+        animationList: newAnimationList,
       }
     })
   },
@@ -105,6 +134,7 @@ const useTextureStore = create<TextureStore>((set) => ({
       return {
         textureData: {},
         textureInstances: {},
+        animationList: [],
       }
     })
   },
