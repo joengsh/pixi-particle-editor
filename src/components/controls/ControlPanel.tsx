@@ -16,6 +16,11 @@ import { LoadButton, SaveButton } from './GeneralControl'
 import TextureList from '../TextureList'
 import { TextureUpload } from './TextureControl'
 import ParticleTypeControl from './ParticleTypeControl'
+import {
+  AddAtBackControl,
+  FrequencyControl,
+  MaxParticlesControl,
+} from './EmitterControl'
 
 const ControlPanel = () => {
   return (
@@ -88,7 +93,11 @@ const ControlPanel = () => {
               <AccordionTrigger className="px-4 py-3 bg-secondary/50 hover:bg-secondary/70 text-sm font-medium">
                 Emitter Properties
               </AccordionTrigger>
-              <AccordionContent className="p-4 space-y-5"></AccordionContent>
+              <AccordionContent className="p-4 space-y-5">
+                <FrequencyControl />
+                <MaxParticlesControl />
+                <AddAtBackControl />
+              </AccordionContent>
             </AccordionItem>
 
             {/* Stage Properties */}

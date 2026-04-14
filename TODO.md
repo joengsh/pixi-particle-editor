@@ -28,13 +28,13 @@ Tasks
   - [] PointSpawn
   - [] ShapeSpawn
   - [] min max Lifetime
-  - [] max Particles
+  - [x] max Particles
   - [] emitterLifetime
   - [] particlesPerWave
   - [] rotation
-  - [] addAtBack
+  - [x] addAtBack
   - [] customEase
-  - [] frequency
+  - [x] frequency
 - [] add basic particle settings
   - [] Acceleration
   - [] Alpha
