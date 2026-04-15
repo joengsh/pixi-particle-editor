@@ -1,12 +1,12 @@
 import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { useShallow } from 'zustand/shallow'
 import { ListPropertyControl } from './ListPropertyControl'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import type { ValueStepData } from '@/types/particle/particleConfig'
 import { Label } from '../ui/label'
 import { Switch } from '../ui/switch'
 import { Input } from '../ui/input'
-import { easingNames } from '@/types/Easing'
+import { easingNames, type EasingName } from '@/types/Easing'
 import {
   Select,
   SelectTrigger,
@@ -31,6 +31,7 @@ const EasingControl = ({ value, onChange }: EasingControlType) => {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
+            <SelectItem value="null">None</SelectItem>
             {easingNames.map((name) => (
               <SelectItem key={name} value={name}>
                 {name}
@@ -75,15 +76,18 @@ export const SpeedControl = () => {
           }
         />
       </div>
-      {/* <EasingControl 
+      <EasingControl
         value={speed.ease || ''}
-        onChange={(value)=>
+        onChange={(value) =>
           setConfigUI((configUI) => ({
-            ...configUI, 
-            speed: {...configUI.speed, ease: value}
+            ...configUI,
+            speed: {
+              ...configUI.speed,
+              ease: value === 'null' ? undefined : (value as EasingName),
+            },
           }))
         }
-      /> */}
+      />
       <ListPropertyControl
         type="number"
         list={speed.list}
@@ -136,6 +140,63 @@ export const LifetimeControl = () => {
           />
         </div>
       </div>
+    </div>
+  )
+}
+
+export const ColorControl = () => {
+  const [color, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [state.configUI.color, state.setConfigUI]),
+  )
+
+  const colorList = useMemo(
+    () => color.list.map((data) => ({ ...data, value: `#${data.value}` })),
+    [color.list],
+  )
+
+  const onChange = useCallback(
+    (fn: (list: ValueStepData<string>[]) => ValueStepData<string>[]) => {
+      setConfigUI((configUI) => ({
+        ...configUI,
+        color: {
+          ...configUI.color,
+          list: fn(configUI.color.list).map((data) => ({
+            ...data,
+            value: data.value.replace('#', ''),
+          })),
+        },
+      }))
+    },
+    [setConfigUI],
+  )
+
+  return (
+    <div className="flex flex-col gap-3">
+      <Label className="text-xs">Color:</Label>
+      <div className="flex items-center gap-3">
+        <Label className="text-xs">IsStepped:</Label>
+        <Switch
+          defaultChecked={color.isStepped}
+          className="h-8 p-0.5 cursor-pointer"
+          checked={color.isStepped}
+          onCheckedChange={(checked) =>
+            setConfigUI((configUI) => ({
+              ...configUI,
+              color: { ...configUI.color, isStepped: checked },
+            }))
+          }
+        />
+      </div>
+      <EasingControl
+        value={color.ease || ''}
+        onChange={(value) =>
+          setConfigUI((configUI) => ({
+            ...configUI,
+            color: { ...configUI.color, ease: value as EasingName },
+          }))
+        }
+      />
+      <ListPropertyControl type="color" list={colorList} onChange={onChange} />
     </div>
   )
 }

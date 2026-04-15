@@ -1,4 +1,5 @@
 import z from 'zod'
+import { type EasingName } from '@/types/Easing'
 
 export const BasicPointSchema = z.object({
   x: z.number(),
@@ -20,12 +21,7 @@ export const ValueListSchema = <T extends z.ZodTypeAny>(valueSchema: T) =>
   z.object({
     list: z.array(ValueStepSchema(valueSchema)),
     isStepped: z.boolean().default(false),
-    ease: z
-      .function({
-        input: [z.number()],
-        output: z.number(),
-      })
-      .optional(),
+    ease: z.custom<EasingName>().optional(),
   })
 
 export const EmitterConfigSchema = z.object({
