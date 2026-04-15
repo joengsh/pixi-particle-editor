@@ -44,13 +44,14 @@ const ParticleBasicTypeControl = () => {
   const [values, setValue] = useState<string[]>(particleType.art as string[])
 
   useEffect(() => {
-    setConfigUI({
+    setConfigUI((configUI) => ({
+      ...configUI,
       particleType: {
         type: 'basic',
         art: values,
         orderedArt: false,
       },
-    })
+    }))
   }, [values, setConfigUI])
 
   return (
@@ -206,33 +207,39 @@ const ParticleAnimatedTypeControl = () => {
       framerate: 'matchLife' | string,
       loop: boolean,
     ) => {
-      const newParticleType = { ...particleType }
-      const data: AnimationParticleArtData = {
-        animationName,
-        ranges,
-        framerate,
-        loop,
-      }
-      ;(newParticleType.art as AnimationParticleArtData[]).push(data)
-      setConfigUI({
-        particleType: newParticleType,
+      setConfigUI((configUI) => {
+        const newParticleType = { ...configUI.particleType }
+        const data: AnimationParticleArtData = {
+          animationName,
+          ranges,
+          framerate,
+          loop,
+        }
+        ;(newParticleType.art as AnimationParticleArtData[]).push(data)
+        return {
+          ...configUI,
+          particleType: newParticleType,
+        }
       })
       setRanges('')
       setFrameRate('matchLife')
       setLoop(false)
     },
-    [setConfigUI, setRanges, setFrameRate, setLoop, particleType],
+    [setConfigUI, setRanges, setFrameRate, setLoop],
   )
 
   const onRemove = useCallback(
     (index: number) => {
-      const newParticleType = { ...particleType }
-      newParticleType.art.splice(index, 1)
-      setConfigUI({
-        particleType: newParticleType,
+      setConfigUI((configUI) => {
+        const newParticleType = { ...configUI.particleType }
+        newParticleType.art.splice(index, 1)
+        return {
+          ...configUI,
+          particleType: newParticleType,
+        }
       })
     },
-    [setConfigUI, particleType],
+    [setConfigUI],
   )
 
   const onChange = useCallback(
@@ -244,14 +251,17 @@ const ParticleAnimatedTypeControl = () => {
       index?: number,
     ) => {
       if (index !== undefined) {
-        const newParticleType = { ...particleType }
-        const data = newParticleType.art[index] as AnimationParticleArtData
-        data.animationName = animationName
-        data.framerate = framerate
-        data.loop = loop
-        data.ranges = ranges
-        setConfigUI({
-          particleType: newParticleType,
+        setConfigUI((configUI) => {
+          const newParticleType = { ...configUI.particleType }
+          const data = newParticleType.art[index] as AnimationParticleArtData
+          data.animationName = animationName
+          data.framerate = framerate
+          data.loop = loop
+          data.ranges = ranges
+          return {
+            ...configUI,
+            particleType: newParticleType,
+          }
         })
       } else {
         setAnimationName(animationName)
@@ -260,14 +270,7 @@ const ParticleAnimatedTypeControl = () => {
         setLoop(loop)
       }
     },
-    [
-      setConfigUI,
-      setAnimationName,
-      setRanges,
-      setFrameRate,
-      setLoop,
-      particleType,
-    ],
+    [setConfigUI, setAnimationName, setRanges, setFrameRate, setLoop],
   )
 
   return (
@@ -310,25 +313,28 @@ const ParticleTypeControl = () => {
   )
   const onTypeChange = useCallback(
     (value: string) => {
-      let particleTypeData: ParticleTypeData
-      switch (value) {
-        case 'animated':
-          particleTypeData = {
-            type: 'animated',
-            art: [],
-          }
-          break
-        case 'basic':
-        default:
-          particleTypeData = {
-            type: 'basic',
-            art: ['particle'],
-            orderedArt: false,
-          }
-          break
-      }
-      setConfigUI({
-        particleType: particleTypeData,
+      setConfigUI((configUI) => {
+        let particleTypeData: ParticleTypeData
+        switch (value) {
+          case 'animated':
+            particleTypeData = {
+              type: 'animated',
+              art: [],
+            }
+            break
+          case 'basic':
+          default:
+            particleTypeData = {
+              type: 'basic',
+              art: ['particle'],
+              orderedArt: false,
+            }
+            break
+        }
+        return {
+          ...configUI,
+          particleType: particleTypeData,
+        }
       })
     },
     [setConfigUI],

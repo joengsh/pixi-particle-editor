@@ -18,9 +18,10 @@ export const FrequencyControl = () => {
         value={frequency}
         min={0}
         onChange={(e) =>
-          setConfigUI({
+          setConfigUI((configUI) => ({
+            ...configUI,
             frequency: parseFloat(e.target.value),
-          })
+          }))
         }
       />
     </div>
@@ -41,9 +42,10 @@ export const MaxParticlesControl = () => {
         value={maxParticles}
         min={0}
         onChange={(e) =>
-          setConfigUI({
+          setConfigUI((configUI) => ({
+            ...configUI,
             maxParticles: parseInt(e.target.value, 10),
-          })
+          }))
         }
       />
     </div>
@@ -62,9 +64,10 @@ export const AddAtBackControl = () => {
         className="h-8 p-0.5 cursor-pointer"
         checked={addAtBack}
         onCheckedChange={(checked) =>
-          setConfigUI({
+          setConfigUI((configUI) => ({
+            ...configUI,
             addAtBack: checked,
-          })
+          }))
         }
       />
     </div>

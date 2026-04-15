@@ -21,6 +21,8 @@ import {
   FrequencyControl,
   MaxParticlesControl,
 } from './EmitterControl'
+import { LifetimeControl, SpeedControl } from './ParticleControl'
+import { Separator } from '../ui/separator'
 
 const ControlPanel = () => {
   return (
@@ -69,7 +71,11 @@ const ControlPanel = () => {
               <AccordionTrigger className="px-4 py-3 bg-secondary/50 hover:bg-secondary/70 text-sm font-medium">
                 Particle Properties
               </AccordionTrigger>
-              <AccordionContent className="p-4 space-y-5"></AccordionContent>
+              <AccordionContent className="p-4 space-y-5">
+                <LifetimeControl />
+                <Separator />
+                <SpeedControl />
+              </AccordionContent>
             </AccordionItem>
 
             {/* Particle Type Config */}

@@ -153,7 +153,7 @@ const useFileManager = () => {
 
       const configJsonText = await zip.files['config.json'].async('string')
       const configData = JSON.parse(configJsonText)
-      setConfigUI(configData)
+      setConfigUI(() => configData)
     } catch (err: any) {
       if (err.name === 'AbortError') {
         console.log('User cancelled open dialog.')

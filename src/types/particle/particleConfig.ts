@@ -184,3 +184,7 @@ export const ParticleArtConfigSchema = z.union([
 
 export type AnimatedArtConfig = z.infer<typeof AnimatedArtConfigSchema>
 export type ParticleArtConfig = z.infer<typeof ParticleArtConfigSchema>
+export type ValueStepData<T> = {
+  value: T
+  time: number
+}

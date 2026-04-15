@@ -46,6 +46,7 @@ Tasks
   - [] Speed
 - [*] add particle texture settings
   - [] OrderedTexture
+  - [] range index quantity
   - [x] RandomTexture
   - [x] RandomAnimatedTexture
   - [x] SingleTexture
