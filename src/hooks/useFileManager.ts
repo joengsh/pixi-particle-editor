@@ -147,6 +147,8 @@ const useFileManager = () => {
       setBackgroundScale(projectData.backgroundScale)
       if (projectData.backgroundTextureUrl) {
         setBackgroundTextureUrl(projectData.backgroundTextureUrl)
+      } else {
+        setBackgroundTextureUrl(null)
       }
       setResolution(projectData.resolution)
       setTickerSpeed(projectData.tickerSpeed)

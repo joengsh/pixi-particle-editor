@@ -24,7 +24,7 @@ export const DEFAULT_CONFIG: ParticleConfigUI = {
     ],
     isStepped: false,
   },
-  minimumScaleMultiplier: 1,
+  minimumScaleMultiplier: 0,
   color: {
     list: [
       { value: 'ffffff', time: 0 },
@@ -39,7 +39,7 @@ export const DEFAULT_CONFIG: ParticleConfigUI = {
     ],
     isStepped: false,
   },
-  minimumSpeedMultiplier: 1,
+  minimumSpeedMultiplier: 0,
   acceleration: {
     x: 0,
     y: 0,

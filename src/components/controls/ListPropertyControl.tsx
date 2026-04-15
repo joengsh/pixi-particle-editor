@@ -37,7 +37,7 @@ export const ListPropertyControlItem = <T extends ControlType>({
         onChange={(e) => {
           let value: ValueByType[T]
           if (type === 'number') {
-            value = parseInt(e.target.value, 10) as ValueByType[T]
+            value = parseFloat(e.target.value) as ValueByType[T]
           } else {
             value = e.target.value as ValueByType[T]
           }

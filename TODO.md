@@ -35,15 +35,17 @@ Tasks
   - [x] addAtBack
   - [] customEase
   - [x] frequency
-- [] add basic particle settings
-  - [] Acceleration
-  - [] Alpha
+- [*] add basic particle settings
+  - [x] Acceleration
+  - [x] Alpha
   - [] BlendMode
-  - [] Color
+  - [x] Color
   - [] NoRotation
   - [] Rotation
-  - [] Scale
-  - [] Speed
+  - [x] Scale
+  - [x] Speed
+  - [x] minimumSpeedMultiplier
+  - [x] minimumScaleMultiplier
 - [*] add particle texture settings
   - [] OrderedTexture
   - [] range index quantity

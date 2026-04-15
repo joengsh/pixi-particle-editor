@@ -44,6 +44,138 @@ const EasingControl = ({ value, onChange }: EasingControlType) => {
   )
 }
 
+export const AlphaControl = () => {
+  const [alpha, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [state.configUI.alpha, state.setConfigUI]),
+  )
+
+  const onChange = useCallback(
+    (fn: (list: ValueStepData<number>[]) => ValueStepData<number>[]) => {
+      setConfigUI((configUI) => ({
+        ...configUI,
+        alpha: { ...configUI.alpha, list: fn(configUI.alpha.list) },
+      }))
+    },
+    [setConfigUI],
+  )
+
+  return (
+    <div className="flex flex-col gap-3">
+      <Label className="text-xs">Alpha:</Label>
+      <div className="flex items-center gap-3">
+        <Label className="text-xs">IsStepped:</Label>
+        <Switch
+          defaultChecked={alpha.isStepped}
+          className="h-8 p-0.5 cursor-pointer"
+          checked={alpha.isStepped}
+          onCheckedChange={(checked) =>
+            setConfigUI((configUI) => ({
+              ...configUI,
+              alpha: { ...configUI.alpha, isStepped: checked },
+            }))
+          }
+        />
+      </div>
+      <EasingControl
+        value={alpha.ease || ''}
+        onChange={(value) =>
+          setConfigUI((configUI) => ({
+            ...configUI,
+            alpha: {
+              ...configUI.alpha,
+              ease: value === 'null' ? undefined : (value as EasingName),
+            },
+          }))
+        }
+      />
+      <ListPropertyControl
+        type="number"
+        list={alpha.list}
+        onChange={onChange}
+      />
+    </div>
+  )
+}
+
+export const ScaleControl = () => {
+  const [scale, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [state.configUI.scale, state.setConfigUI]),
+  )
+
+  const onChange = useCallback(
+    (fn: (list: ValueStepData<number>[]) => ValueStepData<number>[]) => {
+      setConfigUI((configUI) => ({
+        ...configUI,
+        scale: { ...configUI.scale, list: fn(configUI.scale.list) },
+      }))
+    },
+    [setConfigUI],
+  )
+
+  return (
+    <div className="flex flex-col gap-3">
+      <Label className="text-xs">Scale:</Label>
+      <div className="flex items-center gap-3">
+        <Label className="text-xs">IsStepped:</Label>
+        <Switch
+          defaultChecked={scale.isStepped}
+          className="h-8 p-0.5 cursor-pointer"
+          checked={scale.isStepped}
+          onCheckedChange={(checked) =>
+            setConfigUI((configUI) => ({
+              ...configUI,
+              scale: { ...configUI.scale, isStepped: checked },
+            }))
+          }
+        />
+      </div>
+      <EasingControl
+        value={scale.ease || ''}
+        onChange={(value) =>
+          setConfigUI((configUI) => ({
+            ...configUI,
+            scale: {
+              ...configUI.scale,
+              ease: value === 'null' ? undefined : (value as EasingName),
+            },
+          }))
+        }
+      />
+      <ListPropertyControl
+        type="number"
+        list={scale.list}
+        onChange={onChange}
+      />
+    </div>
+  )
+}
+
+export const MinimumScaleMultiplierControl = () => {
+  const [minimumScaleMultiplier, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [
+      state.configUI.minimumScaleMultiplier,
+      state.setConfigUI,
+    ]),
+  )
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Minimum Scale Multiplier:</Label>
+      <Input
+        type="number"
+        step={0.05}
+        className="flex-1 h-8 p-0.5 cursor-pointer"
+        value={minimumScaleMultiplier}
+        onChange={(e) =>
+          setConfigUI((configUI) => ({
+            ...configUI,
+            minimumScaleMultiplier: parseFloat(e.target.value) ?? 0,
+          }))
+        }
+      />
+    </div>
+  )
+}
+
 export const SpeedControl = () => {
   const [speed, setConfigUI] = useParticleConfigStore(
     useShallow((state) => [state.configUI.speed, state.setConfigUI]),
@@ -92,6 +224,32 @@ export const SpeedControl = () => {
         type="number"
         list={speed.list}
         onChange={onChange}
+      />
+    </div>
+  )
+}
+
+export const MinimumSpeedMultiplierControl = () => {
+  const [minimumSpeedMultiplier, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [
+      state.configUI.minimumSpeedMultiplier,
+      state.setConfigUI,
+    ]),
+  )
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Minimum Speed Multiplier:</Label>
+      <Input
+        type="number"
+        step={0.05}
+        className="flex-1 h-8 p-0.5 cursor-pointer"
+        value={minimumSpeedMultiplier}
+        onChange={(e) =>
+          setConfigUI((configUI) => ({
+            ...configUI,
+            minimumSpeedMultiplier: parseFloat(e.target.value) ?? 0,
+          }))
+        }
       />
     </div>
   )
@@ -197,6 +355,53 @@ export const ColorControl = () => {
         }
       />
       <ListPropertyControl type="color" list={colorList} onChange={onChange} />
+    </div>
+  )
+}
+
+export const AccelerationControl = () => {
+  const [acceleration, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [state.configUI.acceleration, state.setConfigUI]),
+  )
+  return (
+    <div className="flex flex-col gap-3">
+      <Label className="text-xs">Acceleration:</Label>
+      <div className="flex items-center gap-3">
+        <div className="flex flex-1 items-center gap-3">
+          <Label className="text-xs">X:</Label>
+          <Input
+            type="number"
+            className="flex-1 h-8 p-0.5 cursor-pointer"
+            value={acceleration.x}
+            onChange={(e) =>
+              setConfigUI((configUI) => ({
+                ...configUI,
+                acceleration: {
+                  x: parseFloat(e.target.value),
+                  y: configUI.acceleration.y,
+                },
+              }))
+            }
+          />
+        </div>
+        <div className="flex flex-1 items-center gap-3">
+          <Label className="text-xs">Y:</Label>
+          <Input
+            type="number"
+            className="flex-1 h-8 p-0.5 cursor-pointer"
+            value={acceleration.y}
+            onChange={(e) =>
+              setConfigUI((configUI) => ({
+                ...configUI,
+                acceleration: {
+                  x: configUI.acceleration.x,
+                  y: parseFloat(e.target.value),
+                },
+              }))
+            }
+          />
+        </div>
+      </div>
     </div>
   )
 }

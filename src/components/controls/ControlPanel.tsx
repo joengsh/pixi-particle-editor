@@ -21,7 +21,16 @@ import {
   FrequencyControl,
   MaxParticlesControl,
 } from './EmitterControl'
-import { ColorControl, LifetimeControl, SpeedControl } from './ParticleControl'
+import {
+  AccelerationControl,
+  AlphaControl,
+  ColorControl,
+  LifetimeControl,
+  MinimumScaleMultiplierControl,
+  MinimumSpeedMultiplierControl,
+  ScaleControl,
+  SpeedControl,
+} from './ParticleControl'
 import { Separator } from '../ui/separator'
 
 const ControlPanel = () => {
@@ -74,7 +83,14 @@ const ControlPanel = () => {
               <AccordionContent className="p-4 space-y-5">
                 <LifetimeControl />
                 <Separator />
+                <AlphaControl />
+                <Separator />
                 <SpeedControl />
+                <AccelerationControl />
+                <MinimumSpeedMultiplierControl />
+                <Separator />
+                <ScaleControl />
+                <MinimumScaleMultiplierControl />
                 <Separator />
                 <ColorControl />
               </AccordionContent>
