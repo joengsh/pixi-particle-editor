@@ -536,3 +536,50 @@ export const NoRotationControl = () => {
     </div>
   )
 }
+
+export const StartRotationControl = () => {
+  const [startRotation, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [state.configUI.startRotation, state.setConfigUI]),
+  )
+  return (
+    <div className="flex flex-col gap-3">
+      <Label className="text-xs">Start Rotation:</Label>
+      <div className="flex items-center gap-3">
+        <div className="flex flex-1 items-center gap-3">
+          <Label className="text-xs">Min:</Label>
+          <Input
+            type="number"
+            className="flex-1 h-8 p-0.5 cursor-pointer"
+            value={startRotation.min}
+            onChange={(e) =>
+              setConfigUI((configUI) => ({
+                ...configUI,
+                startRotation: {
+                  min: parseFloat(e.target.value),
+                  max: configUI.startRotation.max,
+                },
+              }))
+            }
+          />
+        </div>
+        <div className="flex flex-1 items-center gap-3">
+          <Label className="text-xs">Max:</Label>
+          <Input
+            type="number"
+            className="flex-1 h-8 p-0.5 cursor-pointer"
+            value={startRotation.max}
+            onChange={(e) =>
+              setConfigUI((configUI) => ({
+                ...configUI,
+                startRotation: {
+                  min: configUI.startRotation.min,
+                  max: parseFloat(e.target.value),
+                },
+              }))
+            }
+          />
+        </div>
+      </div>
+    </div>
+  )
+}

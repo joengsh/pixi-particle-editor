@@ -34,6 +34,7 @@ import {
   RotationSpeedControl,
   ScaleControl,
   SpeedControl,
+  StartRotationControl,
 } from './ParticleControl'
 import { Separator } from '../ui/separator'
 
@@ -98,6 +99,7 @@ const ControlPanel = () => {
                 <Separator />
                 <ColorControl />
                 <Separator />
+                <StartRotationControl />
                 <RotationSpeedControl />
                 <RotationAccelerationControl />
                 <NoRotationControl />
