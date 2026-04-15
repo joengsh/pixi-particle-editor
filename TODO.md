@@ -33,7 +33,6 @@ Tasks
   - [] particlesPerWave
   - [] rotation
   - [x] addAtBack
-  - [] customEase
   - [x] frequency
 - [*] add basic particle settings
   - [x] Acceleration
@@ -43,11 +42,12 @@ Tasks
   - [x] NoRotation
   - [x] RotationSpeed
   - [x] RotationAcceleration
-  - [] startAngle
+  - [x] startRotation
   - [x] Scale
   - [x] Speed
   - [x] minimumSpeedMultiplier
   - [x] minimumScaleMultiplier
+  - [] customEase
 - [*] add particle texture settings
   - [] OrderedTexture
   - [] range index quantity
