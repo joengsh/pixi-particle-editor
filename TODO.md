@@ -23,11 +23,14 @@ Tasks
 - [x] add canvas resolution setting
 - [x] add canvas background colour setting
 - [x] add canvas background texture
-- [] add particle emitter settings
+- [*] add particle emitter settings
   - [] BurstSpawn
   - [] PointSpawn
+  - [] RectSpawn
+  - [] CircleSpawn
+  - [] RingSpawn
   - [] ShapeSpawn
-  - [] min max Lifetime
+  - [x] min max Lifetime
   - [x] max Particles
   - [] emitterLifetime
   - [] particlesPerWave
@@ -68,3 +71,7 @@ Tasks
   - [x] import stage config
   - [x] import textures
   - [x] import particle system config
+
+## extra
+- [] add tooltip when hover field
+- [] add readme/ doc
