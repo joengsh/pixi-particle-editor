@@ -24,10 +24,14 @@ import {
 import {
   AccelerationControl,
   AlphaControl,
+  BlendModeControl,
   ColorControl,
   LifetimeControl,
   MinimumScaleMultiplierControl,
   MinimumSpeedMultiplierControl,
+  NoRotationControl,
+  RotationAccelerationControl,
+  RotationSpeedControl,
   ScaleControl,
   SpeedControl,
 } from './ParticleControl'
@@ -93,6 +97,12 @@ const ControlPanel = () => {
                 <MinimumScaleMultiplierControl />
                 <Separator />
                 <ColorControl />
+                <Separator />
+                <RotationSpeedControl />
+                <RotationAccelerationControl />
+                <NoRotationControl />
+                <Separator />
+                <BlendModeControl />
               </AccordionContent>
             </AccordionItem>
 

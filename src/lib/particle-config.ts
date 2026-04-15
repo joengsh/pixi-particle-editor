@@ -104,6 +104,7 @@ export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
     maxSpeed: config.maxSpeed,
     startRotation: config.startRotation,
     noRotation: config.noRotation,
+    rotationAcceleration: config.rotationAcceleration,
     rotationSpeed: config.rotationSpeed,
     lifetime: config.lifetime,
     blendMode: config.blendMode,

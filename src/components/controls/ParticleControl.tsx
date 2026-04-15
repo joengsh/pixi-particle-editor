@@ -405,3 +405,134 @@ export const AccelerationControl = () => {
     </div>
   )
 }
+
+export const BlendModeControl = () => {
+  const [blendMode, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [state.configUI.blendMode, state.setConfigUI]),
+  )
+
+  const onChange = useCallback(
+    (value: string) => {
+      setConfigUI((configUI) => ({
+        ...configUI,
+        blendMode: value,
+      }))
+    },
+    [setConfigUI],
+  )
+
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Blend Mode:</Label>
+      <Select value={blendMode} onValueChange={onChange}>
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Select blend mode" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {['normal', 'add', 'multiply', 'screen'].map((name) => (
+              <SelectItem key={name} value={name}>
+                {name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
+  )
+}
+
+export const RotationSpeedControl = () => {
+  const [rotationSpeed, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [state.configUI.rotationSpeed, state.setConfigUI]),
+  )
+  return (
+    <div className="flex flex-col gap-3">
+      <Label className="text-xs">Rotation Speed:</Label>
+      <div className="flex items-center gap-3">
+        <div className="flex flex-1 items-center gap-3">
+          <Label className="text-xs">Min:</Label>
+          <Input
+            type="number"
+            className="flex-1 h-8 p-0.5 cursor-pointer"
+            value={rotationSpeed.min}
+            onChange={(e) =>
+              setConfigUI((configUI) => ({
+                ...configUI,
+                rotationSpeed: {
+                  min: parseFloat(e.target.value),
+                  max: configUI.rotationSpeed.max,
+                },
+              }))
+            }
+          />
+        </div>
+        <div className="flex flex-1 items-center gap-3">
+          <Label className="text-xs">Max:</Label>
+          <Input
+            type="number"
+            className="flex-1 h-8 p-0.5 cursor-pointer"
+            value={rotationSpeed.max}
+            onChange={(e) =>
+              setConfigUI((configUI) => ({
+                ...configUI,
+                rotationSpeed: {
+                  min: configUI.rotationSpeed.min,
+                  max: parseFloat(e.target.value),
+                },
+              }))
+            }
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export const RotationAccelerationControl = () => {
+  const [rotationAcceleration, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [
+      state.configUI.rotationAcceleration,
+      state.setConfigUI,
+    ]),
+  )
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Rotation Acceleration:</Label>
+      <Input
+        type="number"
+        step={0.5}
+        className="flex-1 h-8 p-0.5 cursor-pointer"
+        value={rotationAcceleration}
+        onChange={(e) =>
+          setConfigUI((configUI) => ({
+            ...configUI,
+            rotationAcceleration: parseFloat(e.target.value) ?? 0,
+          }))
+        }
+      />
+    </div>
+  )
+}
+
+export const NoRotationControl = () => {
+  const [noRotation, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [state.configUI.noRotation, state.setConfigUI]),
+  )
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">No Rotation:</Label>
+      <Switch
+        defaultChecked={noRotation}
+        className="h-8 p-0.5 cursor-pointer"
+        checked={noRotation}
+        onCheckedChange={(checked) =>
+          setConfigUI((configUI) => ({
+            ...configUI,
+            noRotation: checked,
+          }))
+        }
+      />
+    </div>
+  )
+}

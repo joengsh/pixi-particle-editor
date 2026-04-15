@@ -292,12 +292,17 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     emitter.maxLifetime = emitterConfig.lifetime!.max
     emitter.minRotationSpeed = emitterConfig.rotationSpeed!.min
     emitter.maxRotationSpeed = emitterConfig.rotationSpeed!.max
+    emitter.rotationAcceleration = emitterConfig.rotationAcceleration || 0
     emitter.minStartRotation = emitterConfig.startRotation!.min
     emitter.maxStartRotation = emitterConfig.startRotation!.max
     emitter.frequency = emitterConfig.frequency
-    emitter.addAtBack = emitterConfig.addAtBack!
-    emitter.noRotation = emitterConfig.noRotation!
+    emitter.addAtBack = emitterConfig.addAtBack || false
+    emitter.noRotation = emitterConfig.noRotation || false
     emitter.orderedArt = emitterConfig.orderedArt || false
+
+    const blendModeKey = (emitterConfig.blendMode?.toUpperCase() ??
+      'NORMAL') as keyof typeof PIXI.BLEND_MODES
+    emitter.particleBlendMode = PIXI.BLEND_MODES[blendModeKey]
 
     // TODO
   }, [emitterConfig])

@@ -38,10 +38,12 @@ Tasks
 - [*] add basic particle settings
   - [x] Acceleration
   - [x] Alpha
-  - [] BlendMode
+  - [x] BlendMode
   - [x] Color
-  - [] NoRotation
-  - [] Rotation
+  - [x] NoRotation
+  - [x] RotationSpeed
+  - [x] RotationAcceleration
+  - [] startAngle
   - [x] Scale
   - [x] Speed
   - [x] minimumSpeedMultiplier
