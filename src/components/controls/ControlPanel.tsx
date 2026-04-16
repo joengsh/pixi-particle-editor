@@ -22,7 +22,7 @@ import {
   FrequencyControl,
   MaxParticlesControl,
   SpawnChanceControl,
-} from './EmitterControl'
+} from './emitterControls/EmitterControl'
 import {
   AccelerationControl,
   AlphaControl,
@@ -39,7 +39,7 @@ import {
   StartRotationControl,
 } from './ParticleControl'
 import { Separator } from '../ui/separator'
-import { EmitterTypeControl } from './EmitterTypeControl'
+import { EmitterTypeControl } from './emitterControls/EmitterTypeControl'
 
 const ControlPanel = () => {
   return (

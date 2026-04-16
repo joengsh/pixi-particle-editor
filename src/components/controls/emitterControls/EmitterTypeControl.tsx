@@ -1,5 +1,5 @@
 import useParticleConfigStore from '@/stores/ParticleConfigStore'
-import { Label } from '../ui/label'
+import { Label } from '../../ui/label'
 import {
   Select,
   SelectTrigger,
@@ -7,17 +7,17 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-} from '../ui/select'
+} from '../../ui/select'
 import { useShallow } from 'zustand/shallow'
 import { emitterTypes, type EmitterType } from '@/types/particle/emitterType'
 import type {
   EmitterSpawnType,
   ParticleConfigUI,
 } from '@/types/particleConfigUIData'
-import { Input } from '../ui/input'
+import { Input } from '../../ui/input'
 import { useCallback, useMemo } from 'react'
 
-type EmitterTypeSpawnControlProps = {
+export type EmitterTypeSpawnControlProps = {
   emitterType: EmitterSpawnType
   setConfigUI: (fn: (configUI: ParticleConfigUI) => ParticleConfigUI) => void
 }

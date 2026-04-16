@@ -1,8 +1,8 @@
 import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { useShallow } from 'zustand/shallow'
-import { Label } from '../ui/label'
-import { Input } from '../ui/input'
-import { Switch } from '../ui/switch'
+import { Label } from '../../ui/label'
+import { Input } from '../../ui/input'
+import { Switch } from '../../ui/switch'
 
 export const FrequencyControl = () => {
   const [frequency, setConfigUI] = useParticleConfigStore(
