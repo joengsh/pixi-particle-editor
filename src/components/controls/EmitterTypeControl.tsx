@@ -56,7 +56,6 @@ export const EmitterTypeRectControl = ({
   )
   return (
     <div className="flex flex-col gap-3">
-      <Label className="text-xs">Rectangle:</Label>
       <div className="flex items-center gap-3">
         <div className="flex flex-1 items-center gap-3">
           <Label className="text-xs">X:</Label>
@@ -133,7 +132,130 @@ export const EmitterTypeCircleControl = ({
   emitterType,
   setConfigUI,
 }: EmitterTypeSpawnControlProps) => {
-  return null
+  const spawnCircle = useMemo(() => {
+    if (emitterType.type === 'circle' || emitterType.type === 'ring') {
+      return emitterType.spawnCircle
+    } else {
+      throw new Error(
+        "EmitterTypeCircleControl should only handle spawnType 'circle' or 'ring'.",
+      )
+    }
+  }, [emitterType])
+
+  const updateSpawnCircle = useCallback(
+    (x: number, y: number, r: number, minR?: number) => {
+      setConfigUI((configUI) => {
+        const type = configUI.emitterType.type
+        let newEmitterType: EmitterSpawnType
+        switch (type) {
+          case 'circle':
+            newEmitterType = {
+              type: 'circle',
+              spawnCircle: {
+                x,
+                y,
+                r,
+              },
+            }
+            break
+          case 'ring':
+            newEmitterType = {
+              type: 'ring',
+              spawnCircle: {
+                x,
+                y,
+                r,
+                minR: minR!,
+              },
+            }
+            break
+          default:
+            throw new Error(
+              "EmitterTypeCircleControl should only handle spawnType 'circle' or 'ring'.",
+            )
+        }
+        return {
+          ...configUI,
+          emitterType: newEmitterType,
+        }
+      })
+    },
+    [setConfigUI],
+  )
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-3">
+        <div className="flex flex-1 items-center gap-3">
+          <Label className="text-xs">X:</Label>
+          <Input
+            type="number"
+            className="flex-1 h-8 p-0.5 cursor-pointer"
+            value={spawnCircle.x}
+            onChange={(e) =>
+              updateSpawnCircle(
+                parseFloat(e.target.value),
+                spawnCircle.y,
+                spawnCircle.r,
+                spawnCircle.minR,
+              )
+            }
+          />
+        </div>
+        <div className="flex flex-1 items-center gap-3">
+          <Label className="text-xs">Y:</Label>
+          <Input
+            type="number"
+            className="flex-1 h-8 p-0.5 cursor-pointer"
+            value={spawnCircle.y}
+            onChange={(e) =>
+              updateSpawnCircle(
+                spawnCircle.x,
+                parseFloat(e.target.value),
+                spawnCircle.r,
+                spawnCircle.minR,
+              )
+            }
+          />
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        {emitterType.type === 'ring' && (
+          <div className="flex flex-1 items-center gap-3">
+            <Label className="text-xs">minR:</Label>
+            <Input
+              type="number"
+              className="flex-1 h-8 p-0.5 cursor-pointer"
+              value={spawnCircle.minR}
+              onChange={(e) =>
+                updateSpawnCircle(
+                  spawnCircle.x,
+                  spawnCircle.y,
+                  spawnCircle.r,
+                  parseFloat(e.target.value),
+                )
+              }
+            />
+          </div>
+        )}
+        <div className="flex flex-1 items-center gap-3">
+          <Label className="text-xs">R:</Label>
+          <Input
+            type="number"
+            className="flex-1 h-8 p-0.5 cursor-pointer"
+            value={spawnCircle.r}
+            onChange={(e) =>
+              updateSpawnCircle(
+                spawnCircle.x,
+                spawnCircle.y,
+                parseFloat(e.target.value),
+                spawnCircle.minR,
+              )
+            }
+          />
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export const EmitterTypeControl = () => {
@@ -156,8 +278,20 @@ export const EmitterTypeControl = () => {
             spawnRect: {
               x: 0,
               y: 0,
-              w: 100,
-              h: 100,
+              w: 200,
+              h: 200,
+            },
+          }
+          break
+        case 'circle':
+        case 'ring':
+          newEmitterType = {
+            type,
+            spawnCircle: {
+              x: 0,
+              y: 0,
+              r: 200,
+              minR: 200,
             },
           }
           break
@@ -197,7 +331,7 @@ export const EmitterTypeControl = () => {
           setConfigUI={setConfigUI}
         />
       )}
-      {emitterType.type === 'circle' && (
+      {(emitterType.type === 'circle' || emitterType.type === 'ring') && (
         <EmitterTypeCircleControl
           emitterType={emitterType}
           setConfigUI={setConfigUI}

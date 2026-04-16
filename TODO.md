@@ -25,17 +25,17 @@ Tasks
 - [x] add canvas background texture
 - [*] add particle emitter settings
   - [] BurstSpawn
-  - [] PointSpawn
-  - [] RectSpawn
-  - [] CircleSpawn
-  - [] RingSpawn
+  - [x] PointSpawn
+  - [x] RectSpawn
+  - [x] CircleSpawn
+  - [x] RingSpawn
   - [] ShapeSpawn
   - [x] min max Lifetime
   - [x] max Particles
   - [] emitterLifetime
   - [] particlesPerWave
   - [] rotation
-  - [] spawnChance
+  - [x] spawnChance
   - [x] addAtBack
   - [x] frequency
 - [*] add basic particle settings

@@ -113,6 +113,7 @@ export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
     maxParticles: config.maxParticles,
     pos: config.pos,
     addAtBack: config.addAtBack,
+    spawnChance: config.spawnChance,
   }
   emitterConfig.spawnType = config.emitterType.type
   switch (config.emitterType.type) {

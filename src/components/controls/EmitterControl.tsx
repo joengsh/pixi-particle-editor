@@ -73,3 +73,26 @@ export const AddAtBackControl = () => {
     </div>
   )
 }
+
+export const SpawnChanceControl = () => {
+  const [spawnChance, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [state.configUI.spawnChance, state.setConfigUI]),
+  )
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Spawn Chance:</Label>
+      <Input
+        type="number"
+        step={0.05}
+        className="flex-1 h-8 p-0.5 cursor-pointer"
+        value={spawnChance}
+        onChange={(e) =>
+          setConfigUI((configUI) => ({
+            ...configUI,
+            spawnChance: parseFloat(e.target.value),
+          }))
+        }
+      />
+    </div>
+  )
+}

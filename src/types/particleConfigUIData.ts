@@ -46,6 +46,7 @@ const CircleEmitterTypeSchema = z.object({
     x: z.number(),
     y: z.number(),
     r: z.number(),
+    minR: z.number().optional(),
   }),
 })
 

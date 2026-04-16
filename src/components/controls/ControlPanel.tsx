@@ -20,6 +20,7 @@ import {
   AddAtBackControl,
   FrequencyControl,
   MaxParticlesControl,
+  SpawnChanceControl,
 } from './EmitterControl'
 import {
   AccelerationControl,
@@ -134,6 +135,7 @@ const ControlPanel = () => {
                 <FrequencyControl />
                 <MaxParticlesControl />
                 <AddAtBackControl />
+                <SpawnChanceControl />
                 <EmitterTypeControl />
               </AccordionContent>
             </AccordionItem>
