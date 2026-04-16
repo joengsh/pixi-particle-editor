@@ -18,6 +18,7 @@ import { TextureUpload } from './TextureControl'
 import ParticleTypeControl from './ParticleTypeControl'
 import {
   AddAtBackControl,
+  EmitterLifetimeControl,
   FrequencyControl,
   MaxParticlesControl,
   SpawnChanceControl,
@@ -134,6 +135,7 @@ const ControlPanel = () => {
               <AccordionContent className="p-4 space-y-5">
                 <FrequencyControl />
                 <MaxParticlesControl />
+                <EmitterLifetimeControl />
                 <AddAtBackControl />
                 <SpawnChanceControl />
                 <EmitterTypeControl />

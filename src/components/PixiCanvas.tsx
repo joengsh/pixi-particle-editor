@@ -254,13 +254,21 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
       emitter.updateOwnerPos(x, y)
     }
 
+    const handleClick = () => {
+      if (!emitter.emit) {
+        emitter.emit = true
+      }
+    }
+
     app.view.addEventListener('mousemove', handleMouseMove)
+    app.view.addEventListener('click', handleClick)
 
     handleResize()
     return () => {
       resizeObserver.disconnect()
       if (pixiAppRef.current === app) {
         app.view.removeEventListener('mousemove', handleMouseMove)
+        app.view.removeEventListener('click', handleClick)
       }
     }
   }, [resolution, mappedTextureData])

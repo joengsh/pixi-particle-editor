@@ -96,3 +96,26 @@ export const SpawnChanceControl = () => {
     </div>
   )
 }
+
+export const EmitterLifetimeControl = () => {
+  const [emitterLifetime, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [state.configUI.emitterLifetime, state.setConfigUI]),
+  )
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Emitter Lifetime:</Label>
+      <Input
+        type="number"
+        step={0.1}
+        className="flex-1 h-8 p-0.5 cursor-pointer"
+        value={emitterLifetime}
+        onChange={(e) =>
+          setConfigUI((configUI) => ({
+            ...configUI,
+            emitterLifetime: parseFloat(e.target.value),
+          }))
+        }
+      />
+    </div>
+  )
+}
