@@ -114,7 +114,7 @@ export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
     pos: config.pos,
     addAtBack: config.addAtBack,
   }
-
+  emitterConfig.spawnType = config.emitterType.type
   switch (config.emitterType.type) {
     case 'burst':
       emitterConfig.particlesPerWave = config.emitterType.particlesPerWave

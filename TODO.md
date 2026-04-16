@@ -35,6 +35,7 @@ Tasks
   - [] emitterLifetime
   - [] particlesPerWave
   - [] rotation
+  - [] spawnChance
   - [x] addAtBack
   - [x] frequency
 - [*] add basic particle settings
@@ -73,5 +74,6 @@ Tasks
   - [x] import particle system config
 
 ## extra
+
 - [] add tooltip when hover field
 - [] add readme/ doc

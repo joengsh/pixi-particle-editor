@@ -37,6 +37,7 @@ import {
   StartRotationControl,
 } from './ParticleControl'
 import { Separator } from '../ui/separator'
+import { EmitterTypeControl } from './EmitterTypeControl'
 
 const ControlPanel = () => {
   return (
@@ -133,6 +134,7 @@ const ControlPanel = () => {
                 <FrequencyControl />
                 <MaxParticlesControl />
                 <AddAtBackControl />
+                <EmitterTypeControl />
               </AccordionContent>
             </AccordionItem>
 

@@ -81,6 +81,15 @@ const ParticleTypeSchema = z.union([
   PathParticleTypeSchema,
 ])
 
+const EmitterTypeSchema = z.discriminatedUnion('type', [
+  PointEmitterTypeSchema,
+  RectEmitterTypeSchema,
+  CircleEmitterTypeSchema,
+  RingEmitterTypeSchema,
+  BurstEmitterTypeSchema,
+  PolygonalChainEmitterTypeSchema,
+])
+
 export const ParticleConfigUISchema = z.object({
   // particle type config
   particleType: ParticleTypeSchema,
@@ -101,14 +110,7 @@ export const ParticleConfigUISchema = z.object({
   blendMode: z.string(),
   extraData: z.any().optional(),
   // emitter config
-  emitterType: z.union([
-    PointEmitterTypeSchema,
-    RectEmitterTypeSchema,
-    CircleEmitterTypeSchema,
-    RingEmitterTypeSchema,
-    BurstEmitterTypeSchema,
-    PolygonalChainEmitterTypeSchema,
-  ]),
+  emitterType: EmitterTypeSchema,
   frequency: z.number(),
   spawnChance: z.number(),
   emitterLifetime: z.number(),
@@ -123,3 +125,4 @@ export type ParticleTypeData = z.infer<typeof ParticleTypeSchema>
 export type AnimationParticleArtData = z.infer<
   typeof AnimationParticleArtSchema
 >
+export type EmitterSpawnType = z.infer<typeof EmitterTypeSchema>
