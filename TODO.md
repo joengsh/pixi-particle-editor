@@ -24,7 +24,7 @@ Tasks
 - [x] add canvas background colour setting
 - [x] add canvas background texture
 - [*] add particle emitter settings
-  - [] BurstSpawn
+  - [x] BurstSpawn
   - [x] PointSpawn
   - [x] RectSpawn
   - [x] CircleSpawn
@@ -32,9 +32,8 @@ Tasks
   - [] ShapeSpawn
   - [x] min max Lifetime
   - [x] max Particles
-  - [] emitterLifetime
-  - [] particlesPerWave
-  - [] rotation
+  - [x] emitterLifetime
+  - [x] particlesPerWave
   - [x] spawnChance
   - [x] addAtBack
   - [x] frequency

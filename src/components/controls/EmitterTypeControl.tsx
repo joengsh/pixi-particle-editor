@@ -258,6 +258,91 @@ export const EmitterTypeCircleControl = ({
   )
 }
 
+export const EmitterTypeBurstControl = ({
+  emitterType,
+  setConfigUI,
+}: EmitterTypeSpawnControlProps) => {
+  const { particleSpacing, particlesPerWave, angleStart } = useMemo(() => {
+    if (emitterType.type === 'burst') {
+      return {
+        particleSpacing: emitterType.particleSpacing,
+        particlesPerWave: emitterType.particlesPerWave,
+        angleStart: emitterType.angleStart,
+      }
+    } else {
+      throw new Error(
+        "EmitterTypeBurstControl should only handle spawnType 'burst'.",
+      )
+    }
+  }, [emitterType])
+
+  const updateSpawnBurst = useCallback(
+    (particleSpacing: number, particlesPerWave: number, angleStart: number) => {
+      const newEmitterType: EmitterSpawnType = {
+        type: 'burst',
+        particleSpacing,
+        particlesPerWave,
+        angleStart,
+      }
+      setConfigUI((configUI) => ({
+        ...configUI,
+        emitterType: newEmitterType,
+      }))
+    },
+    [setConfigUI],
+  )
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-1 items-center gap-3">
+        <Label className="text-xs">Particle Spacing:</Label>
+        <Input
+          type="number"
+          className="flex-1 h-8 p-0.5 cursor-pointer"
+          value={particleSpacing}
+          onChange={(e) =>
+            updateSpawnBurst(
+              parseFloat(e.target.value),
+              particlesPerWave,
+              angleStart,
+            )
+          }
+        />
+      </div>
+      <div className="flex flex-1 items-center gap-3">
+        <Label className="text-xs">Particles Per Wave:</Label>
+        <Input
+          type="number"
+          className="flex-1 h-8 p-0.5 cursor-pointer"
+          value={particlesPerWave}
+          onChange={(e) =>
+            updateSpawnBurst(
+              particleSpacing,
+              parseFloat(e.target.value),
+              angleStart,
+            )
+          }
+        />
+      </div>
+      <div className="flex flex-1 items-center gap-3">
+        <Label className="text-xs">Start Angle:</Label>
+        <Input
+          type="number"
+          className="flex-1 h-8 p-0.5 cursor-pointer"
+          value={angleStart}
+          onChange={(e) =>
+            updateSpawnBurst(
+              particleSpacing,
+              particlesPerWave,
+              parseFloat(e.target.value),
+            )
+          }
+        />
+      </div>
+    </div>
+  )
+}
+
 export const EmitterTypeControl = () => {
   const [emitterType, setConfigUI] = useParticleConfigStore(
     useShallow((state) => [state.configUI.emitterType, state.setConfigUI]),
@@ -293,6 +378,14 @@ export const EmitterTypeControl = () => {
               r: 200,
               minR: 200,
             },
+          }
+          break
+        case 'burst':
+          newEmitterType = {
+            type,
+            particleSpacing: 0,
+            particlesPerWave: 50,
+            angleStart: 0,
           }
           break
       }
@@ -333,6 +426,12 @@ export const EmitterTypeControl = () => {
       )}
       {(emitterType.type === 'circle' || emitterType.type === 'ring') && (
         <EmitterTypeCircleControl
+          emitterType={emitterType}
+          setConfigUI={setConfigUI}
+        />
+      )}
+      {emitterType.type === 'burst' && (
+        <EmitterTypeBurstControl
           emitterType={emitterType}
           setConfigUI={setConfigUI}
         />
