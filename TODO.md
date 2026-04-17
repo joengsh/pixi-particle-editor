@@ -23,13 +23,13 @@ Tasks
 - [x] add canvas resolution setting
 - [x] add canvas background colour setting
 - [x] add canvas background texture
-- [*] add particle emitter settings
+- [x] add particle emitter settings
   - [x] BurstSpawn
   - [x] PointSpawn
   - [x] RectSpawn
   - [x] CircleSpawn
   - [x] RingSpawn
-  - [] ShapeSpawn
+  - [x] ShapeSpawn
   - [x] min max Lifetime
   - [x] max Particles
   - [x] emitterLifetime
@@ -74,5 +74,6 @@ Tasks
 
 ## extra
 
+- [] add quality setting
 - [] add tooltip when hover field
 - [] add readme/ doc
