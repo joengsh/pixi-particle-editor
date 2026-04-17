@@ -156,7 +156,9 @@ export const EmitterTypePolygonChainControl = ({
     setConfigUI((configUI) => {
       const newEmitterType: EmitterSpawnType = { ...configUI.emitterType }
       if (newEmitterType.type === 'polygonalChain') {
-        newEmitterType.spawnPolygon.push([])
+        const newPolygons = [...newEmitterType.spawnPolygon]
+        newPolygons.push([])
+        newEmitterType.spawnPolygon = newPolygons
         return {
           ...configUI,
           emitterType: newEmitterType,
@@ -199,7 +201,9 @@ export const EmitterTypePolygonChainControl = ({
       setConfigUI((configUI) => {
         const newEmitterType = { ...configUI.emitterType }
         if (newEmitterType.type === 'polygonalChain') {
-          newEmitterType.spawnPolygon.splice(index, 1)
+          const newPolygons = [...newEmitterType.spawnPolygon]
+          newPolygons.splice(index, 1)
+          newEmitterType.spawnPolygon = newPolygons
 
           return {
             ...configUI,
@@ -228,7 +232,7 @@ export const EmitterTypePolygonChainControl = ({
     <div className="flex flex-col gap-3">
       {polygons.map((data, index) => (
         <PolygonChainEditor
-          key={JSON.stringify(data)}
+          key={`${index}-${JSON.stringify(data)}`}
           index={index}
           data={data}
           setConfigUI={setConfigUI}
