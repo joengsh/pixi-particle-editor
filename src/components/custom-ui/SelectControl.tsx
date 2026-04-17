@@ -39,7 +39,7 @@ export const SelectControl = ({
         [propName]: value,
       }))
     },
-    [setConfigUI],
+    [propName, setConfigUI],
   )
 
   return (

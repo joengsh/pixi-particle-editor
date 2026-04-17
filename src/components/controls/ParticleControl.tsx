@@ -150,32 +150,6 @@ export const ScaleControl = () => {
   )
 }
 
-export const MinimumScaleMultiplierControl = () => {
-  const [minimumScaleMultiplier, setConfigUI] = useParticleConfigStore(
-    useShallow((state) => [
-      state.configUI.minimumScaleMultiplier,
-      state.setConfigUI,
-    ]),
-  )
-  return (
-    <div className="flex items-center gap-3">
-      <Label className="text-xs">Minimum Scale Multiplier:</Label>
-      <Input
-        type="number"
-        step={0.05}
-        className="flex-1 h-8 p-0.5 cursor-pointer"
-        value={minimumScaleMultiplier}
-        onChange={(e) =>
-          setConfigUI((configUI) => ({
-            ...configUI,
-            minimumScaleMultiplier: parseFloat(e.target.value) ?? 0,
-          }))
-        }
-      />
-    </div>
-  )
-}
-
 export const SpeedControl = () => {
   const [speed, setConfigUI] = useParticleConfigStore(
     useShallow((state) => [state.configUI.speed, state.setConfigUI]),
@@ -225,53 +199,6 @@ export const SpeedControl = () => {
         list={speed.list}
         onChange={onChange}
       />
-    </div>
-  )
-}
-
-export const LifetimeControl = () => {
-  const [lifetime, setConfigUI] = useParticleConfigStore(
-    useShallow((state) => [state.configUI.lifetime, state.setConfigUI]),
-  )
-  return (
-    <div className="flex flex-col gap-3">
-      <Label className="text-xs">Lifttime:</Label>
-      <div className="flex items-center gap-3">
-        <div className="flex flex-1 items-center gap-3">
-          <Label className="text-xs">Min:</Label>
-          <Input
-            type="number"
-            className="flex-1 h-8 p-0.5 cursor-pointer"
-            value={lifetime.min}
-            onChange={(e) =>
-              setConfigUI((configUI) => ({
-                ...configUI,
-                lifetime: {
-                  min: parseFloat(e.target.value),
-                  max: configUI.lifetime.max,
-                },
-              }))
-            }
-          />
-        </div>
-        <div className="flex flex-1 items-center gap-3">
-          <Label className="text-xs">Max:</Label>
-          <Input
-            type="number"
-            className="flex-1 h-8 p-0.5 cursor-pointer"
-            value={lifetime.max}
-            onChange={(e) =>
-              setConfigUI((configUI) => ({
-                ...configUI,
-                lifetime: {
-                  min: configUI.lifetime.min,
-                  max: parseFloat(e.target.value),
-                },
-              }))
-            }
-          />
-        </div>
-      </div>
     </div>
   )
 }

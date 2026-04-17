@@ -27,7 +27,6 @@ import {
   AccelerationControl,
   AlphaControl,
   ColorControl,
-  LifetimeControl,
   RotationAccelerationControl,
   RotationSpeedControl,
   ScaleControl,
@@ -40,6 +39,7 @@ import { NumberControl } from '../custom-ui/NumberControl'
 import { SelectControl } from '../custom-ui/SelectControl'
 import { SwitchControl } from '../custom-ui/SwitchControl'
 import { memo } from 'react'
+import { DuoNumberControl } from '../custom-ui/DuoNumberControl'
 
 const ControlPanel = () => {
   return (
@@ -89,7 +89,12 @@ const ControlPanel = () => {
                 Particle Properties
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-5">
-                <LifetimeControl />
+                <DuoNumberControl
+                  labelName="Lifetime"
+                  propName="lifetime"
+                  subLabelName={['Min', 'Max']}
+                  subPropName={['min', 'max']}
+                />
                 <Separator />
                 <AlphaControl />
                 <Separator />
