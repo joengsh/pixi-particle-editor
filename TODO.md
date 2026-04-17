@@ -74,6 +74,5 @@ Tasks
 
 ## extra
 
-- [] add quality setting
 - [] add tooltip when hover field
 - [] add readme/ doc
