@@ -268,6 +268,9 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
       }
     }
     const handleClick = (e: MouseEvent) => {
+      if (!emitter.emit) {
+        emitter.emit = true
+      }
       if (isEdit && editIndex !== undefined) {
         const rect = app.view.getBoundingClientRect()
         const scaleX = resolution[0] / rect.width
@@ -307,7 +310,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
         app.view.removeEventListener('mousemove', handleMouseMove)
       }
     }
-  }, [isEdit, editIndex, setConfigUI, resolution])
+  }, [isEdit, editIndex, setConfigUI, resolution, mappedTextureData])
 
   useEffect(() => {
     const app = pixiAppRef.current
