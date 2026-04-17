@@ -127,7 +127,9 @@ export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
       emitterConfig.spawnCircle = config.emitterType.spawnCircle
       break
     case 'polygonalChain':
-      // TODO
+      emitterConfig.spawnPolygon = config.emitterType.spawnPolygon.filter(
+        (polygon) => polygon.length >= 2,
+      )
       break
     case 'rect':
       emitterConfig.spawnRect = config.emitterType.spawnRect

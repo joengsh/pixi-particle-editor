@@ -16,6 +16,7 @@ import type {
 } from '@/types/particleConfigUIData'
 import { Input } from '../../ui/input'
 import { useCallback, useMemo } from 'react'
+import { EmitterTypePolygonChainControl } from './EmitterTypePolygonChainControl'
 
 export type EmitterTypeSpawnControlProps = {
   emitterType: EmitterSpawnType
@@ -388,6 +389,17 @@ export const EmitterTypeControl = () => {
             angleStart: 0,
           }
           break
+        case 'polygonalChain':
+          newEmitterType = {
+            type,
+            spawnPolygon: [
+              [
+                { x: 0, y: 0 },
+                { x: 200, y: 200 },
+              ],
+            ],
+          }
+          break
       }
       setConfigUI((configUI) => ({
         ...configUI,
@@ -432,6 +444,12 @@ export const EmitterTypeControl = () => {
       )}
       {emitterType.type === 'burst' && (
         <EmitterTypeBurstControl
+          emitterType={emitterType}
+          setConfigUI={setConfigUI}
+        />
+      )}
+      {emitterType.type === 'polygonalChain' && (
+        <EmitterTypePolygonChainControl
           emitterType={emitterType}
           setConfigUI={setConfigUI}
         />

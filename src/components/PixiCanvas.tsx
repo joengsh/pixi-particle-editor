@@ -6,6 +6,7 @@ import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { useShallow } from 'zustand/shallow'
 import useTextureStore from '@/stores/TextureStore'
 import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
+import usePolygonChainEditStore from '@/stores/PolygonChainEditStore'
 
 const mapAnimatedArtTextures = (
   config: AnimatedArtConfig,
@@ -49,12 +50,21 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     useShallow((state) => state.tickerSpeed),
   )
 
-  const [emitterConfig, textureConfig] = useParticleConfigStore(
-    useShallow((state) => [state.emitterConfig, state.textureConfig]),
+  const [emitterConfig, textureConfig, setConfigUI] = useParticleConfigStore(
+    useShallow((state) => [
+      state.emitterConfig,
+      state.textureConfig,
+      state.setConfigUI,
+    ]),
   )
   const textureInstances = useTextureStore(
     useShallow((state) => state.textureInstances),
   )
+
+  const [editIndex, isEdit] = usePolygonChainEditStore(
+    useShallow((state) => [state.index, state.isEdit]),
+  )
+
   const mappedTextureData = useMemo(() => {
     // map all the texture names to texture instance
     return textureConfig
@@ -96,7 +106,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
       resolution: window.devicePixelRatio || 1,
       autoDensity: true,
     })
-    globalThis.__PIXI_APP__ = app
+    ;(globalThis as any).__PIXI_APP__ = app // eslint-disable-line @typescript-eslint/no-explicit-any
 
     container.appendChild(app.view as HTMLCanvasElement)
     pixiAppRef.current = app
@@ -244,34 +254,60 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     resizeObserver.observe(container)
 
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = app.view.getBoundingClientRect()
-      const scaleX = resolution[0] / rect.width
-      const scaleY = resolution[1] / rect.height
-      const scale = Math.max(scaleX, scaleY)
+      if (isEdit && editIndex !== undefined) {
+        emitter.updateOwnerPos(0, 0)
+      } else {
+        const rect = app.view.getBoundingClientRect()
+        const scaleX = resolution[0] / rect.width
+        const scaleY = resolution[1] / rect.height
+        const scale = Math.max(scaleX, scaleY)
 
-      const x = (e.clientX - rect.left) * scale - resolution[0] / 2
-      const y = (e.clientY - rect.top) * scale - resolution[1] / 2
-      emitter.updateOwnerPos(x, y)
+        const x = (e.clientX - rect.left) * scale - resolution[0] / 2
+        const y = (e.clientY - rect.top) * scale - resolution[1] / 2
+        emitter.updateOwnerPos(x, y)
+      }
     }
+    const handleClick = (e: MouseEvent) => {
+      if (isEdit && editIndex !== undefined) {
+        const rect = app.view.getBoundingClientRect()
+        const scaleX = resolution[0] / rect.width
+        const scaleY = resolution[1] / rect.height
+        const scale = Math.max(scaleX, scaleY)
 
-    const handleClick = () => {
-      if (!emitter.emit) {
-        emitter.emit = true
+        const x = Math.round(
+          (e.clientX - rect.left) * scale - resolution[0] / 2,
+        )
+        const y = Math.round((e.clientY - rect.top) * scale - resolution[1] / 2)
+
+        setConfigUI((configUI) => {
+          const newEmitterType = { ...configUI.emitterType }
+          if (newEmitterType.type === 'polygonalChain') {
+            const newPolygon = [...newEmitterType.spawnPolygon]
+            newPolygon[editIndex].push({ x, y })
+            newEmitterType.spawnPolygon = newPolygon
+            return {
+              ...configUI,
+              emitterType: newEmitterType,
+            }
+          }
+          return configUI
+        })
       }
     }
 
-    app.view.addEventListener('mousemove', handleMouseMove)
     app.view.addEventListener('click', handleClick)
+
+    app.view.addEventListener('mousemove', handleMouseMove)
 
     handleResize()
     return () => {
       resizeObserver.disconnect()
       if (pixiAppRef.current === app) {
-        app.view.removeEventListener('mousemove', handleMouseMove)
         app.view.removeEventListener('click', handleClick)
+        app.view.removeEventListener('mousemove', handleMouseMove)
       }
     }
-  }, [resolution, mappedTextureData])
+  }, [isEdit, editIndex, setConfigUI, resolution])
 
   useEffect(() => {
     const app = pixiAppRef.current
@@ -279,6 +315,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
       app.ticker.speed = tickerSpeed
     }
   }, [tickerSpeed])
+
   useEffect(() => {
     const emitter = emitterRef.current
     if (!emitter) return
@@ -289,7 +326,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex justify-center items-center"
+      className={`w-full h-full flex justify-center items-center ${isEdit && editIndex !== undefined && 'cursor-crosshair'}`}
       style={{ touchAction: 'none' }}
     />
   )
