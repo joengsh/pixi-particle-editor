@@ -24,14 +24,10 @@ import {
   SpawnChanceControl,
 } from './emitterControls/EmitterControl'
 import {
-  AccelerationControl,
   AlphaControl,
   ColorControl,
-  RotationAccelerationControl,
-  RotationSpeedControl,
   ScaleControl,
   SpeedControl,
-  StartRotationControl,
 } from './ParticleControl'
 import { Separator } from '../ui/separator'
 import { EmitterTypeControl } from './emitterControls/EmitterTypeControl'
@@ -104,7 +100,12 @@ const ControlPanel = () => {
                   propName="minimumSpeedMultiplier"
                   step={0.05}
                 />
-                <AccelerationControl />
+                <DuoNumberControl
+                  labelName="Acceleration"
+                  propName="acceleration"
+                  subLabelName={['X', 'Y']}
+                  subPropName={['x', 'y']}
+                />
                 <NumberControl labelName="Max Speed" propName="maxSpeed" />
                 <Separator />
                 <ScaleControl />
@@ -116,9 +117,19 @@ const ControlPanel = () => {
                 <Separator />
                 <ColorControl />
                 <Separator />
-                <StartRotationControl />
-                <RotationSpeedControl />
-                <RotationAccelerationControl />
+                <DuoNumberControl
+                  labelName="Start Rotation"
+                  propName="startRotation"
+                  subLabelName={['Min', 'Max']}
+                  subPropName={['min', 'max']}
+                />
+                <DuoNumberControl
+                  labelName="Rotation Speed"
+                  propName="rotationSpeed"
+                  subLabelName={['Min', 'Max']}
+                  subPropName={['min', 'max']}
+                />
+                <NumberControl labelName="Rotation Acceleration" propName="rotationAcceleration" />
                 <SwitchControl labelName="No Rotation" propName="noRotation" />
                 <Separator />
                 <SelectControl
