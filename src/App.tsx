@@ -3,6 +3,7 @@ import './App.css'
 import { Activity, Layers } from 'lucide-react'
 import PixiCanvas from './components/PixiCanvas'
 import ControlPanel from './components/controls/ControlPanel'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 function App() {
   const [fps, setFps] = useState(0)
@@ -21,7 +22,7 @@ function App() {
   )
 
   return (
-    <>
+    <TooltipProvider>
       <div
         className={`h-screen flex flex-col md:flex-row bg-background overflow-hidden`}
       >
@@ -58,7 +59,7 @@ function App() {
           <ControlPanel />
         </div>
       </div>
-    </>
+    </TooltipProvider>
   )
 }
 

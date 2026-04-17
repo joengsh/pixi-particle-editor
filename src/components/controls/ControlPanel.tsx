@@ -26,12 +26,8 @@ import {
 import {
   AccelerationControl,
   AlphaControl,
-  BlendModeControl,
   ColorControl,
   LifetimeControl,
-  MinimumScaleMultiplierControl,
-  MinimumSpeedMultiplierControl,
-  NoRotationControl,
   RotationAccelerationControl,
   RotationSpeedControl,
   ScaleControl,
@@ -40,6 +36,10 @@ import {
 } from './ParticleControl'
 import { Separator } from '../ui/separator'
 import { EmitterTypeControl } from './emitterControls/EmitterTypeControl'
+import { NumberControl } from '../custom-ui/NumberControl'
+import { SelectControl } from '../custom-ui/SelectControl'
+import { SwitchControl } from '../custom-ui/SwitchControl'
+import { memo } from 'react'
 
 const ControlPanel = () => {
   return (
@@ -94,20 +94,34 @@ const ControlPanel = () => {
                 <AlphaControl />
                 <Separator />
                 <SpeedControl />
+                <NumberControl
+                  labelName="Minimum Speed Multiplier"
+                  propName="minimumSpeedMultiplier"
+                  step={0.05}
+                />
                 <AccelerationControl />
-                <MinimumSpeedMultiplierControl />
+                <NumberControl labelName="Max Speed" propName="maxSpeed" />
                 <Separator />
                 <ScaleControl />
-                <MinimumScaleMultiplierControl />
+                <NumberControl
+                  labelName="Minimum Scale Multiplier"
+                  propName="minimumScaleMultiplier"
+                  step={0.05}
+                />
                 <Separator />
                 <ColorControl />
                 <Separator />
                 <StartRotationControl />
                 <RotationSpeedControl />
                 <RotationAccelerationControl />
-                <NoRotationControl />
+                <SwitchControl labelName="No Rotation" propName="noRotation" />
                 <Separator />
-                <BlendModeControl />
+                <SelectControl
+                  propName="blendMode"
+                  labelName="Blend Mode"
+                  placeholder="Select blend mode"
+                  list={['normal', 'add', 'multiply', 'screen']}
+                />
               </AccordionContent>
             </AccordionItem>
 
@@ -165,4 +179,4 @@ const ControlPanel = () => {
   )
 }
 
-export default ControlPanel
+export default memo(ControlPanel)
