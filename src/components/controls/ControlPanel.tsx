@@ -88,20 +88,27 @@ const ControlPanel = () => {
                   labelName="Minimum Speed Multiplier"
                   propName="minimumSpeedMultiplier"
                   step={0.05}
+                  tooltip="A value between minimum speed multipler and 1 is randomly generated and multiplied with start speed and end speed to provide the actual start speed and end speed for each particle."
                 />
                 <DuoNumberControl
                   labelName="Acceleration"
                   propName="acceleration"
                   subLabelName={['X', 'Y']}
                   subPropName={['x', 'y']}
+                  tooltip="Acceleration of particles. Prevents using end speed. Without a rotation speed defined, particles will rotate to match movement direction"
                 />
-                <NumberControl labelName="Max Speed" propName="maxSpeed" />
+                <NumberControl
+                  labelName="Max Speed"
+                  propName="maxSpeed"
+                  tooltip="The maximum speed allowed on accelerating particles. If particles are not using Acceleration, use Start Speed and End Speed instead."
+                />
                 <Separator />
                 <NumberListControl labelName="Scale" propName="scale" />
                 <NumberControl
                   labelName="Minimum Scale Multiplier"
                   propName="minimumScaleMultiplier"
                   step={0.05}
+                  tooltip="A value between minimum scale multipler and 1 is randomly generated and multiplied with start scale and end scale to provide the actual start scale and end scale for each particle."
                 />
                 <Separator />
                 <ColorControl />
@@ -111,18 +118,25 @@ const ControlPanel = () => {
                   propName="startRotation"
                   subLabelName={['Min', 'Max']}
                   subPropName={['min', 'max']}
+                  tooltip="Angle at which particles are are pointed when emitted in degrees - 0 is to the right, 90 is down. This is ignored in 'arc' and 'burst' emission types"
                 />
                 <DuoNumberControl
                   labelName="Rotation Speed"
                   propName="rotationSpeed"
                   subLabelName={['Min', 'Max']}
                   subPropName={['min', 'max']}
+                  tooltip="Speed in degrees per second that particles rotate - Positive numbers are clockwise"
                 />
                 <NumberControl
                   labelName="Rotation Acceleration"
                   propName="rotationAcceleration"
+                  tooltip="Rotation acceleration of particles. Prevents using end speed."
                 />
-                <SwitchControl labelName="No Rotation" propName="noRotation" />
+                <SwitchControl
+                  labelName="No Rotation"
+                  propName="noRotation"
+                  tooltip="If particles should never rotate. A non-zero rotation speed will override this."
+                />
                 <Separator />
                 <SelectControl
                   propName="blendMode"
@@ -159,22 +173,30 @@ const ControlPanel = () => {
                   labelName="Frequency"
                   propName="frequency"
                   step={0.001}
+                  tooltip="Seconds between each particle being spawned"
                 />
                 <NumberControl
                   labelName="Max Particle"
                   propName="maxParticles"
                   step={100}
+                  tooltip="Maximum number of particles that can exist at once"
                 />
                 <NumberControl
                   labelName="Emitter Lifetime"
                   propName="emitterLifetime"
                   step={0.1}
+                  tooltip="Lifetime of the emitter in seconds before it disables itself. Values of 0 or -1 are infinite"
                 />
-                <SwitchControl labelName="Add at back" propName="addAtBack" />
+                <SwitchControl
+                  labelName="Add at back"
+                  propName="addAtBack"
+                  tooltip="If particles should be added to the back of the display list instead of the top"
+                />
                 <NumberControl
                   labelName="Spawn Chance"
                   propName="spawnChance"
                   step={0.05}
+                  tooltip="Chance whether the particle does actually spawn, range between 0 to 1"
                 />
                 <EmitterTypeControl />
               </AccordionContent>
