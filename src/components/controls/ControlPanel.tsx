@@ -16,19 +16,7 @@ import { LoadButton, SaveButton } from './GeneralControl'
 import TextureList from '../TextureList'
 import { TextureUpload } from './TextureControl'
 import ParticleTypeControl from './ParticleTypeControl'
-import {
-  AddAtBackControl,
-  EmitterLifetimeControl,
-  FrequencyControl,
-  MaxParticlesControl,
-  SpawnChanceControl,
-} from './emitterControls/EmitterControl'
-import {
-  AlphaControl,
-  ColorControl,
-  ScaleControl,
-  SpeedControl,
-} from './ParticleControl'
+import { ColorControl } from './ParticleControl'
 import { Separator } from '../ui/separator'
 import { EmitterTypeControl } from './emitterControls/EmitterTypeControl'
 import { NumberControl } from '../custom-ui/NumberControl'
@@ -36,6 +24,7 @@ import { SelectControl } from '../custom-ui/SelectControl'
 import { SwitchControl } from '../custom-ui/SwitchControl'
 import { memo } from 'react'
 import { DuoNumberControl } from '../custom-ui/DuoNumberControl'
+import { NumberListControl } from '../custom-ui/NumberListControl'
 
 const ControlPanel = () => {
   return (
@@ -92,9 +81,9 @@ const ControlPanel = () => {
                   subPropName={['min', 'max']}
                 />
                 <Separator />
-                <AlphaControl />
+                <NumberListControl labelName="Alpha" propName="alpha" />
                 <Separator />
-                <SpeedControl />
+                <NumberListControl labelName="Speed" propName="speed" />
                 <NumberControl
                   labelName="Minimum Speed Multiplier"
                   propName="minimumSpeedMultiplier"
@@ -108,7 +97,7 @@ const ControlPanel = () => {
                 />
                 <NumberControl labelName="Max Speed" propName="maxSpeed" />
                 <Separator />
-                <ScaleControl />
+                <NumberListControl labelName="Scale" propName="scale" />
                 <NumberControl
                   labelName="Minimum Scale Multiplier"
                   propName="minimumScaleMultiplier"
@@ -129,7 +118,10 @@ const ControlPanel = () => {
                   subLabelName={['Min', 'Max']}
                   subPropName={['min', 'max']}
                 />
-                <NumberControl labelName="Rotation Acceleration" propName="rotationAcceleration" />
+                <NumberControl
+                  labelName="Rotation Acceleration"
+                  propName="rotationAcceleration"
+                />
                 <SwitchControl labelName="No Rotation" propName="noRotation" />
                 <Separator />
                 <SelectControl
@@ -163,11 +155,27 @@ const ControlPanel = () => {
                 Emitter Properties
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-5">
-                <FrequencyControl />
-                <MaxParticlesControl />
-                <EmitterLifetimeControl />
-                <AddAtBackControl />
-                <SpawnChanceControl />
+                <NumberControl
+                  labelName="Frequency"
+                  propName="frequency"
+                  step={0.001}
+                />
+                <NumberControl
+                  labelName="Max Particle"
+                  propName="maxParticles"
+                  step={100}
+                />
+                <NumberControl
+                  labelName="Emitter Lifetime"
+                  propName="emitterLifetime"
+                  step={0.1}
+                />
+                <SwitchControl labelName="Add at back" propName="addAtBack" />
+                <NumberControl
+                  labelName="Spawn Chance"
+                  propName="spawnChance"
+                  step={0.05}
+                />
                 <EmitterTypeControl />
               </AccordionContent>
             </AccordionItem>
