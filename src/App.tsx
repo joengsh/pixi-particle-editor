@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import './App.css'
 import { Activity, Layers } from 'lucide-react'
 import PixiCanvas from './components/PixiCanvas'
@@ -8,10 +8,6 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 function App() {
   const [fps, setFps] = useState(0)
   const [particleCount, setParticleCount] = useState(0)
-  const canvasRef = useRef<{
-    restart: () => void
-    getParticleCount: () => number
-  }>(null)
 
   const handleStatsUpdate = useCallback(
     (newFps: number, newParticleCount: number) => {
