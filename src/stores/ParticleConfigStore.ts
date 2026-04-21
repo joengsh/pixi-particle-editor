@@ -1,7 +1,9 @@
 import type { ParticleConfigUI } from '@/types/particleConfigUIData'
 import { create } from 'zustand'
-import type { EmitterConfig } from 'pixi-particles'
-import type { ParticleArtConfig } from '@/types/particle/particleConfig'
+import type {
+  EmitterConfig,
+  ParticleArtConfig,
+} from '@/types/particle/particleConfig'
 import {
   configToArtConfig,
   configToEmitterConfig,

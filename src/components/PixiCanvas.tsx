@@ -7,6 +7,7 @@ import { useShallow } from 'zustand/shallow'
 import useTextureStore from '@/stores/TextureStore'
 import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
 import usePolygonChainEditStore from '@/stores/PolygonChainEditStore'
+import { Easing } from '@/lib/easing'
 
 const mapAnimatedArtTextures = (
   config: AnimatedArtConfig,
@@ -78,6 +79,36 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
       .filter((texture) => !!texture)
   }, [textureInstances, textureConfig])
 
+  const mappedEmitterConfig: particles.EmitterConfig = useMemo(() => {
+    return {
+      ...emitterConfig,
+      alpha: {
+        ...emitterConfig.alpha!,
+        ease: emitterConfig.alpha?.ease
+          ? Easing[emitterConfig.alpha.ease]()
+          : undefined,
+      },
+      scale: {
+        ...emitterConfig.scale!,
+        ease: emitterConfig.scale?.ease
+          ? Easing[emitterConfig.scale.ease]()
+          : undefined,
+      },
+      color: {
+        ...emitterConfig.color!,
+        ease: emitterConfig.color?.ease
+          ? Easing[emitterConfig.color.ease]()
+          : undefined,
+      },
+      speed: {
+        ...emitterConfig.speed!,
+        ease: emitterConfig.speed?.ease
+          ? Easing[emitterConfig.speed.ease]()
+          : undefined,
+      },
+    }
+  }, [emitterConfig])
+
   const containerRef = useRef<HTMLDivElement>(null)
   const pixiAppRef = useRef<PIXI.Application>(null)
   const emitterRef = useRef<particles.Emitter>(null)
@@ -144,7 +175,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     const emitter = new particles.Emitter(
       emitterContainer,
       mappedTextureData,
-      emitterConfig,
+      mappedEmitterConfig,
     )
     if (
       mappedTextureData.length > 0 &&
@@ -323,8 +354,8 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     const emitter = emitterRef.current
     if (!emitter) return
 
-    emitter.init(mappedTextureData, emitterConfig)
-  }, [emitterConfig])
+    emitter.init(mappedTextureData, mappedEmitterConfig)
+  }, [mappedEmitterConfig])
 
   return (
     <div
