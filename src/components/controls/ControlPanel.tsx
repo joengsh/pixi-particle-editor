@@ -187,6 +187,12 @@ const ControlPanel = () => {
                   step={0.1}
                   tooltip="Lifetime of the emitter in seconds before it disables itself. Values of 0 or -1 are infinite"
                 />
+                <NumberControl
+                  labelName="Particles Per Wave"
+                  propName="particlesPerWave"
+                  step={1}
+                  tooltip="Number of particles to spawn in each burst wave"
+                />
                 <SwitchControl
                   labelName="Add at back"
                   propName="addAtBack"

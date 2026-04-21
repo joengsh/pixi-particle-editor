@@ -189,8 +189,9 @@ const ParticleAnimatedTypeConfigItem = ({
 
 const ParticleAnimatedTypeControl = () => {
   const animationList = useTextureStore((state) => state.animationList)
-  const configUI = useParticleConfigStore(useShallow((state) => state.configUI))
-  const particleType = useMemo(() => configUI.particleType, [configUI])
+  const particleType = useParticleConfigStore(
+    useShallow((state) => state.configUI.particleType),
+  )
   const setConfigUI = useParticleConfigStore(
     useShallow((state) => state.setConfigUI),
   )
@@ -208,14 +209,20 @@ const ParticleAnimatedTypeControl = () => {
       loop: boolean,
     ) => {
       setConfigUI((configUI) => {
-        const newParticleType = { ...configUI.particleType }
         const data: AnimationParticleArtData = {
           animationName,
           ranges,
           framerate,
           loop,
         }
-        ;(newParticleType.art as AnimationParticleArtData[]).push(data)
+        const newArts = [
+          ...configUI.particleType.art,
+        ] as AnimationParticleArtData[]
+        newArts.push(data)
+        const newParticleType: ParticleTypeData = {
+          type: 'animated',
+          art: newArts,
+        }
         return {
           ...configUI,
           particleType: newParticleType,
@@ -231,8 +238,14 @@ const ParticleAnimatedTypeControl = () => {
   const onRemove = useCallback(
     (index: number) => {
       setConfigUI((configUI) => {
-        const newParticleType = { ...configUI.particleType }
-        newParticleType.art.splice(index, 1)
+        const newArts = [
+          ...configUI.particleType.art,
+        ] as AnimationParticleArtData[]
+        newArts.splice(index, 1)
+        const newParticleType: ParticleTypeData = {
+          type: 'animated',
+          art: newArts,
+        }
         return {
           ...configUI,
           particleType: newParticleType,
@@ -252,12 +265,20 @@ const ParticleAnimatedTypeControl = () => {
     ) => {
       if (index !== undefined) {
         setConfigUI((configUI) => {
-          const newParticleType = { ...configUI.particleType }
-          const data = newParticleType.art[index] as AnimationParticleArtData
-          data.animationName = animationName
-          data.framerate = framerate
-          data.loop = loop
-          data.ranges = ranges
+          const data: AnimationParticleArtData = {
+            animationName,
+            ranges,
+            framerate,
+            loop,
+          }
+          const newArts = [
+            ...configUI.particleType.art,
+          ] as AnimationParticleArtData[]
+          newArts[index] = data
+          const newParticleType: ParticleTypeData = {
+            type: 'animated',
+            art: newArts,
+          }
           return {
             ...configUI,
             particleType: newParticleType,

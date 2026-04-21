@@ -53,7 +53,7 @@ Tasks
   - [] customEase
 - [*] add particle texture settings
   - [] OrderedTexture
-  - [] range index quantity
+  - [x] range index quantity
   - [x] RandomTexture
   - [x] RandomAnimatedTexture
   - [x] SingleTexture
@@ -74,5 +74,5 @@ Tasks
 
 ## extra
 
-- [] add tooltip when hover field
+- [*] add tooltip when hover field
 - [] add readme/ doc

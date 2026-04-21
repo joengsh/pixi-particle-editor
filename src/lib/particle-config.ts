@@ -78,6 +78,7 @@ export const DEFAULT_CONFIG: ParticleConfigUI = {
   rotationAcceleration: 0,
   spawnChance: 1,
   emit: true,
+  particlesPerWave: 1,
 }
 
 export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
@@ -114,11 +115,11 @@ export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
     pos: config.pos,
     addAtBack: config.addAtBack,
     spawnChance: config.spawnChance,
+    particlesPerWave: config.particlesPerWave,
   }
   emitterConfig.spawnType = config.emitterType.type
   switch (config.emitterType.type) {
     case 'burst':
-      emitterConfig.particlesPerWave = config.emitterType.particlesPerWave
       emitterConfig.particleSpacing = config.emitterType.particleSpacing
       emitterConfig.angleStart = config.emitterType.angleStart
       break
@@ -193,7 +194,7 @@ export function getTextureListFromAnimationName(
   textureList: string[],
 ) {
   const indexRanges = ranges.replace(/\s/g, '').split(',')
-  const output = []
+  const output: string[] | { texture: string; count: number }[] = []
   function findTexture(range: string | number) {
     const regex = new RegExp(`${animationName}(-|_)?([0]*${range})`)
     const result = textureList.filter((textureName) => textureName.match(regex))
@@ -217,9 +218,11 @@ export function getTextureListFromAnimationName(
         return aIndex - bIndex
       })
   } else {
+    const withCount = ranges.match(/(\d+){(\d+)}/) !== null
     for (const range of indexRanges) {
-      const indices = range.split('-').map((str) => parseInt(str, 10))
-      if (indices.length > 1) {
+      const splits = range.split('-')
+      if (splits.length > 1) {
+        const indices = splits.map((str) => parseInt(str, 10))
         const isAscending = indices[1] >= indices[0]
         for (
           let i = indices[0];
@@ -228,13 +231,40 @@ export function getTextureListFromAnimationName(
         ) {
           const texture = findTexture(i)
           if (texture) {
-            output.push(texture)
+            if (withCount) {
+              ;(output as { texture: string; count: number }[]).push({
+                texture,
+                count: 1,
+              })
+            } else {
+              ;(output as string[]).push(texture)
+            }
           }
         }
       } else {
-        const texture = findTexture(range)
-        if (texture) {
-          output.push(texture)
+        const match = range.match(/(\d+){(\d+)}/)
+        if (match) {
+          const index = match[1]
+          const count = match[2]
+          const texture = findTexture(index)
+          if (texture) {
+            ;(output as { texture: string; count: number }[]).push({
+              texture,
+              count: parseInt(count, 10),
+            })
+          }
+        } else {
+          const texture = findTexture(range)
+          if (texture) {
+            if (withCount) {
+              ;(output as { texture: string; count: number }[]).push({
+                texture,
+                count: 1,
+              })
+            } else {
+              ;(output as string[]).push(texture)
+            }
+          }
         }
       }
     }

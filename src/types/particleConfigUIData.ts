@@ -63,7 +63,6 @@ const RingEmitterTypeSchema = z.object({
 const BurstEmitterTypeSchema = z.object({
   type: z.literal('burst'),
   particleSpacing: z.number(),
-  particlesPerWave: z.number(),
   angleStart: z.number(),
 })
 
@@ -119,6 +118,7 @@ export const ParticleConfigUISchema = z.object({
   addAtBack: z.boolean(),
   pos: BasicPointSchema,
   emit: z.boolean(),
+  particlesPerWave: z.number().default(1),
 })
 
 export type ParticleConfigUI = z.infer<typeof ParticleConfigUISchema>

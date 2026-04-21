@@ -263,11 +263,10 @@ export const EmitterTypeBurstControl = ({
   emitterType,
   setConfigUI,
 }: EmitterTypeSpawnControlProps) => {
-  const { particleSpacing, particlesPerWave, angleStart } = useMemo(() => {
+  const { particleSpacing, angleStart } = useMemo(() => {
     if (emitterType.type === 'burst') {
       return {
         particleSpacing: emitterType.particleSpacing,
-        particlesPerWave: emitterType.particlesPerWave,
         angleStart: emitterType.angleStart,
       }
     } else {
@@ -278,11 +277,10 @@ export const EmitterTypeBurstControl = ({
   }, [emitterType])
 
   const updateSpawnBurst = useCallback(
-    (particleSpacing: number, particlesPerWave: number, angleStart: number) => {
+    (particleSpacing: number, angleStart: number) => {
       const newEmitterType: EmitterSpawnType = {
         type: 'burst',
         particleSpacing,
-        particlesPerWave,
         angleStart,
       }
       setConfigUI((configUI) => ({
@@ -302,26 +300,7 @@ export const EmitterTypeBurstControl = ({
           className="flex-1 h-8 p-0.5 cursor-pointer"
           value={particleSpacing}
           onChange={(e) =>
-            updateSpawnBurst(
-              parseFloat(e.target.value),
-              particlesPerWave,
-              angleStart,
-            )
-          }
-        />
-      </div>
-      <div className="flex flex-1 items-center gap-3">
-        <Label className="text-xs">Particles Per Wave:</Label>
-        <Input
-          type="number"
-          className="flex-1 h-8 p-0.5 cursor-pointer"
-          value={particlesPerWave}
-          onChange={(e) =>
-            updateSpawnBurst(
-              particleSpacing,
-              parseFloat(e.target.value),
-              angleStart,
-            )
+            updateSpawnBurst(parseFloat(e.target.value), angleStart)
           }
         />
       </div>
@@ -332,11 +311,7 @@ export const EmitterTypeBurstControl = ({
           className="flex-1 h-8 p-0.5 cursor-pointer"
           value={angleStart}
           onChange={(e) =>
-            updateSpawnBurst(
-              particleSpacing,
-              particlesPerWave,
-              parseFloat(e.target.value),
-            )
+            updateSpawnBurst(particleSpacing, parseFloat(e.target.value))
           }
         />
       </div>
@@ -385,7 +360,6 @@ export const EmitterTypeControl = () => {
           newEmitterType = {
             type,
             particleSpacing: 0,
-            particlesPerWave: 50,
             angleStart: 0,
           }
           break
