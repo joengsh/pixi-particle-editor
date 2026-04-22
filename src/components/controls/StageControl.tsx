@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import useStageConfigStore from '@/stores/StageConfigStore'
 import { useShallow } from 'zustand/shallow'
 import { ImagePlus, X } from 'lucide-react'
+import { Switch } from '../ui/switch'
 
 export const ResolutionControl = () => {
   const [resolution, setResolution] = useStageConfigStore(
@@ -193,6 +194,23 @@ export const ContainerPosControl = () => {
           />
         </div>
       </div>
+    </div>
+  )
+}
+
+export const FixSpawnPosControl = () => {
+  const [fixSpawnPos, setFixSpawnPos] = useStageConfigStore(
+    useShallow((state) => [state.fixSpawnPos, state.setFixSpawnPos]),
+  )
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Fix Spawn Pos:</Label>
+      <Switch
+        defaultChecked={fixSpawnPos}
+        className="h-8 p-0.5 cursor-pointer"
+        checked={fixSpawnPos}
+        onCheckedChange={(checked) => setFixSpawnPos(checked)}
+      />
     </div>
   )
 }

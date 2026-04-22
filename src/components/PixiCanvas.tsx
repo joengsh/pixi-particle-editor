@@ -54,6 +54,10 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     useShallow((state) => state.containerPos),
   )
 
+  const fixSpawnPos = useStageConfigStore(
+    useShallow((state) => state.fixSpawnPos),
+  )
+
   const [emitterConfig, textureConfig, setConfigUI] = useParticleConfigStore(
     useShallow((state) => [
       state.emitterConfig,
@@ -288,7 +292,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     resizeObserver.observe(container)
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (isEdit && editIndex !== undefined) {
+      if (fixSpawnPos || (isEdit && editIndex !== undefined)) {
         emitter.updateSpawnPos(0, 0)
       } else {
         const rect = app.view.getBoundingClientRect()
@@ -344,7 +348,14 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
         app.view.removeEventListener('mousemove', handleMouseMove)
       }
     }
-  }, [isEdit, editIndex, setConfigUI, resolution, mappedTextureData])
+  }, [
+    fixSpawnPos,
+    isEdit,
+    editIndex,
+    setConfigUI,
+    resolution,
+    mappedTextureData,
+  ])
 
   useEffect(() => {
     const app = pixiAppRef.current

@@ -7,6 +7,7 @@ export const ProjectDataSchema = z.object({
   resolution: z.tuple([z.number(), z.number()]),
   tickerSpeed: z.number(),
   containerPos: z.tuple([z.number(), z.number()]).default([0, 0]),
+  fixSpawnPos: z.boolean().default(false),
 })
 
 export type ProjectData = z.infer<typeof ProjectDataSchema>

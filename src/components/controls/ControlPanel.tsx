@@ -10,6 +10,7 @@ import {
   BackgroundScaleControl,
   BackgroundTextureControl,
   ContainerPosControl,
+  FixSpawnPosControl,
   ResolutionControl,
   TickerSpeedControl,
 } from './StageControl'
@@ -220,6 +221,7 @@ const ControlPanel = () => {
               <AccordionContent className="p-4 space-y-4">
                 <ResolutionControl />
                 <ContainerPosControl />
+                <FixSpawnPosControl />
                 <BackgroundColorControl />
                 <BackgroundTextureControl />
                 <BackgroundScaleControl />
