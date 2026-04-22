@@ -9,6 +9,7 @@ import {
   BackgroundColorControl,
   BackgroundScaleControl,
   BackgroundTextureControl,
+  ContainerPosControl,
   ResolutionControl,
   TickerSpeedControl,
 } from './StageControl'
@@ -218,6 +219,7 @@ const ControlPanel = () => {
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-4">
                 <ResolutionControl />
+                <ContainerPosControl />
                 <BackgroundColorControl />
                 <BackgroundTextureControl />
                 <BackgroundScaleControl />

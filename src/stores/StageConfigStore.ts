@@ -6,6 +6,7 @@ export type StageConfigStoreState = {
   resolution: [number, number]
   backgroundScale: number
   tickerSpeed: number
+  containerPos: [number, number]
 }
 
 export type StageConfigStoreAction = {
@@ -14,6 +15,7 @@ export type StageConfigStoreAction = {
   setResolution: (value: [number, number]) => void
   setBackgroundScale: (value: number) => void
   setTickerSpeed: (value: number) => void
+  setContainerPos: (values: [number, number]) => void
 }
 
 export type StageConfigStore = StageConfigStoreState & StageConfigStoreAction
@@ -25,6 +27,7 @@ const useStageConfigStore = create<StageConfigStore>((set) => ({
   resolution: [1920, 1080],
   backgroundScale: 1,
   tickerSpeed: 1,
+  containerPos: [0, 0],
   setBackgroundColor: (color) => set(() => ({ backgroundColor: color })),
   setBackgroundTextureUrl: (url) => set(() => ({ backgroundTextureUrl: url })),
   setResolution: (value: [number, number]) =>
@@ -32,6 +35,8 @@ const useStageConfigStore = create<StageConfigStore>((set) => ({
   setBackgroundScale: (value: number) =>
     set(() => ({ backgroundScale: value })),
   setTickerSpeed: (value: number) => set(() => ({ tickerSpeed: value })),
+  setContainerPos: (values: [number, number]) =>
+    set(() => ({ containerPos: values })),
 }))
 
 export default useStageConfigStore

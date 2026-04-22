@@ -50,6 +50,9 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   const tickerSpeed = useStageConfigStore(
     useShallow((state) => state.tickerSpeed),
   )
+  const containerPos = useStageConfigStore(
+    useShallow((state) => state.containerPos),
+  )
 
   const [emitterConfig, textureConfig, setConfigUI] = useParticleConfigStore(
     useShallow((state) => [
@@ -272,7 +275,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
       app.renderer.resize(resolution[0], resolution[1])
       rootContainer.x = resolution[0] / 2
       rootContainer.y = resolution[1] / 2
-      emitter.updateOwnerPos(0, 0)
+      emitter.updateSpawnPos(0, 0)
 
       const scaleX = newWidth / resolution[0]
       const scaleY = newHeight / resolution[1]
@@ -286,7 +289,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
 
     const handleMouseMove = (e: MouseEvent) => {
       if (isEdit && editIndex !== undefined) {
-        emitter.updateOwnerPos(0, 0)
+        emitter.updateSpawnPos(0, 0)
       } else {
         const rect = app.view.getBoundingClientRect()
         const scaleX = resolution[0] / rect.width
@@ -295,7 +298,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
 
         const x = (e.clientX - rect.left) * scale - resolution[0] / 2
         const y = (e.clientY - rect.top) * scale - resolution[1] / 2
-        emitter.updateOwnerPos(x, y)
+        emitter.updateSpawnPos(x, y)
       }
     }
     const handleClick = (e: MouseEvent) => {
@@ -356,6 +359,14 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
 
     emitter.init(mappedTextureData, mappedEmitterConfig)
   }, [mappedEmitterConfig])
+
+  useEffect(() => {
+    const container = emitterContainerRef.current
+    if (container) {
+      container.x = containerPos[0]
+      container.y = containerPos[1]
+    }
+  }, [containerPos])
 
   return (
     <div
