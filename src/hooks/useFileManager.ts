@@ -2,7 +2,10 @@
 import JSZip from 'jszip'
 import useStageConfigStore from '@/stores/StageConfigStore'
 import { useCallback } from 'react'
-import { ProjectStageDataSchema, type ProjectStageData } from '@/types/projectStageData'
+import {
+  ProjectStageDataSchema,
+  type ProjectStageData,
+} from '@/types/projectStageData'
 import { showOpenFilePicker, showSaveFilePicker } from '@/lib/file'
 import useTextureStore from '@/stores/TextureStore'
 import { useShallow } from 'zustand/shallow'
