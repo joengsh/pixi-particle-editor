@@ -1,6 +1,6 @@
 import z from 'zod'
 
-export const ProjectDataSchema = z.object({
+export const ProjectStageDataSchema = z.object({
   backgroundColor: z.string(),
   backgroundScale: z.number(),
   backgroundTextureUrl: z.string().nullable(),
@@ -10,4 +10,4 @@ export const ProjectDataSchema = z.object({
   fixSpawnPos: z.boolean().default(false),
 })
 
-export type ProjectData = z.infer<typeof ProjectDataSchema>
+export type ProjectStageData = z.infer<typeof ProjectStageDataSchema>

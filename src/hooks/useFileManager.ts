@@ -2,7 +2,7 @@
 import JSZip from 'jszip'
 import useStageConfigStore from '@/stores/StageConfigStore'
 import { useCallback } from 'react'
-import { ProjectDataSchema, type ProjectData } from '@/types/projectData'
+import { ProjectStageDataSchema, type ProjectStageData } from '@/types/projectStageData'
 import { showOpenFilePicker, showSaveFilePicker } from '@/lib/file'
 import useTextureStore from '@/stores/TextureStore'
 import { useShallow } from 'zustand/shallow'
@@ -45,7 +45,7 @@ const useFileManager = () => {
       containerPos,
       fixSpawnPos,
     } = stageConfigStore
-    const data: ProjectData = {
+    const data: ProjectStageData = {
       backgroundColor,
       backgroundScale,
       backgroundTextureUrl,
@@ -54,7 +54,7 @@ const useFileManager = () => {
       containerPos,
       fixSpawnPos,
     }
-    const projectData = ProjectDataSchema.parse(data)
+    const projectStageData = ProjectStageDataSchema.parse(data)
     const particleData = {
       emitterConfig,
       textureConfig,
@@ -69,7 +69,7 @@ const useFileManager = () => {
         zip.file(`${fileName}.png`, blob)
       }
 
-      const json = JSON.stringify(projectData, null, 2)
+      const json = JSON.stringify(projectStageData, null, 2)
       zip.file('project.json', json)
 
       const particleJson = JSON.stringify(particleData, null, 2)
@@ -146,20 +146,20 @@ const useFileManager = () => {
 
       const jsonText = await zip.files['project.json'].async('string')
       const data = JSON.parse(jsonText)
-      const projectData = ProjectDataSchema.parse(data)
+      const projectStageData = ProjectStageDataSchema.parse(data)
 
       // set stage config
-      setBackgroundColor(projectData.backgroundColor)
-      setBackgroundScale(projectData.backgroundScale)
-      if (projectData.backgroundTextureUrl) {
-        setBackgroundTextureUrl(projectData.backgroundTextureUrl)
+      setBackgroundColor(projectStageData.backgroundColor)
+      setBackgroundScale(projectStageData.backgroundScale)
+      if (projectStageData.backgroundTextureUrl) {
+        setBackgroundTextureUrl(projectStageData.backgroundTextureUrl)
       } else {
         setBackgroundTextureUrl(null)
       }
-      setResolution(projectData.resolution)
-      setTickerSpeed(projectData.tickerSpeed)
-      setContainerPos(projectData.containerPos)
-      setFixSpawnPos(projectData.fixSpawnPos)
+      setResolution(projectStageData.resolution)
+      setTickerSpeed(projectStageData.tickerSpeed)
+      setContainerPos(projectStageData.containerPos)
+      setFixSpawnPos(projectStageData.fixSpawnPos)
 
       const configJsonText = await zip.files['config.json'].async('string')
       const configData = JSON.parse(configJsonText)
