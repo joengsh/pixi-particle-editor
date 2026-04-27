@@ -11,7 +11,8 @@ import {
 } from '@/lib/particle-config'
 import useTextureStore from './TextureStore'
 
-type ProjectData = {
+export type ProjectData = {
+  id: string
   name: string
   configUI: ParticleConfigUI
   emitterConfig: EmitterConfig
@@ -24,13 +25,14 @@ export type ProjectStoreState = {
 }
 
 export type ProjectStoreAction = {
-  renameProject: (project: ProjectData, newName: string) => void
+  renameProject: (id: string, newName: string) => void
   addProject: () => void
-  removeProject: (projectName: string) => void
+  removeProject: (id: string) => void
   updateProjectConfig: (
-    name: string,
+    id: string,
     fn: (configUI: ParticleConfigUI) => ParticleConfigUI,
   ) => void
+  selectProject: (id: string) => void
 }
 
 export type ProjectStore = ProjectStoreState & ProjectStoreAction
@@ -38,7 +40,8 @@ export type ProjectStore = ProjectStoreState & ProjectStoreAction
 // Create your store, which includes both state and (optionally) actions
 const useProjectStore = create<ProjectStore>((set) => ({
   projects: {
-    particle: {
+    default: {
+      id: 'default',
       name: 'particle',
       configUI: DEFAULT_CONFIG,
       emitterConfig: configToEmitterConfig(DEFAULT_CONFIG),
@@ -48,36 +51,36 @@ const useProjectStore = create<ProjectStore>((set) => ({
       ),
     },
   },
-  currentProject: 'particle',
-  renameProject: (project, newName) => {
-    const oldName = project.name
+  currentProject: 'default',
+  renameProject: (id, newName) => {
     set((state) => {
       const newProjects = { ...state.projects }
-      if (newProjects[oldName]) {
-        delete newProjects[oldName]
-      }
-      newProjects[newName] = {
+      const project = newProjects[id]
+      newProjects[id] = {
         ...project,
         name: newName,
       }
       return {
         projects: newProjects,
-        currentProject:
-          state.currentProject === oldName ? newName : state.currentProject,
       }
     })
   },
   addProject: () => {
     set((state) => {
       let index = 0
-      while (state.projects[`particle${index ? `_${index}` : ''}`]) {
+      const projectNames = Object.values(state.projects).map(
+        (project) => project.name,
+      )
+      while (projectNames.includes(`particle${index ? `_${index}` : ''}`)) {
         index++
       }
       const projectName = `particle${index ? `_${index}` : ''}`
+      const uuid = crypto.randomUUID()
       return {
         projects: {
           ...state.projects,
-          [projectName]: {
+          [uuid]: {
+            id: uuid,
             name: projectName,
             configUI: DEFAULT_CONFIG,
             emitterConfig: configToEmitterConfig(DEFAULT_CONFIG),
@@ -90,40 +93,51 @@ const useProjectStore = create<ProjectStore>((set) => ({
       }
     })
   },
-  removeProject: (name) => {
+  removeProject: (id) => {
     set((state) => {
       const newProjects = { ...state.projects }
-      if (newProjects[name]) {
-        delete newProjects[name]
+      if (newProjects[id]) {
+        delete newProjects[id]
       }
       return {
         projects: newProjects,
         currentProject:
-          state.currentProject === name
+          state.currentProject === id
             ? Object.keys(newProjects)[0]
             : state.currentProject,
       }
     })
   },
-  updateProjectConfig: (name, fn) => {
+  selectProject: (id) => {
     set((state) => {
-      const newProjects = { ...state.projects }
-      if (!newProjects[name]) {
+      if (!state.projects[id]) {
         return state
       }
-      const newConfigUI = fn(newProjects[name].configUI)
+      return {
+        currentProject: id,
+      }
+    })
+  },
+  updateProjectConfig: (id, fn) => {
+    set((state) => {
+      const newProjects = { ...state.projects }
+      const project = newProjects[id]
+      if (!project) {
+        return state
+      }
+      const newConfigUI = fn(newProjects[id].configUI)
       const newEmitterConfig = configToEmitterConfig(newConfigUI)
       const newTextureConfig = configToArtConfig(
         newConfigUI,
         Object.keys(useTextureStore.getState().textureData),
       )
       const newProject = {
-        name: name,
+        ...project,
         configUI: newConfigUI,
         emitterConfig: newEmitterConfig,
         textureConfig: newTextureConfig,
       }
-      newProjects[name] = newProject
+      newProjects[id] = newProject
       return {
         projects: newProjects,
       }
