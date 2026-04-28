@@ -26,7 +26,7 @@ export type ProjectStoreState = {
 
 export type ProjectStoreAction = {
   renameProject: (id: string, newName: string) => void
-  addProject: () => void
+  addProject: (project: Omit<ProjectData, 'id'> | undefined) => void
   removeProject: (id: string) => void
   updateProjectConfig: (
     id: string,
@@ -65,30 +65,36 @@ const useProjectStore = create<ProjectStore>((set) => ({
       }
     })
   },
-  addProject: () => {
+  addProject: (project) => {
     set((state) => {
       let index = 0
       const projectNames = Object.values(state.projects).map(
         (project) => project.name,
       )
-      while (projectNames.includes(`particle${index ? `_${index}` : ''}`)) {
+      while (
+        projectNames.includes(
+          `${project ? project.name : 'particle'}${index ? `_${index}` : ''}`,
+        )
+      ) {
         index++
       }
       const projectName = `particle${index ? `_${index}` : ''}`
       const uuid = crypto.randomUUID()
+      const newProject = {
+        id: uuid,
+        name: projectName,
+        configUI: DEFAULT_CONFIG,
+        emitterConfig: configToEmitterConfig(DEFAULT_CONFIG),
+        textureConfig: configToArtConfig(
+          DEFAULT_CONFIG,
+          Object.keys(useTextureStore.getState().textureData),
+        ),
+        ...project,
+      }
       return {
         projects: {
           ...state.projects,
-          [uuid]: {
-            id: uuid,
-            name: projectName,
-            configUI: DEFAULT_CONFIG,
-            emitterConfig: configToEmitterConfig(DEFAULT_CONFIG),
-            textureConfig: configToArtConfig(
-              DEFAULT_CONFIG,
-              Object.keys(useTextureStore.getState().textureData),
-            ),
-          },
+          [uuid]: newProject,
         },
       }
     })

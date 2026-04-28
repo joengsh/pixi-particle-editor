@@ -3,7 +3,11 @@ import type {
   EmitterConfig,
   ParticleArtConfig,
 } from '@/types/particle/particleConfig'
-import type { ParticleConfigUI } from '@/types/particleConfigUIData'
+import type {
+  EmitterSpawnType,
+  ParticleConfigUI,
+  ParticleTypeData,
+} from '@/types/particleConfigUIData'
 
 export const DEFAULT_PARTICLE_IMAGE_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAQAAAC0jZKKAAACPElEQVR4AbXXcW/TMBAF8EtCypa1LCDB9/98ILG1dKNNCOZZT8h6N4562eZTzH8/ni6dfWns4kqtvbMOT2tmv+0XasG/F1aTLFxd5lDcCS8o0tyX58K9bVA9WZe40LNNqLkevrJr1HvrC1vgQoM820/UqQZubQBKWDKjDJjP+wg41/J/eAOQsGb2rWDlvKzMTyEMaJvBIHNpBdswOfhoZ4VL2h3Irc+srSiJPYv9B1Mr3IHcCS2ZJTFf2+RZ1NEWD5PF7mmQ/nfs85I9klb4KrNCa2YkZitcXmVZpwL3zFtwpYH6l3cWtqDMPP+Fb+zWPthW6BvUIJmZuOTN7APqKOjB9vZAuAM6ArvFE9CSeI5Y1B7PPfAFMPKMKMWVZmbCzKusoveoKcODjQDzgx3c6GnUFnADOAFGV5V16B7PI2BkBRjgmf4IWBbYu8I6lPuhSa2w4xP8k7CF/l5Q7HuiZW9ST+wpjgKLvP9ed6gAJXztWcG/2CaAJ/tKlJSnm7RTTHHATQAnwAFKWCn/H3y2eH2L2ZfDIf06rXD8m768l//cAvzN/kBe709a8cPFQ4jXFA8hHpvVh1D9scmrqfbYrD/oO0s5caYrDvraqwlwW3811V6mvXUrLtOq6x+NYCt0vIqv/2hgcUPWqoFFRixlB9tEIxZHWKHJLmuGQraifijUMTbIq63QzDLGrh+8wVYO3rI6nzdohc+81H3cDHiijxvNfAJ9Wv855hJL5nnlB2Tw8ojzC7UelrXqk/cPn233eGpGsfAAAAAASUVORK5CYII='
@@ -79,6 +83,8 @@ export const DEFAULT_CONFIG: ParticleConfigUI = {
   emit: true,
   particlesPerWave: 1,
 }
+
+/***************** convert ui config to emitterConfig and textureConfig *******************/
 
 export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
   const emitterConfig: EmitterConfig = {
@@ -257,4 +263,199 @@ export function getTextureListFromAnimationName(
     }
   }
   return output
+}
+
+/***************** convert emitterConfig and textureConfig back to ui *******************/
+
+export function convertParticleConfigToConfigUI(
+  emitterConfig: EmitterConfig,
+  textureConfig: ParticleArtConfig,
+): ParticleConfigUI {
+  const config: ParticleConfigUI = {
+    alpha: emitterConfig.alpha!,
+    scale: emitterConfig.scale!,
+    minimumScaleMultiplier: emitterConfig.minimumScaleMultiplier || 0,
+    color: emitterConfig.color!,
+    speed: emitterConfig.speed!,
+    minimumSpeedMultiplier: emitterConfig.minimumSpeedMultiplier || 0,
+    acceleration: emitterConfig.acceleration!,
+    maxSpeed: emitterConfig.maxSpeed || 0,
+    startRotation: emitterConfig.startRotation!,
+    noRotation: emitterConfig.noRotation,
+    rotationAcceleration: emitterConfig.rotationAcceleration!,
+    rotationSpeed: emitterConfig.rotationSpeed!,
+    lifetime: emitterConfig.lifetime,
+    blendMode: emitterConfig.blendMode!,
+    frequency: emitterConfig.frequency,
+    emitterLifetime: emitterConfig.emitterLifetime!,
+    maxParticles: emitterConfig.maxParticles!,
+    addAtBack: emitterConfig.addAtBack || false,
+    spawnChance: emitterConfig.spawnChance || 1,
+    particlesPerWave: emitterConfig.particlesPerWave || 1,
+    emitterType: convertEmitterTypeToUI(emitterConfig),
+    particleType: convertParticleTypeToUI(textureConfig, emitterConfig),
+    emit: true,
+    pos: { x: 0, y: 0 },
+  }
+
+  return config
+}
+
+function convertEmitterTypeToUI(
+  emitterConfig: EmitterConfig,
+): EmitterSpawnType {
+  const type = emitterConfig.spawnType
+
+  switch (type) {
+    case 'burst':
+      return {
+        type: 'burst',
+        particleSpacing: emitterConfig.particleSpacing ?? 0,
+        angleStart: emitterConfig.angleStart ?? 0,
+      } as EmitterSpawnType
+
+    case 'circle':
+    case 'ring':
+      return {
+        type,
+        spawnCircle: emitterConfig.spawnCircle,
+      } as EmitterSpawnType
+
+    case 'polygonalChain':
+      return {
+        type: 'polygonalChain',
+        spawnPolygon: emitterConfig.spawnPolygon ?? [],
+      } as EmitterSpawnType
+
+    case 'rect':
+      return {
+        type: 'rect',
+        spawnRect: emitterConfig.spawnRect,
+      } as EmitterSpawnType
+
+    case 'point':
+    default:
+      return {
+        type: 'point',
+      } as EmitterSpawnType
+  }
+}
+
+function convertParticleTypeToUI(
+  textureConfig: ParticleArtConfig,
+  emitterConfig: EmitterConfig,
+): ParticleTypeData {
+  // basic particle
+  if (Array.isArray(textureConfig) === false) {
+    return {
+      type: 'basic',
+      art: textureConfig as string[],
+      orderedArt: emitterConfig.orderedArt ?? false,
+    }
+  }
+
+  // animated particle
+  return {
+    type: 'animated',
+    art: (textureConfig as AnimatedArtConfig[]).map((entry) => {
+      // get texture list
+      const textures = getTextureListFromTextureConfigArtData(entry.textures)
+      return {
+        animationName: inferAnimationName(textures),
+        ranges: inferRanges(textures),
+
+        loop: entry.loop,
+        framerate:
+          typeof entry.framerate === 'number'
+            ? String(entry.framerate)
+            : 'matchLife',
+      }
+    }),
+  }
+}
+
+export function getTextureListFromTextureConfigArtData(
+  textures: string[] | { texture: string; count: number }[],
+): string[] {
+  if (textures.length === 0) return []
+
+  if (typeof textures[0] === 'string') {
+    return textures as string[]
+  } else {
+    return (textures as { texture: string; count: number }[]).reduce(
+      (result, data) => [
+        ...result,
+        ...new Array(data.count).fill(null).map(() => data.texture),
+      ],
+      [] as string[],
+    )
+  }
+}
+
+function inferAnimationName(textures: string[]): string {
+  if (textures.length === 0) return ''
+
+  // Strip trailing index: explosion_001 → explosion
+  const match = textures[0].match(/^(.*?)([-_]?0*\d+)$/)
+  return match ? match[1] : textures[0]
+}
+
+export function inferRanges(textures: string[]): string {
+  if (textures.length === 0) return ''
+
+  // Matches: prefix_001, prefix-12, prefix3
+  const indexRegex = /^(.*?)(?:[-_]?)(\d+)$/
+
+  // Extract indices (in original order)
+  const indices: number[] = []
+
+  for (const texture of textures) {
+    const match = texture.match(indexRegex)
+    if (!match) {
+      throw new Error(`Invalid texture format: ${texture}`)
+    }
+    indices.push(parseInt(match[2], 10))
+  }
+
+  const ranges: string[] = []
+
+  let i = 0
+  while (i < indices.length) {
+    const start = indices[i]
+
+    // 1️⃣ Count repeated textures (same index)
+    let repeatCount = 1
+    while (
+      i + repeatCount < indices.length &&
+      indices[i + repeatCount] === start
+    ) {
+      repeatCount++
+    }
+
+    if (repeatCount > 1) {
+      ranges.push(`${start}{${repeatCount}}`)
+      i += repeatCount
+      continue
+    }
+
+    // 2️⃣ Detect ascending range
+    let end = start
+    let j = i + 1
+
+    while (j < indices.length && indices[j] === end + 1) {
+      end = indices[j]
+      j++
+    }
+
+    if (end > start) {
+      ranges.push(`${start}-${end}`)
+      i = j
+    } else {
+      // 3️⃣ Single index
+      ranges.push(String(start))
+      i++
+    }
+  }
+
+  return ranges.join(',')
 }

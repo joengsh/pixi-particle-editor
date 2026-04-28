@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import type { StageConfigStore } from '@/stores/StageConfigStore'
+import {
+  ProjectStageDataSchema,
+  type ProjectStageData,
+} from '@/types/projectStageData'
+import type JSZip from 'jszip'
+import type { ProjectData } from '@/stores/ProjectStore'
+
 // Polyfill for showOpenFilePicker
 async function showOpenFilePicker(options: any): Promise<File[]> {
   // If native API exists (Chromium browsers), use it
@@ -91,4 +99,102 @@ async function showSaveFilePicker(options: any) {
   }
 }
 
-export { showOpenFilePicker, showSaveFilePicker }
+function addStageConfigToZip(zip: JSZip, stageConfigStore: StageConfigStore) {
+  const {
+    backgroundColor,
+    backgroundScale,
+    backgroundTextureUrl,
+    resolution,
+    tickerSpeed,
+    containerPos,
+    fixSpawnPos,
+  } = stageConfigStore
+  const data: ProjectStageData = {
+    backgroundColor,
+    backgroundScale,
+    backgroundTextureUrl,
+    resolution,
+    tickerSpeed,
+    containerPos,
+    fixSpawnPos,
+  }
+  const projectStageData = ProjectStageDataSchema.parse(data)
+  const json = JSON.stringify(projectStageData, null, 2)
+  zip.file('project.json', json)
+}
+
+async function addTexturesToZip(
+  zip: JSZip,
+  textureData: Record<string, string>,
+  filterList: string[] = [],
+) {
+  let textureNames = filterList
+  if (filterList.length === 0) {
+    textureNames = Object.keys(textureData)
+  }
+  for (const fileName of textureNames) {
+    const response = await fetch(textureData[fileName])
+    const blob = await response.blob()
+
+    zip.file(`${fileName}.png`, blob)
+  }
+}
+
+async function addParticleProjectToZip(zip: JSZip, project: ProjectData) {
+  const particleFolder = zip.folder('particles')
+
+  if (!particleFolder) {
+    throw new Error('Cannot create folder in zip')
+  }
+
+  const particleData = {
+    emitterConfig: project.emitterConfig,
+    textureConfig: project.textureConfig,
+  }
+  const particleJson = JSON.stringify(particleData, null, 2)
+  particleFolder.file(`${project.name}.json`, particleJson)
+
+  const configJson = JSON.stringify(project.configUI, null, 2)
+  zip.file('config.json', configJson)
+}
+
+async function loadTextureData(zip: JSZip): Promise<
+  {
+    textureName: string
+    textureUrl: string
+  }[]
+> {
+  const textureMap: {
+    textureName: string
+    textureUrl: string
+  }[] = []
+
+  const entries = Object.values(zip.files).filter(
+    (f) => !f.dir && !f.name.endsWith('.json'),
+  )
+
+  await Promise.all(
+    entries.map(async (entry) => {
+      const blob = await entry.async('blob')
+      const blobUrl = URL.createObjectURL(blob)
+      const lastDotIndex = entry.name.lastIndexOf('.')
+      const textureName =
+        lastDotIndex <= 0 ? entry.name : entry.name.substring(0, lastDotIndex)
+      textureMap.push({
+        textureName,
+        textureUrl: blobUrl,
+      })
+    }),
+  )
+
+  return textureMap
+}
+
+export {
+  showOpenFilePicker,
+  showSaveFilePicker,
+  addTexturesToZip,
+  addStageConfigToZip,
+  addParticleProjectToZip,
+  loadTextureData,
+}

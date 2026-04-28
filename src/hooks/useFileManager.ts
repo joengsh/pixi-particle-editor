@@ -6,10 +6,20 @@ import {
   ProjectStageDataSchema,
   type ProjectStageData,
 } from '@/types/projectStageData'
-import { showOpenFilePicker, showSaveFilePicker } from '@/lib/file'
+import {
+  addParticleProjectToZip,
+  addStageConfigToZip,
+  addTexturesToZip,
+  loadTextureData,
+  showOpenFilePicker,
+  showSaveFilePicker,
+} from '@/lib/file'
 import useTextureStore from '@/stores/TextureStore'
 import { useShallow } from 'zustand/shallow'
 import useParticleConfigStore from '@/stores/ParticleConfigStore'
+import useProjectStore from '@/stores/ProjectStore'
+import { getTextureListFromTextureConfigArtData } from '@/lib/particle-config'
+import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
 
 const useFileManager = () => {
   const stageConfigStore = useStageConfigStore()
@@ -36,6 +46,12 @@ const useFileManager = () => {
   )
   const removeAllTexture = useTextureStore(
     useShallow((state) => state.removeAllTexture),
+  )
+  const [projects, currentProject] = useProjectStore(
+    useShallow((state) => [
+      state.projects,
+      state.projects[state.currentProject],
+    ]),
   )
 
   const saveProject = useCallback(async () => {
@@ -188,9 +204,99 @@ const useFileManager = () => {
     setConfigUI,
   ])
 
+  // save everything, all particle system project, all chains, all textures, stage config
+  const saveWorkspace = useCallback(async () => {}, [])
+  // load everything, all particle system project, all chains, all textures, stage config
+  const loadWorkspace = useCallback(async () => {}, [])
+
+  // export only the current particle system project
+  const exportCurrentProject = useCallback(async () => {
+    try {
+      const zip = new JSZip()
+
+      addStageConfigToZip(zip, stageConfigStore)
+      addParticleProjectToZip(zip, currentProject)
+      const textureConfig = currentProject.textureConfig
+
+      if (textureConfig.length > 0) {
+        if (typeof textureConfig[0] === 'string') {
+          addTexturesToZip(zip, textureData, textureConfig as string[])
+        } else {
+          for (const data of textureConfig) {
+            const textures = getTextureListFromTextureConfigArtData(
+              (data as AnimatedArtConfig).textures,
+            )
+            addTexturesToZip(zip, textureData, textures as string[])
+          }
+        }
+      }
+
+      const zipBlob = await zip.generateAsync({ type: 'blob' })
+
+      const fileHandle = await showSaveFilePicker({
+        suggestedName: 'particle.zip',
+        types: [
+          {
+            description: 'ZIP archive',
+            accept: { 'application/zip': ['.zip'] },
+          },
+        ],
+      })
+
+      const writable = await fileHandle.createWritable()
+      await writable.write(zipBlob)
+      await writable.close()
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        console.log('User cancelled save dialog.')
+      } else {
+        console.error('Error saving project:', err)
+      }
+    }
+  }, [currentProject, stageConfigStore, textureData])
+
+  // import particle system project into workspace
+  const importProject = useCallback(async () => {
+    try {
+      const files = await showOpenFilePicker({
+        multiple: false,
+        types: [
+          {
+            description: 'ZIP archive',
+            accept: { 'application/zip': ['.zip'] },
+          },
+        ],
+      })
+
+      const file = files[0]
+      const zip = await JSZip.loadAsync(file)
+
+      // load textures
+      const textureMap = await loadTextureData(zip)
+      addTextures(textureMap)
+
+      // TODO hydrade the project
+      const configJsonText = await zip.files['config.json'].async('string')
+      const configData = JSON.parse(configJsonText)
+      setConfigUI(() => configData)
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        console.log('User cancelled open dialog.')
+        return null
+      }
+      console.error('Error loading project:', err)
+      return null
+    }
+  }, [addTextures])
+  // export current chain json
+  const exportCurrentChain = useCallback(async () => {}, [])
+  // import chain json into workspace
+  const importChain = useCallback(async () => {}, [])
+
   return {
     saveProject,
     loadProject,
+    exportCurrentProject,
   }
 }
 

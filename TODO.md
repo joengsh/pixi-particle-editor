@@ -76,3 +76,23 @@ Tasks
 
 - [*] add tooltip when hover field
 - [] add readme/ doc
+
+## Chain Editor
+
+- [x] Add explorer component to show multiple particle systems
+- [] move container position and fixSpawnPos to particle config instead of stage config
+- [] export single particle system
+- [] import single particle system
+- [] save workspace
+- [] load workspace
+- [] chain properties
+  - [] random scale range
+  - [] random hsl color ranges
+- [] handle chainNode onParticleAdded
+- [] handle chainNode onParticleRemoved
+- [] handle chainNode trail
+- [] chainNode properties
+  - [] maxFrequencyMultiplier
+  - [] minParticlePerWaveMultiplier
+- [] export chain config
+- [] import chain config
