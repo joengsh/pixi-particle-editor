@@ -30,7 +30,7 @@ export default function ProjectExplorer() {
   const [
     projects,
     currentProject,
-    addProject,
+    addNewProject,
     selectProject,
     renameProject,
     removeProject,
@@ -38,7 +38,7 @@ export default function ProjectExplorer() {
     useShallow((state) => [
       state.projects,
       state.currentProject,
-      state.addProject,
+      state.addNewProject,
       state.selectProject,
       state.renameProject,
       state.removeProject,
@@ -46,7 +46,8 @@ export default function ProjectExplorer() {
   )
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
-  const { exportCurrentProject, importProject } = useFileManager()
+  const { exportCurrentProject, importProject, loadWorkspace, saveWorkspace } =
+    useFileManager()
 
   const projectArray = useMemo(() => Object.values(projects), [projects])
 
@@ -192,25 +193,16 @@ export default function ProjectExplorer() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-48">
-            <DropdownMenuItem
-              onClick={() => addProject()}
-              className="gap-2 text-xs"
-            >
+            <DropdownMenuItem onClick={saveWorkspace} className="gap-2 text-xs">
               <Save className="w-3.5 h-3.5" />
               Save Workspace
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => addProject()}
-              className="gap-2 text-xs"
-            >
+            <DropdownMenuItem onClick={loadWorkspace} className="gap-2 text-xs">
               <FolderOpen className="w-3.5 h-3.5" />
               Load Workspace
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => addProject()}
-              className="gap-2 text-xs"
-            >
+            <DropdownMenuItem onClick={addNewProject} className="gap-2 text-xs">
               <Plus className="w-3.5 h-3.5" />
               Add Project
             </DropdownMenuItem>

@@ -7,6 +7,7 @@ import {
 } from '@/types/projectStageData'
 import type JSZip from 'jszip'
 import type { ProjectData } from '@/stores/ProjectStore'
+import { convertParticleConfigToConfigUI } from './particle-config'
 
 // Polyfill for showOpenFilePicker
 async function showOpenFilePicker(options: any): Promise<File[]> {
@@ -191,6 +192,52 @@ async function loadTextureData(zip: JSZip): Promise<
   return textureMap
 }
 
+async function loadProjects(
+  zip: JSZip,
+): Promise<Pick<ProjectData, 'name' | 'configUI'>[]> {
+  const configFolderPath = 'configs/'
+  const outputFolderPath = 'outputs/'
+
+  const projects: Pick<ProjectData, 'name' | 'configUI'>[] = []
+
+  for (const filePath of Object.keys(zip.files).filter((path) =>
+    path.includes(outputFolderPath),
+  )) {
+    const lastSlashIndex = filePath.lastIndexOf('/')
+    const filename =
+      lastSlashIndex <= 0 ? filePath : filePath.substring(lastSlashIndex + 1)
+    const lastDotIndex = filename.lastIndexOf('.')
+    const particleName =
+      lastDotIndex <= 0 ? filename : filename.substring(0, lastDotIndex)
+    if (filename !== '') {
+      if (zip.files[`${configFolderPath}${filename}`]) {
+        const configJsonText =
+          await zip.files[`${configFolderPath}${filename}`].async('string')
+        const configData = JSON.parse(configJsonText)
+        projects.push({
+          name: particleName,
+          configUI: configData,
+        })
+      } else {
+        const particleJsonText =
+          await zip.files[`${outputFolderPath}${filename}`].async('string')
+        const particleData = JSON.parse(particleJsonText)
+        const configData = convertParticleConfigToConfigUI(
+          particleData.emitterConfig,
+          particleData.textureConfig,
+          particleData.extraConfig,
+        )
+        projects.push({
+          name: particleName,
+          configUI: configData,
+        })
+      }
+    }
+  }
+
+  return projects
+}
+
 export {
   showOpenFilePicker,
   showSaveFilePicker,
@@ -198,4 +245,5 @@ export {
   addStageConfigToZip,
   addParticleProjectToZip,
   loadTextureData,
+  loadProjects,
 }

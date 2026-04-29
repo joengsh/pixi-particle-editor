@@ -10,6 +10,7 @@ import {
   addParticleProjectToZip,
   addStageConfigToZip,
   addTexturesToZip,
+  loadProjects,
   loadTextureData,
   showOpenFilePicker,
   showSaveFilePicker,
@@ -19,7 +20,6 @@ import { useShallow } from 'zustand/shallow'
 import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import useProjectStore from '@/stores/ProjectStore'
 import {
-  convertParticleConfigToConfigUI,
   getTextureListFromTextureConfigArtData,
 } from '@/lib/particle-config'
 import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
@@ -48,11 +48,11 @@ const useFileManager = () => {
   const removeAllTexture = useTextureStore(
     useShallow((state) => state.removeAllTexture),
   )
-  const [projects, currentProject, addProject] = useProjectStore(
+  const [projects, currentProject, addProjects] = useProjectStore(
     useShallow((state) => [
       state.projects,
       state.projects[state.currentProject],
-      state.addProject,
+      state.addProjects,
     ]),
   )
 
@@ -199,9 +199,109 @@ const useFileManager = () => {
   ])
 
   // save everything, all particle system project, all chains, all textures, stage config
-  const saveWorkspace = useCallback(async () => {}, [])
+  const saveWorkspace = useCallback(async () => {
+    try {
+      const zip = new JSZip()
+
+      addStageConfigToZip(zip, stageConfigStore)
+      for (const project of Object.values(projects)) {
+        addParticleProjectToZip(zip, project)
+
+        const textureConfig = project.textureConfig
+
+        if (textureConfig.length > 0) {
+          if (typeof textureConfig[0] === 'string') {
+            await addTexturesToZip(zip, textureData, textureConfig as string[])
+          } else {
+            for (const data of textureConfig) {
+              const textures = getTextureListFromTextureConfigArtData(
+                (data as AnimatedArtConfig).textures,
+              )
+              await addTexturesToZip(zip, textureData, textures as string[])
+            }
+          }
+        }
+      }
+
+      const zipBlob = await zip.generateAsync({ type: 'blob' })
+
+      const fileHandle = await showSaveFilePicker({
+        suggestedName: 'workspace.zip',
+        types: [
+          {
+            description: 'ZIP archive',
+            accept: { 'application/zip': ['.zip'] },
+          },
+        ],
+      })
+
+      const writable = await fileHandle.createWritable()
+      await writable.write(zipBlob)
+      await writable.close()
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        console.log('User cancelled save dialog.')
+      } else {
+        console.error('Error saving workspace:', err)
+      }
+    }
+  }, [projects, stageConfigStore, textureData])
+
   // load everything, all particle system project, all chains, all textures, stage config
-  const loadWorkspace = useCallback(async () => {}, [])
+  const loadWorkspace = useCallback(async () => {
+    try {
+      const files = await showOpenFilePicker({
+        multiple: false,
+        types: [
+          {
+            description: 'ZIP archive',
+            accept: { 'application/zip': ['.zip'] },
+          },
+        ],
+      })
+
+      const file = files[0]
+      const zip = await JSZip.loadAsync(file)
+
+      const jsonText = await zip.files['project.json'].async('string')
+      const data = JSON.parse(jsonText)
+      const projectStageData = ProjectStageDataSchema.parse(data)
+
+      // set stage config
+      setBackgroundColor(projectStageData.backgroundColor)
+      setBackgroundScale(projectStageData.backgroundScale)
+      if (projectStageData.backgroundTextureUrl) {
+        setBackgroundTextureUrl(projectStageData.backgroundTextureUrl)
+      } else {
+        setBackgroundTextureUrl(null)
+      }
+      setResolution(projectStageData.resolution)
+      setTickerSpeed(projectStageData.tickerSpeed)
+
+      // load textures
+      const textureMap = await loadTextureData(zip)
+      addTextures(textureMap)
+
+      // add the project
+      const projects = await loadProjects(zip)
+      addProjects(projects, true)
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        console.log('User cancelled open dialog.')
+        return null
+      }
+      console.error('Error loading project:', err)
+      return null
+    }
+  }, [
+    addTextures,
+    addProjects,
+    setBackgroundScale,
+    setBackgroundColor,
+    setBackgroundTextureUrl,
+    setResolution,
+    setTickerSpeed,
+  ])
 
   // export only the current particle system project
   const exportCurrentProject = useCallback(async () => {
@@ -270,45 +370,8 @@ const useFileManager = () => {
       addTextures(textureMap)
 
       // add the project
-      const configFolderPath = 'configs/'
-      const outputFolderPath = 'outputs/'
-
-      for (const filePath of Object.keys(zip.files).filter((path) =>
-        path.includes(outputFolderPath),
-      )) {
-        const lastSlashIndex = filePath.lastIndexOf('/')
-        const filename =
-          lastSlashIndex <= 0
-            ? filePath
-            : filePath.substring(lastSlashIndex + 1)
-        const lastDotIndex = filename.lastIndexOf('.')
-        const particleName =
-          lastDotIndex <= 0 ? filename : filename.substring(0, lastDotIndex)
-        if (filename !== '') {
-          if (zip.files[`${configFolderPath}${filename}`]) {
-            const configJsonText =
-              await zip.files[`${configFolderPath}${filename}`].async('string')
-            const configData = JSON.parse(configJsonText)
-            addProject({
-              name: particleName,
-              configUI: configData,
-            })
-          } else {
-            const particleJsonText =
-              await zip.files[`${outputFolderPath}${filename}`].async('string')
-            const particleData = JSON.parse(particleJsonText)
-            const configData = convertParticleConfigToConfigUI(
-              particleData.emitterConfig,
-              particleData.textureConfig,
-              particleData.extraConfig,
-            )
-            addProject({
-              name: particleName,
-              configUI: configData,
-            })
-          }
-        }
-      }
+      const projects = await loadProjects(zip)
+      addProjects(projects, false)
     } catch (err: any) {
       if (err.name === 'AbortError') {
         console.log('User cancelled open dialog.')
@@ -317,7 +380,7 @@ const useFileManager = () => {
       console.error('Error loading project:', err)
       return null
     }
-  }, [addTextures, addProject])
+  }, [addTextures, addProjects])
   // export current chain json
   const exportCurrentChain = useCallback(async () => {}, [])
   // import chain json into workspace
@@ -328,6 +391,8 @@ const useFileManager = () => {
     loadProject,
     exportCurrentProject,
     importProject,
+    loadWorkspace,
+    saveWorkspace,
   }
 }
 
