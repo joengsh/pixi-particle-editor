@@ -26,8 +26,11 @@ export type ProjectStoreState = {
 
 export type ProjectStoreAction = {
   renameProject: (id: string, newName: string) => void
-  addProject: (project: Omit<ProjectData, 'id'> | undefined) => void
+  addProject: (project?: Omit<ProjectData, 'id'>) => void
   removeProject: (id: string) => void
+  updateCurrentProjectConfig: (
+    fn: (configUI: ParticleConfigUI) => ParticleConfigUI,
+  ) => void
   updateProjectConfig: (
     id: string,
     fn: (configUI: ParticleConfigUI) => ParticleConfigUI,
@@ -37,6 +40,33 @@ export type ProjectStoreAction = {
 
 export type ProjectStore = ProjectStoreState & ProjectStoreAction
 
+const updateProjectConfig = (
+  state: ProjectStore,
+  id: string,
+  fn: (configUI: ParticleConfigUI) => ParticleConfigUI,
+) => {
+  const newProjects = { ...state.projects }
+  const project = newProjects[id]
+  if (!project) {
+    return state
+  }
+  const newConfigUI = fn(newProjects[id].configUI)
+  const newEmitterConfig = configToEmitterConfig(newConfigUI)
+  const newTextureConfig = configToArtConfig(
+    newConfigUI,
+    Object.keys(useTextureStore.getState().textureData),
+  )
+  const newProject = {
+    ...project,
+    configUI: newConfigUI,
+    emitterConfig: newEmitterConfig,
+    textureConfig: newTextureConfig,
+  }
+  newProjects[id] = newProject
+  return {
+    projects: newProjects,
+  }
+}
 // Create your store, which includes both state and (optionally) actions
 const useProjectStore = create<ProjectStore>((set) => ({
   projects: {
@@ -124,30 +154,11 @@ const useProjectStore = create<ProjectStore>((set) => ({
       }
     })
   },
+  updateCurrentProjectConfig: (fn) => {
+    set((state) => updateProjectConfig(state, state.currentProject, fn))
+  },
   updateProjectConfig: (id, fn) => {
-    set((state) => {
-      const newProjects = { ...state.projects }
-      const project = newProjects[id]
-      if (!project) {
-        return state
-      }
-      const newConfigUI = fn(newProjects[id].configUI)
-      const newEmitterConfig = configToEmitterConfig(newConfigUI)
-      const newTextureConfig = configToArtConfig(
-        newConfigUI,
-        Object.keys(useTextureStore.getState().textureData),
-      )
-      const newProject = {
-        ...project,
-        configUI: newConfigUI,
-        emitterConfig: newEmitterConfig,
-        textureConfig: newTextureConfig,
-      }
-      newProjects[id] = newProject
-      return {
-        projects: newProjects,
-      }
-    })
+    set((state) => updateProjectConfig(state, id, fn))
   },
 }))
 

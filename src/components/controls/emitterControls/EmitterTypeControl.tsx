@@ -1,4 +1,3 @@
-import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { Label } from '../../ui/label'
 import {
   Select,
@@ -17,6 +16,7 @@ import type {
 import { Input } from '../../ui/input'
 import { useCallback, useMemo } from 'react'
 import { EmitterTypePolygonChainControl } from './EmitterTypePolygonChainControl'
+import useProjectStore from '@/stores/ProjectStore'
 
 export type EmitterTypeSpawnControlProps = {
   emitterType: EmitterSpawnType
@@ -320,8 +320,11 @@ export const EmitterTypeBurstControl = ({
 }
 
 export const EmitterTypeControl = () => {
-  const [emitterType, setConfigUI] = useParticleConfigStore(
-    useShallow((state) => [state.configUI.emitterType, state.setConfigUI]),
+  const [emitterType, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI.emitterType,
+      state.updateCurrentProjectConfig,
+    ]),
   )
 
   const updateSpawnType = useCallback(

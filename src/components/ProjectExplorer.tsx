@@ -163,7 +163,7 @@ export default function ProjectExplorer() {
           variant="outline"
           size="sm"
           className="w-full gap-2 text-xs"
-          onClick={addProject}
+          onClick={() => addProject()}
         >
           <Plus className="w-3.5 h-3.5" />
           Add Project

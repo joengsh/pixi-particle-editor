@@ -1,4 +1,3 @@
-import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { easingNames, type EasingName } from '@/types/Easing'
 import type { ValueStepData } from '@/types/particle/particleConfig'
 import { useCallback } from 'react'
@@ -16,6 +15,7 @@ import {
 import { Switch } from '../ui/switch'
 import type { ParticleConfigUI } from '@/types/particleConfigUIData'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
+import useProjectStore from '@/stores/ProjectStore'
 
 type EasingControlType = {
   value: string
@@ -56,8 +56,11 @@ export const NumberListControl = ({
   propName,
   tooltip,
 }: NumberListControlProps) => {
-  const [prop, setConfigUI] = useParticleConfigStore(
-    useShallow((state) => [state.configUI[propName], state.setConfigUI]),
+  const [prop, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI[propName],
+      state.updateCurrentProjectConfig,
+    ]),
   )
 
   const onChange = useCallback(

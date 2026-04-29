@@ -1,9 +1,9 @@
-import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { useShallow } from 'zustand/shallow'
 import type { ParticleConfigUI } from '@/types/particleConfigUIData'
 import { Label } from '../ui/label'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { Switch } from '../ui/switch'
+import useProjectStore from '@/stores/ProjectStore'
 
 type SwitchControlProps = {
   labelName: string
@@ -16,8 +16,11 @@ export const SwitchControl = ({
   propName,
   tooltip,
 }: SwitchControlProps) => {
-  const [prop, setConfigUI] = useParticleConfigStore(
-    useShallow((state) => [state.configUI[propName], state.setConfigUI]),
+  const [prop, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI[propName],
+      state.updateCurrentProjectConfig,
+    ]),
   )
   return (
     <div className="flex items-center gap-3">

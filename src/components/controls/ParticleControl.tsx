@@ -1,4 +1,3 @@
-import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { useShallow } from 'zustand/shallow'
 import { ListPropertyControl } from './ListPropertyControl'
 import { useCallback, useMemo } from 'react'
@@ -7,10 +6,14 @@ import { Label } from '../ui/label'
 import { Switch } from '../ui/switch'
 import { EasingControl } from '../custom-ui/NumberListControl'
 import type { EasingName } from '@/types/Easing'
+import useProjectStore from '@/stores/ProjectStore'
 
 export const ColorControl = () => {
-  const [color, setConfigUI] = useParticleConfigStore(
-    useShallow((state) => [state.configUI.color, state.setConfigUI]),
+  const [color, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI.color,
+      state.updateCurrentProjectConfig,
+    ]),
   )
 
   const colorList = useMemo(

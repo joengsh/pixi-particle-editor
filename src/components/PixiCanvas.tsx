@@ -2,12 +2,12 @@ import * as PIXI from 'pixi.js'
 import * as particles from 'pixi-particles'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import useStageConfigStore from '@/stores/StageConfigStore'
-import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { useShallow } from 'zustand/shallow'
 import useTextureStore from '@/stores/TextureStore'
 import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
 import usePolygonChainEditStore from '@/stores/PolygonChainEditStore'
 import { Easing } from '@/lib/easing'
+import useProjectStore from '@/stores/ProjectStore'
 
 const mapAnimatedArtTextures = (
   config: AnimatedArtConfig,
@@ -58,11 +58,11 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     useShallow((state) => state.fixSpawnPos),
   )
 
-  const [emitterConfig, textureConfig, setConfigUI] = useParticleConfigStore(
+  const [emitterConfig, textureConfig, setConfigUI] = useProjectStore(
     useShallow((state) => [
-      state.emitterConfig,
-      state.textureConfig,
-      state.setConfigUI,
+      state.projects[state.currentProject].emitterConfig,
+      state.projects[state.currentProject].textureConfig,
+      state.updateCurrentProjectConfig,
     ]),
   )
   const textureInstances = useTextureStore(

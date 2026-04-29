@@ -1,9 +1,9 @@
-import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { useShallow } from 'zustand/shallow'
 import type { ParticleConfigUI } from '@/types/particleConfigUIData'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
+import useProjectStore from '@/stores/ProjectStore'
 
 type DuoNumberControlProps = {
   labelName: string
@@ -22,8 +22,11 @@ export const DuoNumberControl = ({
   subLabelName,
   subPropName,
 }: DuoNumberControlProps) => {
-  const [prop, setConfigUI] = useParticleConfigStore(
-    useShallow((state) => [state.configUI[propName], state.setConfigUI]),
+  const [prop, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI[propName],
+      state.updateCurrentProjectConfig,
+    ]),
   )
   return (
     <div className="flex flex-col gap-3">

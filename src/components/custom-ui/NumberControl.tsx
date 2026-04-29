@@ -1,9 +1,9 @@
-import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { useShallow } from 'zustand/shallow'
 import type { ParticleConfigUI } from '@/types/particleConfigUIData'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
+import useProjectStore from '@/stores/ProjectStore'
 
 type NumberControlProps = {
   labelName: string
@@ -18,8 +18,11 @@ export const NumberControl = ({
   tooltip,
   step,
 }: NumberControlProps) => {
-  const [prop, setConfigUI] = useParticleConfigStore(
-    useShallow((state) => [state.configUI[propName], state.setConfigUI]),
+  const [prop, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI[propName],
+      state.updateCurrentProjectConfig,
+    ]),
   )
   return (
     <div className="flex items-center gap-3">

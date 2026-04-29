@@ -119,6 +119,9 @@ export const ParticleConfigUISchema = z.object({
   pos: BasicPointSchema,
   emit: z.boolean(),
   particlesPerWave: z.number().default(1),
+  // extra config (won't affect the particle system in game)
+  containerPos: z.tuple([z.number(), z.number()]).default([0, 0]),
+  fixSpawnPos: z.boolean().default(false),
 })
 
 export type ParticleConfigUI = z.infer<typeof ParticleConfigUISchema>
@@ -127,3 +130,8 @@ export type AnimationParticleArtData = z.infer<
   typeof AnimationParticleArtSchema
 >
 export type EmitterSpawnType = z.infer<typeof EmitterTypeSchema>
+
+export type ExtraData = {
+  containerPos?: [number, number]
+  fixSpawnPos?: boolean
+}

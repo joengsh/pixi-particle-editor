@@ -1,4 +1,3 @@
-import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import {
   SelectTrigger,
   SelectValue,
@@ -22,16 +21,17 @@ import { Switch } from '../ui/switch'
 import { Button } from '../ui/button'
 import { Trash2 } from 'lucide-react'
 import { SquarePlus } from 'lucide-react'
+import useProjectStore from '@/stores/ProjectStore'
 
 const particleTypes = ['basic', 'animated']
 
 const ParticleBasicTypeControl = () => {
   const textureData = useTextureStore((state) => state.textureData)
-  const particleType = useParticleConfigStore(
-    useShallow((state) => state.configUI.particleType),
-  )
-  const setConfigUI = useParticleConfigStore(
-    useShallow((state) => state.setConfigUI),
+  const [particleType, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI.particleType,
+      state.updateCurrentProjectConfig,
+    ]),
   )
   const options = useMemo(
     () =>
@@ -189,11 +189,11 @@ const ParticleAnimatedTypeConfigItem = ({
 
 const ParticleAnimatedTypeControl = () => {
   const animationList = useTextureStore((state) => state.animationList)
-  const particleType = useParticleConfigStore(
-    useShallow((state) => state.configUI.particleType),
-  )
-  const setConfigUI = useParticleConfigStore(
-    useShallow((state) => state.setConfigUI),
+  const [particleType, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI.particleType,
+      state.updateCurrentProjectConfig,
+    ]),
   )
 
   const [animationName, setAnimationName] = useState<string>()
@@ -326,11 +326,11 @@ const ParticleAnimatedTypeControl = () => {
 }
 
 const ParticleTypeControl = () => {
-  const particleTypeConfig = useParticleConfigStore(
-    useShallow((state) => state.configUI.particleType),
-  )
-  const setConfigUI = useParticleConfigStore(
-    useShallow((state) => state.setConfigUI),
+  const [particleTypeConfig, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI.particleType,
+      state.updateCurrentProjectConfig,
+    ]),
   )
   const onTypeChange = useCallback(
     (value: string) => {

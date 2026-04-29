@@ -1,4 +1,3 @@
-import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import { useShallow } from 'zustand/shallow'
 import type { ParticleConfigUI } from '@/types/particleConfigUIData'
 import { Label } from '../ui/label'
@@ -12,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import useProjectStore from '@/stores/ProjectStore'
 
 type SelectControlProps = {
   labelName: string
@@ -28,8 +28,11 @@ export const SelectControl = ({
   tooltip,
   list,
 }: SelectControlProps) => {
-  const [prop, setConfigUI] = useParticleConfigStore(
-    useShallow((state) => [state.configUI[propName], state.setConfigUI]),
+  const [prop, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI[propName],
+      state.updateCurrentProjectConfig,
+    ]),
   )
 
   const onChange = useCallback(

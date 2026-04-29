@@ -5,6 +5,7 @@ import type {
 } from '@/types/particle/particleConfig'
 import type {
   EmitterSpawnType,
+  ExtraData,
   ParticleConfigUI,
   ParticleTypeData,
 } from '@/types/particleConfigUIData'
@@ -270,6 +271,7 @@ export function getTextureListFromAnimationName(
 export function convertParticleConfigToConfigUI(
   emitterConfig: EmitterConfig,
   textureConfig: ParticleArtConfig,
+  extraData: ExtraData,
 ): ParticleConfigUI {
   const config: ParticleConfigUI = {
     alpha: emitterConfig.alpha!,
@@ -296,6 +298,8 @@ export function convertParticleConfigToConfigUI(
     particleType: convertParticleTypeToUI(textureConfig, emitterConfig),
     emit: true,
     pos: { x: 0, y: 0 },
+    containerPos: extraData.containerPos ?? [0, 0],
+    fixSpawnPos: extraData.fixSpawnPos ?? false,
   }
 
   return config
