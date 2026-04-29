@@ -50,12 +50,16 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   const tickerSpeed = useStageConfigStore(
     useShallow((state) => state.tickerSpeed),
   )
-  const containerPos = useStageConfigStore(
-    useShallow((state) => state.containerPos),
+  const containerPos = useProjectStore(
+    useShallow(
+      (state) => state.projects[state.currentProject].configUI.containerPos,
+    ),
   )
 
-  const fixSpawnPos = useStageConfigStore(
-    useShallow((state) => state.fixSpawnPos),
+  const fixSpawnPos = useProjectStore(
+    useShallow(
+      (state) => state.projects[state.currentProject].configUI.fixSpawnPos,
+    ),
   )
 
   const [emitterConfig, textureConfig, setConfigUI] = useProjectStore(
@@ -374,8 +378,8 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   useEffect(() => {
     const container = emitterContainerRef.current
     if (container) {
-      container.x = containerPos[0]
-      container.y = containerPos[1]
+      container.x = containerPos.x
+      container.y = containerPos.y
     }
   }, [containerPos])
 

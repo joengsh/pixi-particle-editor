@@ -126,6 +126,7 @@ const useProjectStore = create<ProjectStore>((set) => ({
           ...state.projects,
           [uuid]: newProject,
         },
+        currentProject: uuid,
       }
     })
   },

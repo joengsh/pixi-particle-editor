@@ -83,6 +83,8 @@ export const DEFAULT_CONFIG: ParticleConfigUI = {
   spawnChance: 1,
   emit: true,
   particlesPerWave: 1,
+  containerPos: { x: 0, y: 0 },
+  fixSpawnPos: false,
 }
 
 /***************** convert ui config to emitterConfig and textureConfig *******************/
@@ -298,7 +300,7 @@ export function convertParticleConfigToConfigUI(
     particleType: convertParticleTypeToUI(textureConfig, emitterConfig),
     emit: true,
     pos: { x: 0, y: 0 },
-    containerPos: extraData.containerPos ?? [0, 0],
+    containerPos: extraData.containerPos ?? { x: 0, y: 0 },
     fixSpawnPos: extraData.fixSpawnPos ?? false,
   }
 

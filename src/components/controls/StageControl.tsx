@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import useStageConfigStore from '@/stores/StageConfigStore'
 import { useShallow } from 'zustand/shallow'
 import { ImagePlus, X } from 'lucide-react'
-import { Switch } from '../ui/switch'
 
 export const ResolutionControl = () => {
   const [resolution, setResolution] = useStageConfigStore(
@@ -158,58 +157,6 @@ export const TickerSpeedControl = () => {
         value={tickerSpeed}
         min={0}
         onChange={(e) => setTickerSpeed(parseFloat(e.target.value))}
-      />
-    </div>
-  )
-}
-
-export const ContainerPosControl = () => {
-  const [containerPos, setContainerPos] = useStageConfigStore(
-    useShallow((state) => [state.containerPos, state.setContainerPos]),
-  )
-  return (
-    <div className="flex flex-col gap-3">
-      <Label className="text-xs">Container Pos:</Label>
-      <div className="flex items-center gap-3">
-        <div className="flex flex-1 items-center gap-3">
-          <Label className="text-xs">X:</Label>
-          <Input
-            type="number"
-            className="flex-1 h-8 p-0.5 cursor-pointer"
-            value={containerPos[0]}
-            onChange={(e) =>
-              setContainerPos([parseInt(e.target.value, 10), containerPos[1]])
-            }
-          />
-        </div>
-        <div className="flex flex-1 items-center gap-3">
-          <Label className="text-xs">Y:</Label>
-          <Input
-            type="number"
-            className="flex-1 h-8 p-0.5 cursor-pointer"
-            value={containerPos[1]}
-            onChange={(e) =>
-              setContainerPos([containerPos[0], parseInt(e.target.value, 10)])
-            }
-          />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export const FixSpawnPosControl = () => {
-  const [fixSpawnPos, setFixSpawnPos] = useStageConfigStore(
-    useShallow((state) => [state.fixSpawnPos, state.setFixSpawnPos]),
-  )
-  return (
-    <div className="flex items-center gap-3">
-      <Label className="text-xs">Fix Spawn Pos:</Label>
-      <Switch
-        defaultChecked={fixSpawnPos}
-        className="h-8 p-0.5 cursor-pointer"
-        checked={fixSpawnPos}
-        onCheckedChange={(checked) => setFixSpawnPos(checked)}
       />
     </div>
   )

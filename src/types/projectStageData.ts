@@ -6,8 +6,6 @@ export const ProjectStageDataSchema = z.object({
   backgroundTextureUrl: z.string().nullable(),
   resolution: z.tuple([z.number(), z.number()]),
   tickerSpeed: z.number(),
-  containerPos: z.tuple([z.number(), z.number()]).default([0, 0]),
-  fixSpawnPos: z.boolean().default(false),
 })
 
 export type ProjectStageData = z.infer<typeof ProjectStageDataSchema>

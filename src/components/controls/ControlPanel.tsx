@@ -9,8 +9,6 @@ import {
   BackgroundColorControl,
   BackgroundScaleControl,
   BackgroundTextureControl,
-  ContainerPosControl,
-  FixSpawnPosControl,
   ResolutionControl,
   TickerSpeedControl,
 } from './StageControl'
@@ -171,6 +169,18 @@ const ControlPanel = () => {
                 Emitter Properties
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-5">
+                <DuoNumberControl
+                  labelName="Container Position"
+                  propName="containerPos"
+                  subLabelName={['X', 'Y']}
+                  subPropName={['x', 'y']}
+                  tooltip="Particle container position. Won't be exported to game"
+                />
+                <SwitchControl
+                  labelName="Fix SpawnPos"
+                  propName="fixSpawnPos"
+                  tooltip="Particle won't follow mouse position when set to true"
+                />
                 <NumberControl
                   labelName="Frequency"
                   propName="frequency"
@@ -220,8 +230,6 @@ const ControlPanel = () => {
               </AccordionTrigger>
               <AccordionContent className="p-4 space-y-4">
                 <ResolutionControl />
-                <ContainerPosControl />
-                <FixSpawnPosControl />
                 <BackgroundColorControl />
                 <BackgroundTextureControl />
                 <BackgroundScaleControl />
