@@ -33,10 +33,6 @@ const ControlPanel = () => {
         <h2 className="text-lg font-semibold text-foreground mb-3">
           Particle Editor
         </h2>
-        <div className="flex flex-wrap gap-2 justify-end md:justify-start">
-          <SaveButton />
-          <LoadButton />
-        </div>
       </div>
       <ScrollArea className="flex-1 overflow-hidden [&>div>div]:block!">
         <div className="p-4">
