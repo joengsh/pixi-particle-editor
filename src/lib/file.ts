@@ -106,8 +106,6 @@ function addStageConfigToZip(zip: JSZip, stageConfigStore: StageConfigStore) {
     backgroundTextureUrl,
     resolution,
     tickerSpeed,
-    containerPos,
-    fixSpawnPos,
   } = stageConfigStore
   const data: ProjectStageData = {
     backgroundColor,
@@ -115,8 +113,6 @@ function addStageConfigToZip(zip: JSZip, stageConfigStore: StageConfigStore) {
     backgroundTextureUrl,
     resolution,
     tickerSpeed,
-    containerPos,
-    fixSpawnPos,
   }
   const projectStageData = ProjectStageDataSchema.parse(data)
   const json = JSON.stringify(projectStageData, null, 2)
@@ -141,21 +137,26 @@ async function addTexturesToZip(
 }
 
 async function addParticleProjectToZip(zip: JSZip, project: ProjectData) {
-  const particleFolder = zip.folder('particles')
+  const outputFolder = zip.folder('outputs')
+  const configFolder = zip.folder('configs')
 
-  if (!particleFolder) {
+  if (!outputFolder || !configFolder) {
     throw new Error('Cannot create folder in zip')
   }
 
   const particleData = {
     emitterConfig: project.emitterConfig,
     textureConfig: project.textureConfig,
+    extraConfig: {
+      containerPos: project.configUI.containerPos,
+      fixSpawnPos: project.configUI.fixSpawnPos,
+    },
   }
   const particleJson = JSON.stringify(particleData, null, 2)
-  particleFolder.file(`${project.name}.json`, particleJson)
+  outputFolder.file(`${project.name}.json`, particleJson)
 
   const configJson = JSON.stringify(project.configUI, null, 2)
-  zip.file('config.json', configJson)
+  configFolder.file(`${project.name}.json`, configJson)
 }
 
 async function loadTextureData(zip: JSZip): Promise<

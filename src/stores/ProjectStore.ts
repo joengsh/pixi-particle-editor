@@ -26,7 +26,7 @@ export type ProjectStoreState = {
 
 export type ProjectStoreAction = {
   renameProject: (id: string, newName: string) => void
-  addProject: (project?: Omit<ProjectData, 'id'>) => void
+  addProject: (project?: Pick<ProjectData, 'name' | 'configUI'>) => void
   removeProject: (id: string) => void
   updateCurrentProjectConfig: (
     fn: (configUI: ParticleConfigUI) => ParticleConfigUI,
@@ -108,18 +108,18 @@ const useProjectStore = create<ProjectStore>((set) => ({
       ) {
         index++
       }
-      const projectName = `particle${index ? `_${index}` : ''}`
+      const projectName = `${project ? project.name : 'particle'}${index ? `_${index}` : ''}`
       const uuid = crypto.randomUUID()
+      const configUI = project ? project.configUI : DEFAULT_CONFIG
       const newProject = {
         id: uuid,
         name: projectName,
-        configUI: DEFAULT_CONFIG,
-        emitterConfig: configToEmitterConfig(DEFAULT_CONFIG),
+        configUI: configUI,
+        emitterConfig: configToEmitterConfig(configUI),
         textureConfig: configToArtConfig(
-          DEFAULT_CONFIG,
+          configUI,
           Object.keys(useTextureStore.getState().textureData),
         ),
-        ...project,
       }
       return {
         projects: {

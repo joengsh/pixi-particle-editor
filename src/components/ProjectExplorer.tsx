@@ -1,10 +1,30 @@
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+  Trash2,
+  Plus,
+  Sparkles,
+  Pencil,
+  Check,
+  X,
+  Menu,
+  Save,
+  FolderOpen,
+  Download,
+  Upload,
+} from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { Trash2, Plus, Sparkles, Pencil, Check, X } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import useProjectStore, { type ProjectData } from '@/stores/ProjectStore'
 import { useShallow } from 'zustand/shallow'
+import useFileManager from '@/hooks/useFileManager'
 
 export default function ProjectExplorer() {
   const [
@@ -26,6 +46,7 @@ export default function ProjectExplorer() {
   )
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
+  const { exportCurrentProject, importProject } = useFileManager()
 
   const projectArray = useMemo(() => Object.values(projects), [projects])
 
@@ -157,17 +178,55 @@ export default function ProjectExplorer() {
         </div>
       </ScrollArea>
 
-      {/* Add Project Button */}
+      {/* Actions Menu */}
       <div className="p-2 border-t border-border">
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full gap-2 text-xs"
-          onClick={() => addProject()}
-        >
-          <Plus className="w-3.5 h-3.5" />
-          Add Project
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full gap-2 text-xs"
+            >
+              <Menu className="w-3.5 h-3.5" />
+              Actions
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-48">
+            <DropdownMenuItem
+              onClick={() => addProject()}
+              className="gap-2 text-xs"
+            >
+              <Save className="w-3.5 h-3.5" />
+              Save Workspace
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => addProject()}
+              className="gap-2 text-xs"
+            >
+              <FolderOpen className="w-3.5 h-3.5" />
+              Load Workspace
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => addProject()}
+              className="gap-2 text-xs"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Add Project
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={importProject} className="gap-2 text-xs">
+              <Upload className="w-3.5 h-3.5" />
+              Import Project
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={exportCurrentProject}
+              className="gap-2 text-xs"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Export Project
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   )
