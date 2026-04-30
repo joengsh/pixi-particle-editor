@@ -1,0 +1,195 @@
+import { create } from 'zustand'
+import type {
+  ParticleEmitterChainNodeData,
+  ParticleEmitterPoolSettings,
+} from '@/pixiComponents/ParticleEmitterChain'
+import {
+  DEFAULT_CHAIN_CONFIG,
+  getPoolsFromNodes,
+  mapPoolsData,
+} from '@/lib/chain-config'
+import type { ProjectData } from './ProjectStore'
+import useProjectStore from './ProjectStore'
+
+export type ChainProjectData = {
+  id: string
+  name: string
+  pools: Record<string, Omit<ParticleEmitterPoolSettings, 'textureInstances'>>
+  nodes: ParticleEmitterChainNodeData[]
+}
+
+export type ChainProjectStoreState = {
+  projects: Record<string, ChainProjectData>
+  currentProject: string
+}
+
+export type ChainProjectStoreAction = {
+  renameProject: (id: string, newName: string) => void
+  addNewProject: () => void
+  addProjects: (
+    projects: Omit<ChainProjectData, 'id'>[],
+    clearAll: boolean,
+  ) => void
+  removeProject: (id: string) => void
+  updateCurrentProjectConfig: (
+    fn: (
+      nodes: ParticleEmitterChainNodeData[],
+    ) => ParticleEmitterChainNodeData[],
+  ) => void
+  selectProject: (id: string) => void
+}
+
+export type ChainProjectStore = ChainProjectStoreState & ChainProjectStoreAction
+
+const updateProjectConfig = (
+  state: ChainProjectStore,
+  id: string,
+  fn: (nodes: ParticleEmitterChainNodeData[]) => ParticleEmitterChainNodeData[],
+  particleProjects: Record<string, ProjectData>,
+) => {
+  const newProjects = { ...state.projects }
+  const project = newProjects[id]
+  if (!project) {
+    return state
+  }
+  const newNodes = fn(newProjects[id].nodes)
+  const newProject = {
+    ...project,
+    nodes: newNodes,
+    pools: mapPoolsData(getPoolsFromNodes(newNodes), particleProjects),
+  }
+  newProjects[id] = newProject
+  return {
+    projects: newProjects,
+  }
+}
+
+const addProjects = (
+  state: ChainProjectStore,
+  projects: Pick<ChainProjectData, 'name' | 'nodes'>[],
+  clearAll: boolean,
+  particleProjects: Record<string, ProjectData>,
+) => {
+  const projectNames = clearAll
+    ? []
+    : Object.values(state.projects).map((project) => project.name)
+  const newProjects: Record<string, ChainProjectData> = {}
+  let lastId = ''
+  for (const project of projects) {
+    let index = 0
+    while (
+      projectNames.includes(
+        `${project ? project.name : 'particle'}${index ? `_${index}` : ''}`,
+      )
+    ) {
+      index++
+    }
+    const projectName = `${project ? project.name : 'particle'}${index ? `_${index}` : ''}`
+    const uuid = crypto.randomUUID()
+    const nodes = project ? project.nodes : DEFAULT_CHAIN_CONFIG.nodes
+    const pools = mapPoolsData(getPoolsFromNodes(nodes), particleProjects)
+    const newProject = {
+      id: uuid,
+      name: projectName,
+      nodes,
+      pools,
+    }
+    newProjects[uuid] = newProject
+    lastId = uuid
+  }
+  return {
+    projects: {
+      ...(clearAll ? {} : state.projects),
+      ...newProjects,
+    },
+    currentProject: lastId,
+  }
+}
+
+// Create your store, which includes both state and (optionally) actions
+const useChainProjectStore = create<ChainProjectStore>((set) => ({
+  projects: {
+    default: {
+      id: 'default',
+      name: 'particle',
+      ...DEFAULT_CHAIN_CONFIG,
+    },
+  },
+  currentProject: 'default',
+  renameProject: (id, newName) => {
+    set((state) => {
+      const newProjects = { ...state.projects }
+      const project = newProjects[id]
+      newProjects[id] = {
+        ...project,
+        name: newName,
+      }
+      return {
+        projects: newProjects,
+      }
+    })
+  },
+  addNewProject: () => {
+    set((state) => {
+      const projects = [
+        {
+          name: 'chain',
+          ...DEFAULT_CHAIN_CONFIG,
+        },
+      ]
+      return addProjects(
+        state,
+        projects,
+        false,
+        useProjectStore.getState().projects,
+      )
+    })
+  },
+  addProjects: (projects, clearAll) => {
+    set((state) => {
+      return addProjects(
+        state,
+        projects,
+        clearAll,
+        useProjectStore.getState().projects,
+      )
+    })
+  },
+  removeProject: (id) => {
+    set((state) => {
+      const newProjects = { ...state.projects }
+      if (newProjects[id]) {
+        delete newProjects[id]
+      }
+      return {
+        projects: newProjects,
+        currentProject:
+          state.currentProject === id
+            ? Object.keys(newProjects)[0]
+            : state.currentProject,
+      }
+    })
+  },
+  selectProject: (id) => {
+    set((state) => {
+      if (!state.projects[id]) {
+        return state
+      }
+      return {
+        currentProject: id,
+      }
+    })
+  },
+  updateCurrentProjectConfig: (fn) => {
+    set((state) =>
+      updateProjectConfig(
+        state,
+        state.currentProject,
+        fn,
+        useProjectStore.getState().projects,
+      ),
+    )
+  },
+}))
+
+export default useChainProjectStore
