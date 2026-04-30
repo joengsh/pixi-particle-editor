@@ -19,9 +19,7 @@ import useTextureStore from '@/stores/TextureStore'
 import { useShallow } from 'zustand/shallow'
 import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import useProjectStore from '@/stores/ProjectStore'
-import {
-  getTextureListFromTextureConfigArtData,
-} from '@/lib/particle-config'
+import { getTextureListFromTextureConfigArtData } from '@/lib/particle-config'
 import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
 
 const useFileManager = () => {

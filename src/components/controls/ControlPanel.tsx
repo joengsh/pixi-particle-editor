@@ -12,7 +12,6 @@ import {
   ResolutionControl,
   TickerSpeedControl,
 } from './StageControl'
-import { LoadButton, SaveButton } from './GeneralControl'
 import TextureList from '../TextureList'
 import { TextureUpload } from './TextureControl'
 import ParticleTypeControl from './ParticleTypeControl'
