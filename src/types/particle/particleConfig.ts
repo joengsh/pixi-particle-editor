@@ -178,6 +178,7 @@ export const ParticleArtConfigSchema = z.union([
   AnimatedParticleArtConfigSchema,
 ])
 
+export type MinMaxValue = z.infer<typeof RandNumberSchema>
 export type BasicPoint = z.infer<typeof BasicPointSchema>
 export type AnimatedArtConfig = z.infer<typeof AnimatedArtConfigSchema>
 export type ParticleArtConfig = z.infer<typeof ParticleArtConfigSchema>

@@ -4,7 +4,10 @@ import * as particles from 'pixi-particles'
 import EventBus, { type EventPayload } from './EventBus'
 import { Easing } from '@/lib/easing'
 import type { EasingName } from '@/types/Easing'
-import type { EmitterConfig } from 'pixi-particles'
+import type {
+  EmitterConfig,
+  ParticleArtConfig,
+} from '@/types/particle/particleConfig'
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                      */
@@ -19,8 +22,9 @@ export interface ParticleEmitterEventAdded extends EventPayload {
 export interface ParticleEmitterEventRemoved extends ParticleEmitterEventAdded {}
 
 export interface ParticleEmitterExtendedSettings {
+  textureInstances: Record<string, PIXI.Texture>
   emitterConfig: EmitterConfig
-  textureConfig: any
+  textureConfig: ParticleArtConfig
 }
 
 /* -------------------------------------------------------------------------- */
@@ -28,7 +32,7 @@ export interface ParticleEmitterExtendedSettings {
 /* -------------------------------------------------------------------------- */
 
 class ParticleEmitterExtended extends PIXI.Container {
-  private _settings: any = null
+  private _settings: ParticleEmitterExtendedSettings
   private _emitterConfig: any = null
   private _textureConfig: any = null
   private _emitter: particles.Emitter | null = null
@@ -178,9 +182,11 @@ class ParticleEmitterExtended extends PIXI.Container {
       textureConfig: this._settings.textureConfig,
     }
 
-    this._textureConfig = particleData.textureConfig
+    this._textureConfig = this._mappedTextureData(particleData.textureConfig)
 
-    this._emitterConfig = particleData.emitterConfig
+    this._emitterConfig = this._mappedEmitterConfigData(
+      particleData.emitterConfig,
+    )
 
     const emitter = new particles.Emitter(
       this,
@@ -205,7 +211,7 @@ class ParticleEmitterExtended extends PIXI.Container {
   /* ---------------------------------------------------------------------- */
 
   private _textureNameToPixiTexture(name: string): PIXI.Texture {
-    const texture = PIXI.utils.TextureCache[name]
+    const texture = this._settings.textureInstances[name]
     if (!texture) {
       console.error(`ParticleEmitterExtended: Texture not found ${name}`)
       return PIXI.Texture.EMPTY
