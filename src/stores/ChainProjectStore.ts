@@ -111,7 +111,7 @@ const useChainProjectStore = create<ChainProjectStore>((set) => ({
   projects: {
     default: {
       id: 'default',
-      name: 'particle',
+      name: 'chain',
       ...DEFAULT_CHAIN_CONFIG,
     },
   },

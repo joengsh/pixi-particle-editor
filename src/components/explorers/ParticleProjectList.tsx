@@ -26,7 +26,7 @@ import useProjectStore, { type ProjectData } from '@/stores/ProjectStore'
 import { useShallow } from 'zustand/shallow'
 import useFileManager from '@/hooks/useFileManager'
 
-export default function ProjectExplorer() {
+export default function ParticleProjectList() {
   const [
     projects,
     currentProject,

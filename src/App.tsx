@@ -4,15 +4,16 @@ import { Activity, Layers, PanelLeft } from 'lucide-react'
 import PixiCanvas from './components/PixiCanvas'
 import ControlPanel from './components/controls/ControlPanel'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import ProjectExplorer from './components/ProjectExplorer'
+import ProjectExplorer from './components/explorers/ProjectExplorer'
 import { Button } from './components/ui/button'
 import useProjectStore from './stores/ProjectStore'
 import { useShallow } from 'zustand/shallow'
+import useGeneralSettingStore from './stores/GeneralSettingStore'
 
 function App() {
   const [fps, setFps] = useState(0)
   const [particleCount, setParticleCount] = useState(0)
-  const [showExplorer, setShowExplorer] = useState(true)
+  const { showExplorer, setShowExplorer } = useGeneralSettingStore()
   const activeProjectName = useProjectStore(
     useShallow((state) => state.projects[state.currentProject].name),
   )
@@ -34,7 +35,7 @@ function App() {
         {showExplorer && (
           <div
             className={`
-            flex-shrink-0 w-[220px]
+            shrink-0 w-55 h-full absolute z-20
           `}
           >
             <ProjectExplorer />
