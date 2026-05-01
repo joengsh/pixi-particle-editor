@@ -6,10 +6,6 @@ import ObjectPool from './ObjectPool'
 import ParticleEmitterChainNode from './ParticleEmitterChainNode'
 import type { MinMaxValue } from '@/types/particle/particleConfig'
 
-/* -------------------------------------------------------------------------- */
-/* Types                                                                      */
-/* -------------------------------------------------------------------------- */
-
 export interface ParticleEmitterPoolSettings extends ParticleEmitterExtendedSettings {
   count: number
 }
@@ -40,10 +36,6 @@ export interface ParticleEmitterChainSettings {
   emit?: boolean
 }
 
-/* -------------------------------------------------------------------------- */
-/* Class                                                                      */
-/* -------------------------------------------------------------------------- */
-
 class ParticleEmitterChain extends PIXI.Container {
   private _promise: Promise<void> | null = null
   private _resolve: (() => void) | null = null
@@ -61,18 +53,32 @@ class ParticleEmitterChain extends PIXI.Container {
 
     this._initPools()
     this._setupNodes()
-
+    this._activeEmitters = []
     if (this._settings.emit) {
       this.startPromise()
     }
   }
 
-  /* ---------------------------------------------------------------------- */
-  /* Public API                                                             */
-  /* ---------------------------------------------------------------------- */
-
   get pools(): Record<string, ObjectPool<ParticleEmitterExtended>> {
     return this._pools
+  }
+
+  get particleCount(): number {
+    let count = 0
+    for (const emitterExtended of this._activeEmitters) {
+      count += emitterExtended.children.length
+    }
+    return count
+  }
+
+  get isEmitting(): boolean {
+    return this._activeEmitters.length > 0
+  }
+
+  updateSpawnPos(x: number, y: number) {
+    for (const emitter of this._emitters) {
+      emitter.emitter.updateSpawnPos(x, y)
+    }
   }
 
   addActiveEmitter(emitter: ParticleEmitterExtended): void {
@@ -113,7 +119,6 @@ class ParticleEmitterChain extends PIXI.Container {
         node.releaseEmitter(emitter)
       })
 
-      this.addActiveEmitter(emitter)
       this._emitters.push(emitter)
     }
 
@@ -130,15 +135,10 @@ class ParticleEmitterChain extends PIXI.Container {
   stop(): Promise<void> {
     for (const emitter of this._emitters) {
       emitter.emitter.emit = false
-      this.removeActiveEmitter(emitter)
     }
 
     return this._promise ?? Promise.resolve()
   }
-
-  /* ---------------------------------------------------------------------- */
-  /* Internal setup                                                         */
-  /* ---------------------------------------------------------------------- */
 
   private _initPools(): void {
     const data = this._settings.pools

@@ -9,12 +9,17 @@ import { Button } from './components/ui/button'
 import useProjectStore from './stores/ProjectStore'
 import { useShallow } from 'zustand/shallow'
 import useGeneralSettingStore from './stores/GeneralSettingStore'
+import PixiCanvasChain from './components/PixiCanvasChain'
+import useChainProjectStore from './stores/ChainProjectStore'
 
 function App() {
   const [fps, setFps] = useState(0)
   const [particleCount, setParticleCount] = useState(0)
-  const { showExplorer, setShowExplorer } = useGeneralSettingStore()
+  const { mode, showExplorer, setShowExplorer } = useGeneralSettingStore()
   const activeProjectName = useProjectStore(
+    useShallow((state) => state.projects[state.currentProject].name),
+  )
+  const activeChainProjectName = useChainProjectStore(
     useShallow((state) => state.projects[state.currentProject].name),
   )
 
@@ -63,7 +68,9 @@ function App() {
               >
                 <span className="w-2 h-2 rounded-full" />
                 <span className="max-w-[200px] truncate">
-                  {activeProjectName}
+                  {mode === 'particle'
+                    ? activeProjectName
+                    : activeChainProjectName}
                 </span>
               </button>
             </div>
@@ -82,7 +89,12 @@ function App() {
           </div>
           {/* Pixi Canvas */}
           <div className="w-full h-full">
-            <PixiCanvas onStatsUpdate={handleStatsUpdate} />
+            {mode === 'particle' && (
+              <PixiCanvas onStatsUpdate={handleStatsUpdate} />
+            )}
+            {mode === 'chain' && (
+              <PixiCanvasChain onStatsUpdate={handleStatsUpdate} />
+            )}
           </div>
         </div>
         {/* Control Panel */}

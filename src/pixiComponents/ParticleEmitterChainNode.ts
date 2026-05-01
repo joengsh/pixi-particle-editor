@@ -1,7 +1,4 @@
-/* -------------------------------------------------------------------------- */
-/* Utilities                                                                  */
-/* -------------------------------------------------------------------------- */
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type ObjectPool from './ObjectPool'
 import type ParticleEmitterChain from './ParticleEmitterChain'
 import type ParticleEmitterExtended from './ParticleEmitterExtended'
@@ -26,10 +23,6 @@ function hslToHex(h: number, s: number, l: number): string {
     )
     .join('')
 }
-
-/* -------------------------------------------------------------------------- */
-/* Types                                                                      */
-/* -------------------------------------------------------------------------- */
 
 export interface MinMaxProps {
   min: number
@@ -67,10 +60,6 @@ export interface ParticleEmitterChainNodeSettings {
   onParticleRemoved?: ParticleEmitterChainNodeSettings[]
   trail?: ParticleEmitterChainNodeSettings[]
 }
-
-/* -------------------------------------------------------------------------- */
-/* Class                                                                      */
-/* -------------------------------------------------------------------------- */
 
 class ParticleEmitterChainNode {
   private _settings: ParticleEmitterChainNodeSettings
@@ -117,10 +106,6 @@ class ParticleEmitterChainNode {
       }
     }
   }
-
-  /* ---------------------------------------------------------------------- */
-  /* Emitters                                                               */
-  /* ---------------------------------------------------------------------- */
 
   getNewEmitter(): ParticleEmitterExtended {
     const emitter = this._pool.allocate()
@@ -216,10 +201,6 @@ class ParticleEmitterChainNode {
   setParentProps(props?: ParticleProps): void {
     this._parentProps = props ?? {}
   }
-
-  /* ---------------------------------------------------------------------- */
-  /* Events                                                                 */
-  /* ---------------------------------------------------------------------- */
 
   private _onParticleAdded(payload: any): void {
     const { particle, container } = payload

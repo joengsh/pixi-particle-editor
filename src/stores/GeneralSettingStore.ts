@@ -6,7 +6,7 @@ export type GeneralSettingStoreState = {
 }
 
 export type GeneralSettingStoreAction = {
-  setShowExplorer: (value: boolean) => void
+  setShowExplorer: (value: boolean | ((state: boolean) => boolean)) => void
   setMode: (mode: 'particle' | 'chain') => void
 }
 
@@ -17,8 +17,12 @@ export type GeneralSettingStore = GeneralSettingStoreState &
 const useGeneralSettingStore = create<GeneralSettingStore>((set) => ({
   showExplorer: true,
   mode: 'particle',
-  setShowExplorer: (value: boolean) => set(() => ({ showExplorer: value })),
-  setMode: (mode: 'particle' | 'chain') => set(() => ({ mode })),
+  setShowExplorer: (value) =>
+    set((state) => ({
+      showExplorer:
+        typeof value === 'boolean' ? value : value(state.showExplorer),
+    })),
+  setMode: (mode) => set(() => ({ mode })),
 }))
 
 export default useGeneralSettingStore

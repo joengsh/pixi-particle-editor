@@ -10,12 +10,15 @@ import {
 } from '@/lib/chain-config'
 import type { ProjectData } from './ProjectStore'
 import useProjectStore from './ProjectStore'
+import type { BasicPoint } from 'pixi-particles'
 
 export type ChainProjectData = {
   id: string
   name: string
   pools: Record<string, Omit<ParticleEmitterPoolSettings, 'textureInstances'>>
   nodes: ParticleEmitterChainNodeData[]
+  containerPos: BasicPoint
+  fixSpawnPos: boolean
 }
 
 export type ChainProjectStoreState = {
@@ -37,6 +40,8 @@ export type ChainProjectStoreAction = {
     ) => ParticleEmitterChainNodeData[],
   ) => void
   selectProject: (id: string) => void
+  updateCurrentProjectContainerPos: (point: BasicPoint) => void
+  updateCurrentProjectFixSpawnPos: (value: boolean) => void
 }
 
 export type ChainProjectStore = ChainProjectStoreState & ChainProjectStoreAction
@@ -66,7 +71,10 @@ const updateProjectConfig = (
 
 const addProjects = (
   state: ChainProjectStore,
-  projects: Pick<ChainProjectData, 'name' | 'nodes'>[],
+  projects: Pick<
+    ChainProjectData,
+    'name' | 'nodes' | 'containerPos' | 'fixSpawnPos'
+  >[],
   clearAll: boolean,
   particleProjects: Record<string, ProjectData>,
 ) => {
@@ -93,6 +101,8 @@ const addProjects = (
       name: projectName,
       nodes,
       pools,
+      containerPos: project.containerPos,
+      fixSpawnPos: project.fixSpawnPos,
     }
     newProjects[uuid] = newProject
     lastId = uuid
@@ -113,6 +123,8 @@ const useChainProjectStore = create<ChainProjectStore>((set) => ({
       id: 'default',
       name: 'chain',
       ...DEFAULT_CHAIN_CONFIG,
+      containerPos: { x: 0, y: 0 },
+      fixSpawnPos: false,
     },
   },
   currentProject: 'default',
@@ -135,6 +147,8 @@ const useChainProjectStore = create<ChainProjectStore>((set) => ({
         {
           name: 'chain',
           ...DEFAULT_CHAIN_CONFIG,
+          containerPos: { x: 0, y: 0 },
+          fixSpawnPos: false,
         },
       ]
       return addProjects(
@@ -189,6 +203,32 @@ const useChainProjectStore = create<ChainProjectStore>((set) => ({
         useProjectStore.getState().projects,
       ),
     )
+  },
+  updateCurrentProjectContainerPos: (point: BasicPoint) => {
+    set((state) => {
+      const newProjects = { ...state.projects }
+      const project = newProjects[state.currentProject]
+      newProjects[state.currentProject] = {
+        ...project,
+        containerPos: point,
+      }
+      return {
+        projects: newProjects,
+      }
+    })
+  },
+  updateCurrentProjectFixSpawnPos: (value: boolean) => {
+    set((state) => {
+      const newProjects = { ...state.projects }
+      const project = newProjects[state.currentProject]
+      newProjects[state.currentProject] = {
+        ...project,
+        fixSpawnPos: value,
+      }
+      return {
+        projects: newProjects,
+      }
+    })
   },
 }))
 
