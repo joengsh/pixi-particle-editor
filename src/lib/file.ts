@@ -8,6 +8,8 @@ import {
 import type JSZip from 'jszip'
 import type { ProjectData } from '@/stores/ProjectStore'
 import { convertParticleConfigToConfigUI } from './particle-config'
+import type { ChainProjectData } from '@/stores/ChainProjectStore'
+import { mapPoolsData } from './chain-config'
 
 // Polyfill for showOpenFilePicker
 async function showOpenFilePicker(options: any): Promise<File[]> {
@@ -160,6 +162,35 @@ async function addParticleProjectToZip(zip: JSZip, project: ProjectData) {
   configFolder.file(`${project.name}.json`, configJson)
 }
 
+async function addChainProjectToZip(
+  zip: JSZip,
+  project: ChainProjectData,
+  particleProjects: Record<string, ProjectData>,
+) {
+  const outputFolder = zip.folder('chains')
+
+  if (!outputFolder) {
+    throw new Error('Cannot create folder in zip')
+  }
+
+  const chainData = {
+    pools: project.pools.reduce((result, particleDataId) => {
+      result[particleDataId] = {
+        particleDataId,
+        count: 1,
+      }
+      return result
+    }, {} as any),
+    nodes: project.nodes,
+    extraConfig: {
+      containerPos: project.containerPos,
+      fixSpawnPos: project.fixSpawnPos,
+    },
+  }
+  const chainJson = JSON.stringify(chainData, null, 2)
+  outputFolder.file(`${project.name}.json`, chainJson)
+}
+
 async function loadTextureData(zip: JSZip): Promise<
   {
     textureName: string
@@ -238,12 +269,52 @@ async function loadProjects(
   return projects
 }
 
+async function loadChainProjects(
+  zip: JSZip,
+): Promise<
+  Pick<ChainProjectData, 'name' | 'nodes' | 'containerPos' | 'fixSpawnPos'>[]
+> {
+  const outputFolderPath = 'chains/'
+
+  const projects: Pick<
+    ChainProjectData,
+    'name' | 'nodes' | 'containerPos' | 'fixSpawnPos'
+  >[] = []
+
+  for (const filePath of Object.keys(zip.files).filter((path) =>
+    path.includes(outputFolderPath),
+  )) {
+    const lastSlashIndex = filePath.lastIndexOf('/')
+    const filename =
+      lastSlashIndex <= 0 ? filePath : filePath.substring(lastSlashIndex + 1)
+    const lastDotIndex = filename.lastIndexOf('.')
+    const chainName =
+      lastDotIndex <= 0 ? filename : filename.substring(0, lastDotIndex)
+    if (filename !== '') {
+      const chainJsonText =
+        await zip.files[`${outputFolderPath}${filename}`].async('string')
+      const chainData = JSON.parse(chainJsonText)
+
+      projects.push({
+        name: chainName,
+        nodes: chainData.nodes,
+        containerPos: chainData.extraConfig?.containerPos ?? { x: 0, y: 0 },
+        fixSpawnPos: chainData.extraConfig?.fixSpawnPos ?? false,
+      })
+    }
+  }
+
+  return projects
+}
+
 export {
   showOpenFilePicker,
   showSaveFilePicker,
   addTexturesToZip,
   addStageConfigToZip,
   addParticleProjectToZip,
+  addChainProjectToZip,
+  loadChainProjects,
   loadTextureData,
   loadProjects,
 }

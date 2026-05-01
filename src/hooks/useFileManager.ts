@@ -8,12 +8,14 @@ import {
 } from '@/types/projectStageData'
 import {
   addParticleProjectToZip,
+  addChainProjectToZip,
   addStageConfigToZip,
   addTexturesToZip,
   loadProjects,
   loadTextureData,
   showOpenFilePicker,
   showSaveFilePicker,
+  loadChainProjects,
 } from '@/lib/file'
 import useTextureStore from '@/stores/TextureStore'
 import { useShallow } from 'zustand/shallow'
@@ -21,6 +23,7 @@ import useParticleConfigStore from '@/stores/ParticleConfigStore'
 import useProjectStore from '@/stores/ProjectStore'
 import { getTextureListFromTextureConfigArtData } from '@/lib/particle-config'
 import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
+import useChainProjectStore from '@/stores/ChainProjectStore'
 
 const useFileManager = () => {
   const stageConfigStore = useStageConfigStore()
@@ -52,6 +55,10 @@ const useFileManager = () => {
       state.projects[state.currentProject],
       state.addProjects,
     ]),
+  )
+
+  const [chainProjects, addChainProjects] = useChainProjectStore(
+    useShallow((state) => [state.projects, state.addProjects]),
   )
 
   const saveProject = useCallback(async () => {
@@ -221,6 +228,10 @@ const useFileManager = () => {
         }
       }
 
+      for (const project of Object.values(chainProjects)) {
+        await addChainProjectToZip(zip, project, projects)
+      }
+
       const zipBlob = await zip.generateAsync({ type: 'blob' })
 
       const fileHandle = await showSaveFilePicker({
@@ -283,6 +294,9 @@ const useFileManager = () => {
       // add the project
       const projects = await loadProjects(zip)
       addProjects(projects, true)
+
+      const chainProjects = await loadChainProjects(zip)
+      addChainProjects(chainProjects, true)
     } catch (err: any) {
       if (err.name === 'AbortError') {
         console.log('User cancelled open dialog.')
@@ -379,10 +393,6 @@ const useFileManager = () => {
       return null
     }
   }, [addTextures, addProjects])
-  // export current chain json
-  const exportCurrentChain = useCallback(async () => {}, [])
-  // import chain json into workspace
-  const importChain = useCallback(async () => {}, [])
 
   return {
     saveProject,

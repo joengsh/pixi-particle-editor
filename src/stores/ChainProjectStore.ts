@@ -21,7 +21,10 @@ export type ChainProjectStoreAction = {
   renameProject: (id: string, newName: string) => void
   addNewProject: () => void
   addProjects: (
-    projects: Omit<ChainProjectData, 'id'>[],
+    projects: Pick<
+      ChainProjectData,
+      'name' | 'nodes' | 'containerPos' | 'fixSpawnPos'
+    >[],
     clearAll: boolean,
   ) => void
   removeProject: (id: string) => void

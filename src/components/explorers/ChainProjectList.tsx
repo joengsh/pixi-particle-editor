@@ -207,14 +207,6 @@ export default function ChainProjectList() {
               <Plus className="w-3.5 h-3.5" />
               Add Chain
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={addNewProject} className="gap-2 text-xs">
-              <Upload className="w-3.5 h-3.5" />
-              Import Chain
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={addNewProject} className="gap-2 text-xs">
-              <Download className="w-3.5 h-3.5" />
-              Export Chain
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
