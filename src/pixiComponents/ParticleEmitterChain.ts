@@ -11,13 +11,15 @@ export interface ParticleEmitterPoolSettings extends ParticleEmitterExtendedSett
 }
 
 export interface ParticleEmitterChainNodeData {
-  id: string
+  id?: string
+  hasParticleVariants?: boolean
   particleVariants?: {
     scale: MinMaxValue
     hue: MinMaxValue
     saturation: MinMaxValue
     lightness: MinMaxValue
   }
+  hasEmitterVariants?: boolean
   emitterVariants?: {
     maxFrequencyMultiplier: number
     minParticlesPerWaveMultiplier: number
@@ -173,6 +175,7 @@ class ParticleEmitterChain extends PIXI.Container {
 
   private _setupNodes(): void {
     for (const nodeData of this._settings.nodes) {
+      if (!nodeData.id) continue
       const node = new ParticleEmitterChainNode(this, nodeData)
       this._nodes.push(node)
     }

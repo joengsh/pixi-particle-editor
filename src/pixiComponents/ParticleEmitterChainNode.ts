@@ -52,7 +52,7 @@ export interface ParticleProps {
 }
 
 export interface ParticleEmitterChainNodeSettings {
-  id: string
+  id?: string
   props?: ParticleProps
   particleVariants?: ParticleVariants
   emitterVariants?: EmitterVariants
@@ -81,11 +81,12 @@ class ParticleEmitterChainNode {
     this._settings = settings
 
     this._props = this._settings.props ?? {}
-    this._pool = chain.pools[settings.id]
+    this._pool = chain.pools[settings.id!]
     this._chain = chain
 
     if (this._settings.onParticleAdded) {
       for (const nodeData of this._settings.onParticleAdded) {
+        if (!nodeData.id) continue
         this._nodesOnParticleAdded.push(
           new ParticleEmitterChainNode(chain, nodeData),
         )
@@ -94,6 +95,7 @@ class ParticleEmitterChainNode {
 
     if (this._settings.onParticleRemoved) {
       for (const nodeData of this._settings.onParticleRemoved) {
+        if (!nodeData.id) continue
         this._nodesOnParticleRemoved.push(
           new ParticleEmitterChainNode(chain, nodeData),
         )
@@ -102,6 +104,7 @@ class ParticleEmitterChainNode {
 
     if (this._settings.trail) {
       for (const nodeData of this._settings.trail) {
+        if (!nodeData.id) continue
         this._nodesTrail.push(new ParticleEmitterChainNode(chain, nodeData))
       }
     }

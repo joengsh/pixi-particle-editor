@@ -28,10 +28,21 @@ export const DEFAULT_CHAIN_CONFIG: Omit<
   emit: true,
 }
 
+export function createDefaultNode(): ParticleEmitterChainNodeData {
+  return {
+    hasParticleVariants: false,
+    hasEmitterVariants: false,
+    onParticleRemoved: [],
+    onParticleAdded: [],
+    trail: [],
+  }
+}
+
 function getPoolsFromNode(
   node: ParticleEmitterChainNodeData,
   poolSet: Set<string>,
 ) {
+  if (!node.id) return
   if (!poolSet.has(node.id)) {
     poolSet.add(node.id)
   }

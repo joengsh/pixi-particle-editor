@@ -1,21 +1,17 @@
 import { create } from 'zustand'
 import type {
   ParticleEmitterChainNodeData,
-  ParticleEmitterPoolSettings,
 } from '@/pixiComponents/ParticleEmitterChain'
 import {
   DEFAULT_CHAIN_CONFIG,
   getPoolsFromNodes,
-  mapPoolsData,
 } from '@/lib/chain-config'
-import type { ProjectData } from './ProjectStore'
-import useProjectStore from './ProjectStore'
 import type { BasicPoint } from 'pixi-particles'
 
 export type ChainProjectData = {
   id: string
   name: string
-  pools: Record<string, Omit<ParticleEmitterPoolSettings, 'textureInstances'>>
+  pools: string[]
   nodes: ParticleEmitterChainNodeData[]
   containerPos: BasicPoint
   fixSpawnPos: boolean
@@ -50,7 +46,6 @@ const updateProjectConfig = (
   state: ChainProjectStore,
   id: string,
   fn: (nodes: ParticleEmitterChainNodeData[]) => ParticleEmitterChainNodeData[],
-  particleProjects: Record<string, ProjectData>,
 ) => {
   const newProjects = { ...state.projects }
   const project = newProjects[id]
@@ -61,7 +56,7 @@ const updateProjectConfig = (
   const newProject = {
     ...project,
     nodes: newNodes,
-    pools: mapPoolsData(getPoolsFromNodes(newNodes), particleProjects),
+    pools: getPoolsFromNodes(newNodes),
   }
   newProjects[id] = newProject
   return {
@@ -76,7 +71,6 @@ const addProjects = (
     'name' | 'nodes' | 'containerPos' | 'fixSpawnPos'
   >[],
   clearAll: boolean,
-  particleProjects: Record<string, ProjectData>,
 ) => {
   const projectNames = clearAll
     ? []
@@ -95,7 +89,7 @@ const addProjects = (
     const projectName = `${project ? project.name : 'particle'}${index ? `_${index}` : ''}`
     const uuid = crypto.randomUUID()
     const nodes = project ? project.nodes : DEFAULT_CHAIN_CONFIG.nodes
-    const pools = mapPoolsData(getPoolsFromNodes(nodes), particleProjects)
+    const pools = getPoolsFromNodes(nodes)
     const newProject = {
       id: uuid,
       name: projectName,
@@ -123,6 +117,7 @@ const useChainProjectStore = create<ChainProjectStore>((set) => ({
       id: 'default',
       name: 'chain',
       ...DEFAULT_CHAIN_CONFIG,
+      pools: ['particle'],
       containerPos: { x: 0, y: 0 },
       fixSpawnPos: false,
     },
@@ -151,22 +146,12 @@ const useChainProjectStore = create<ChainProjectStore>((set) => ({
           fixSpawnPos: false,
         },
       ]
-      return addProjects(
-        state,
-        projects,
-        false,
-        useProjectStore.getState().projects,
-      )
+      return addProjects(state, projects, false)
     })
   },
   addProjects: (projects, clearAll) => {
     set((state) => {
-      return addProjects(
-        state,
-        projects,
-        clearAll,
-        useProjectStore.getState().projects,
-      )
+      return addProjects(state, projects, clearAll)
     })
   },
   removeProject: (id) => {
@@ -195,14 +180,7 @@ const useChainProjectStore = create<ChainProjectStore>((set) => ({
     })
   },
   updateCurrentProjectConfig: (fn) => {
-    set((state) =>
-      updateProjectConfig(
-        state,
-        state.currentProject,
-        fn,
-        useProjectStore.getState().projects,
-      ),
-    )
+    set((state) => updateProjectConfig(state, state.currentProject, fn))
   },
   updateCurrentProjectContainerPos: (point: BasicPoint) => {
     set((state) => {

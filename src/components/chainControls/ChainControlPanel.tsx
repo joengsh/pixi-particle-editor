@@ -17,6 +17,7 @@ import {
   ChainContainerPosControl,
   ChainFixSpawnPosControl,
 } from './ChainControls'
+import { ParticleEmitterControl } from './ChainNodeControl'
 
 const ChainControlPanel = () => {
   return (
@@ -28,6 +29,7 @@ const ChainControlPanel = () => {
       </div>
       <ScrollArea className="flex-1 overflow-hidden [&>div>div]:block!">
         <div className="p-4">
+          <ParticleEmitterControl />
           <Accordion
             type="multiple"
             defaultValue={['emitter', 'stage']}

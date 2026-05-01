@@ -1,10 +1,12 @@
 import * as PIXI from 'pixi.js'
-import { memo, useEffect, useRef } from 'react'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import useStageConfigStore from '@/stores/StageConfigStore'
 import { useShallow } from 'zustand/shallow'
 import useTextureStore from '@/stores/TextureStore'
 import ParticleEmitterChain from '@/pixiComponents/ParticleEmitterChain'
 import useChainProjectStore from '@/stores/ChainProjectStore'
+import useProjectStore from '@/stores/ProjectStore'
+import { mapPoolsData } from '@/lib/chain-config'
 
 type PixiCanvasProp = {
   onStatsUpdate?: (fps: number, particleCount: number) => void
@@ -40,6 +42,14 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
       state.projects[state.currentProject].nodes,
     ]),
   )
+  const particleProjects = useProjectStore(
+    useShallow((state) => state.projects),
+  )
+  const mappedPools = useMemo(
+    () => mapPoolsData(pools, particleProjects),
+    [pools, particleProjects],
+  )
+
   const textureInstances = useTextureStore(
     useShallow((state) => state.textureInstances),
   )
@@ -109,7 +119,7 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
 
     const chain = new ParticleEmitterChain('chain', {
       textureInstances,
-      pools,
+      pools: mappedPools,
       nodes,
       emit: true,
     })
