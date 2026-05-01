@@ -126,10 +126,10 @@ class ParticleEmitterExtended extends PIXI.Container {
     this._emitter.init(this._textureConfig, mergedEmitterConfig)
   }
 
-  async emitPromise(): Promise<void> {
+  async emitPromise(autoUpdate = true): Promise<void> {
     if (!this._emitter) return
 
-    this._emitter.autoUpdate = true
+    this._emitter.autoUpdate = autoUpdate
     this._emitter.emit = true
 
     let resolveFn!: () => void

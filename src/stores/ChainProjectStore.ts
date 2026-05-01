@@ -1,11 +1,6 @@
 import { create } from 'zustand'
-import type {
-  ParticleEmitterChainNodeData,
-} from '@/pixiComponents/ParticleEmitterChain'
-import {
-  DEFAULT_CHAIN_CONFIG,
-  getPoolsFromNodes,
-} from '@/lib/chain-config'
+import type { ParticleEmitterChainNodeData } from '@/pixiComponents/ParticleEmitterChain'
+import { DEFAULT_CHAIN_CONFIG, getPoolsFromNodes } from '@/lib/chain-config'
 import type { BasicPoint } from 'pixi-particles'
 
 export type ChainProjectData = {

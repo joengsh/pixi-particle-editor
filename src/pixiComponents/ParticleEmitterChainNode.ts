@@ -114,6 +114,7 @@ class ParticleEmitterChainNode {
     const emitter = this._pool.allocate()
     if (!emitter.parent) this._chain.addChild(emitter)
     emitter.visible = true
+    emitter.emitter.autoUpdate = false
 
     const emitterConfig: any = {}
 
@@ -236,7 +237,7 @@ class ParticleEmitterChainNode {
       const localPos = this._chain.toLocal(globalPos)
 
       emitter.position.set(localPos.x, localPos.y)
-      emitter.emitPromise().then(() => {
+      emitter.emitPromise(false).then(() => {
         node.releaseEmitter(emitter)
       })
     }
@@ -250,7 +251,7 @@ class ParticleEmitterChainNode {
       const emitter = node.getNewEmitter()
       particle.extraData.trails.push(emitter)
 
-      emitter.emitPromise().then(() => {
+      emitter.emitPromise(false).then(() => {
         node.releaseEmitter(emitter)
       })
 
@@ -279,7 +280,7 @@ class ParticleEmitterChainNode {
       const localPos = this._chain.toLocal(globalPos)
 
       emitter.position.set(localPos.x, localPos.y)
-      emitter.emitPromise().then(() => {
+      emitter.emitPromise(false).then(() => {
         node.releaseEmitter(emitter)
       })
     }

@@ -59,6 +59,10 @@ class ParticleEmitterChain extends PIXI.Container {
     if (this._settings.emit) {
       this.startPromise()
     }
+
+    this._updateEmitters = this._updateEmitters.bind(this)
+    const ticker = PIXI.Ticker.system
+    ticker.add(this._updateEmitters)
   }
 
   get pools(): Record<string, ObjectPool<ParticleEmitterExtended>> {
@@ -86,6 +90,8 @@ class ParticleEmitterChain extends PIXI.Container {
     for (const pool of Object.values(this._pools)) {
       pool.destroy()
     }
+    const ticker = PIXI.Ticker.system
+    ticker.remove(this._updateEmitters)
   }
 
   updateSpawnPos(x: number, y: number) {
@@ -127,7 +133,7 @@ class ParticleEmitterChain extends PIXI.Container {
     for (const node of this._nodes) {
       const emitter = node.getNewEmitter()
 
-      emitter.emitPromise().then(() => {
+      emitter.emitPromise(false).then(() => {
         emitter.emitter.autoUpdate = false
         node.releaseEmitter(emitter)
       })
@@ -178,6 +184,12 @@ class ParticleEmitterChain extends PIXI.Container {
       if (!nodeData.id) continue
       const node = new ParticleEmitterChainNode(this, nodeData)
       this._nodes.push(node)
+    }
+  }
+
+  private _updateEmitters(dt: number) {
+    for (const emitter of this._activeEmitters) {
+      emitter.emitter.update(dt / 60)
     }
   }
 }

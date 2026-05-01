@@ -12,9 +12,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import type { MinMaxValue } from '@/types/particle/particleConfig'
-import type {
-  ParticleEmitterChainNodeData,
-} from '@/pixiComponents/ParticleEmitterChain'
+import type { ParticleEmitterChainNodeData } from '@/pixiComponents/ParticleEmitterChain'
 import { createDefaultNode } from '@/lib/chain-config'
 import useChainProjectStore from '@/stores/ChainProjectStore'
 import { useShallow } from 'zustand/shallow'
