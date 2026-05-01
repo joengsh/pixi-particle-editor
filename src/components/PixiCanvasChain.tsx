@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { memo, useEffect, useMemo, useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import useStageConfigStore from '@/stores/StageConfigStore'
 import { useShallow } from 'zustand/shallow'
 import useTextureStore from '@/stores/TextureStore'
@@ -136,6 +136,7 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
       }
       const chain = chainRef.current
       if (chain) {
+        chain.destroy()
         emitterContainer?.removeChildren()
         chainRef.current = null
       }
@@ -224,7 +225,7 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
         chain.updateSpawnPos(x, y)
       }
     }
-    const handleClick = (e: MouseEvent) => {
+    const handleClick = () => {
       if (!chain.isEmitting) {
         chain.startPromise()
       }
@@ -242,7 +243,7 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
         app.view.removeEventListener('mousemove', handleMouseMove)
       }
     }
-  }, [resolution, nodes])
+  }, [resolution, nodes, fixSpawnPos])
 
   useEffect(() => {
     const app = pixiAppRef.current

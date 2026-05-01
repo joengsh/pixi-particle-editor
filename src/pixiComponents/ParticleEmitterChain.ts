@@ -75,6 +75,17 @@ class ParticleEmitterChain extends PIXI.Container {
     return this._activeEmitters.length > 0
   }
 
+  destroy() {
+    this.stop()
+    for (const emitter of this._activeEmitters) {
+      emitter.emitter.emit = false
+      emitter.emitter.cleanup()
+    }
+    for (const pool of Object.values(this._pools)) {
+      pool.destroy()
+    }
+  }
+
   updateSpawnPos(x: number, y: number) {
     for (const emitter of this._emitters) {
       emitter.emitter.updateSpawnPos(x, y)

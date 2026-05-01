@@ -8,8 +8,6 @@ import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
 import usePolygonChainEditStore from '@/stores/PolygonChainEditStore'
 import { Easing } from '@/lib/easing'
 import useProjectStore from '@/stores/ProjectStore'
-import ParticleEmitterChain from '@/pixiComponents/ParticleEmitterChain'
-import { DEFAULT_CHAIN_CONFIG } from '@/lib/chain-config'
 
 const mapAnimatedArtTextures = (
   config: AnimatedArtConfig,
@@ -184,12 +182,6 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   useEffect(() => {
     const app = pixiAppRef.current!
     const emitterContainer = emitterContainerRef.current!
-
-    // const chain = new ParticleEmitterChain('chain', {
-    //   ...DEFAULT_CHAIN_CONFIG,
-    //   textureInstances,
-    // })
-    // emitterContainer.addChild(chain)
 
     const emitter = new particles.Emitter(
       emitterContainer,

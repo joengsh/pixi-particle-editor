@@ -11,6 +11,7 @@ import { useShallow } from 'zustand/shallow'
 import useGeneralSettingStore from './stores/GeneralSettingStore'
 import PixiCanvasChain from './components/PixiCanvasChain'
 import useChainProjectStore from './stores/ChainProjectStore'
+import ChainControlPanel from './components/chainControls/ChainControlPanel'
 
 function App() {
   const [fps, setFps] = useState(0)
@@ -101,7 +102,8 @@ function App() {
         <div
           className={`relative h-[45vh] w-full border-t md:h-full md:w-90 md:border-l md:border-t-0 border-border bg-card basis-[45vh] md:basis-90 flex-0 shrink-0 grow-0`}
         >
-          <ControlPanel />
+          {mode === 'particle' && <ControlPanel />}
+          {mode === 'chain' && <ChainControlPanel />}
         </div>
       </div>
     </TooltipProvider>
