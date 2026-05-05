@@ -17,8 +17,6 @@ import {
   Menu,
   Save,
   FolderOpen,
-  Download,
-  Upload,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { useCallback, useMemo, useState } from 'react'

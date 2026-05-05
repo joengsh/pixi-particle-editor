@@ -26,10 +26,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import { Switch } from '../ui/switch'
 
-// ============================================================================
 // MinMaxControl - Edits a MinMaxValue
-// ============================================================================
 interface MinMaxControlProps {
   label: string
   value: MinMaxValue
@@ -88,9 +87,7 @@ function MinMaxControl({
   )
 }
 
-// ============================================================================
 // NumberControl - Edits a single number value
-// ============================================================================
 interface NumberControlProps {
   label: string
   value: number
@@ -124,9 +121,7 @@ function NumberControl({
   )
 }
 
-// ============================================================================
 // CollapsibleSection - Wrapper for collapsible sections
-// ============================================================================
 interface CollapsibleSectionProps {
   title: string
   defaultOpen?: boolean
@@ -169,9 +164,30 @@ function CollapsibleSection({
   )
 }
 
-// ============================================================================
+// HasParticleVariantsControl - Edits hasParticleVariants
+interface HasParticleVariantsControlProps {
+  value: boolean
+  onChange: (value: boolean) => void
+}
+
+export const HasParticleVariantsControl = ({
+  value,
+  onChange,
+}: HasParticleVariantsControlProps) => {
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Has Particle Variants:</Label>
+      <Switch
+        defaultChecked={value}
+        className="h-8 p-0.5 cursor-pointer"
+        checked={value}
+        onCheckedChange={onChange}
+      />
+    </div>
+  )
+}
+
 // ParticleVariantsControl - Edits particleVariants
-// ============================================================================
 interface ParticleVariantsControlProps {
   value: NonNullable<ParticleEmitterChainNodeData['particleVariants']>
   onChange: (
@@ -223,9 +239,30 @@ function ParticleVariantsControl({
   )
 }
 
-// ============================================================================
+// HasParticleVariantsControl - Edits hasParticleVariants
+interface HasEmitterVariantsControlProps {
+  value: boolean
+  onChange: (value: boolean) => void
+}
+
+export const HasEmitterVariantsControl = ({
+  value,
+  onChange,
+}: HasEmitterVariantsControlProps) => {
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">Has Emitter Variants:</Label>
+      <Switch
+        defaultChecked={value}
+        className="h-8 p-0.5 cursor-pointer"
+        checked={value}
+        onCheckedChange={onChange}
+      />
+    </div>
+  )
+}
+
 // EmitterVariantsControl - Edits emitterVariants
-// ============================================================================
 interface EmitterVariantsControlProps {
   value: NonNullable<ParticleEmitterChainNodeData['emitterVariants']>
   onChange: (
@@ -273,9 +310,7 @@ function EmitterVariantsControl({
   )
 }
 
-// ============================================================================
 // NodeArraySection - Recursive section for node arrays
-// ============================================================================
 interface NodeArraySectionProps {
   title: string
   nodes: ParticleEmitterChainNodeData[]
@@ -340,9 +375,7 @@ function NodeArraySection({
   )
 }
 
-// ============================================================================
 // NodeControl - Recursive control for a single node
-// ============================================================================
 interface NodeControlProps {
   node: ParticleEmitterChainNodeData
   onChange: (node: ParticleEmitterChainNodeData) => void
@@ -371,14 +404,12 @@ function NodeControl({
   const [isOpen, setIsOpen] = React.useState(depth === 0)
   const projects = useProjectStore(useShallow((state) => state.projects))
 
-  const particleProjects = useMemo(
-    () => Object.values(projects),
-    [projects],
-  )
+  const particleProjects = useMemo(() => Object.values(projects), [projects])
   const finiteParticleProjects = useMemo(
     () =>
-      Object.values(projects)
-        .filter((project) => project.configUI.emitterLifetime > 0),
+      Object.values(projects).filter(
+        (project) => project.configUI.emitterLifetime > 0,
+      ),
     [projects],
   )
 
@@ -453,6 +484,12 @@ function NodeControl({
             </div>
 
             {/* Particle Variants */}
+            <HasParticleVariantsControl
+              value={node.hasParticleVariants ?? false}
+              onChange={(hasParticleVariants) =>
+                onChange({ ...node, hasParticleVariants })
+              }
+            />
             {node.hasParticleVariants && node.particleVariants && (
               <ParticleVariantsControl
                 value={node.particleVariants}
@@ -463,6 +500,12 @@ function NodeControl({
             )}
 
             {/* Emitter Variants */}
+            <HasEmitterVariantsControl
+              value={node.hasEmitterVariants ?? false}
+              onChange={(hasEmitterVariants) =>
+                onChange({ ...node, hasEmitterVariants })
+              }
+            />
             {node.hasEmitterVariants && node.emitterVariants && (
               <EmitterVariantsControl
                 value={node.emitterVariants}
@@ -505,9 +548,7 @@ function NodeControl({
   )
 }
 
-// ============================================================================
 // ParticleEmitterControl - Main control component
-// ============================================================================
 interface ParticleEmitterControlProps {
   className?: string
 }

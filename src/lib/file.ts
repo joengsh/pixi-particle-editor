@@ -10,8 +10,10 @@ import type { ProjectData } from '@/stores/ProjectStore'
 import { convertParticleConfigToConfigUI } from './particle-config'
 import type { ChainProjectData } from '@/stores/ChainProjectStore'
 import {
+  addDefaultVariants,
   convertIdsToNames,
   convertNamesToIds,
+  filterVariants,
 } from './chain-config'
 
 // Polyfill for showOpenFilePicker
@@ -178,10 +180,11 @@ async function addChainProjectToZip(
 
   const clonedNodes = JSON.parse(JSON.stringify(project.nodes))
   convertIdsToNames(clonedNodes, particleProjects)
+  filterVariants(clonedNodes)
   const chainData = {
     pools: project.pools.reduce((result, particleDataId) => {
-      result[particleDataId] = {
-        particleDataId,
+      result[particleProjects[particleDataId].name] = {
+        particleDataId: particleProjects[particleDataId].name,
         count: 1,
       }
       return result
@@ -304,6 +307,7 @@ async function loadChainProjects(
       const chainData = JSON.parse(chainJsonText)
       const nodes = chainData.nodes
       convertNamesToIds(nodes, particleProjects)
+      addDefaultVariants(nodes)
 
       projects.push({
         name: chainName,

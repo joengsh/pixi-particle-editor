@@ -6,7 +6,11 @@ import useTextureStore from '@/stores/TextureStore'
 import ParticleEmitterChain from '@/pixiComponents/ParticleEmitterChain'
 import useChainProjectStore from '@/stores/ChainProjectStore'
 import useProjectStore from '@/stores/ProjectStore'
-import { convertIdsToNames, mapPoolsData } from '@/lib/chain-config'
+import {
+  convertIdsToNames,
+  filterVariants,
+  mapPoolsData,
+} from '@/lib/chain-config'
 
 type PixiCanvasProp = {
   onStatsUpdate?: (fps: number, particleCount: number) => void
@@ -46,14 +50,12 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
     useShallow((state) => state.projects),
   )
 
-  const mappedNodes = useMemo(
-    () => {
-        const clonedNodes = JSON.parse(JSON.stringify(nodes))
-        convertIdsToNames(clonedNodes, particleProjects)
-        return clonedNodes
-    },
-    [nodes, particleProjects],
-  )
+  const mappedNodes = useMemo(() => {
+    const clonedNodes = JSON.parse(JSON.stringify(nodes))
+    convertIdsToNames(clonedNodes, particleProjects)
+    filterVariants(clonedNodes)
+    return clonedNodes
+  }, [nodes, particleProjects])
 
   const mappedPools = useMemo(
     () => mapPoolsData(pools, particleProjects),

@@ -3,7 +3,6 @@ import type {
   ParticleEmitterChainSettings,
   ParticleEmitterPoolSettings,
 } from '@/pixiComponents/ParticleEmitterChain'
-import { configToEmitterConfig, DEFAULT_CONFIG } from './particle-config'
 import type { ProjectData } from '@/stores/ProjectStore'
 
 export const DEFAULT_CHAIN_CONFIG: Omit<
@@ -18,7 +17,19 @@ export const DEFAULT_CHAIN_CONFIG: Omit<
 export function createDefaultNode(): ParticleEmitterChainNodeData {
   return {
     hasParticleVariants: false,
+    particleVariants: {
+      scale: { min: 1, max: 1 },
+      hue: { min: 0, max: 360 },
+      saturation: { min: 80, max: 100 },
+      lightness: { min: 50, max: 50 },
+    },
     hasEmitterVariants: false,
+    emitterVariants: {
+      minLifetimeMultiplier: 1,
+      maxFrequencyMultiplier: 1,
+      minSpawnChanceMultiplier: 1,
+      minParticlesPerWaveMultiplier: 1,
+    },
     onParticleRemoved: [],
     onParticleAdded: [],
     trail: [],
@@ -156,5 +167,77 @@ export function convertNamesToIds(
 ) {
   for (const node of nodes) {
     convertNameToId(node, particleProjects)
+  }
+}
+
+function addDefaultVariant(node: ParticleEmitterChainNodeData) {
+  if (!node.id) return
+  if (!node.emitterVariants) {
+    node.emitterVariants = {
+      minLifetimeMultiplier: 1,
+      maxFrequencyMultiplier: 1,
+      minSpawnChanceMultiplier: 1,
+      minParticlesPerWaveMultiplier: 1,
+    }
+  }
+  if (!node.particleVariants) {
+    node.particleVariants = {
+      scale: { min: 1, max: 1 },
+      hue: { min: 0, max: 360 },
+      saturation: { min: 80, max: 100 },
+      lightness: { min: 50, max: 50 },
+    }
+  }
+  if (node.onParticleAdded) {
+    for (const childNode of node.onParticleAdded) {
+      addDefaultVariant(childNode)
+    }
+  }
+  if (node.onParticleRemoved) {
+    for (const childNode of node.onParticleRemoved) {
+      addDefaultVariant(childNode)
+    }
+  }
+  if (node.trail) {
+    for (const childNode of node.trail) {
+      addDefaultVariant(childNode)
+    }
+  }
+}
+
+export function addDefaultVariants(nodes: ParticleEmitterChainNodeData[]) {
+  for (const node of nodes) {
+    addDefaultVariant(node)
+  }
+}
+
+function filterVariant(node: ParticleEmitterChainNodeData) {
+  if (!node.id) return
+  if (!node.hasEmitterVariants) {
+    delete node.emitterVariants
+  }
+  if (!node.hasParticleVariants) {
+    delete node.particleVariants
+  }
+  if (node.onParticleAdded) {
+    for (const childNode of node.onParticleAdded) {
+      filterVariant(childNode)
+    }
+  }
+  if (node.onParticleRemoved) {
+    for (const childNode of node.onParticleRemoved) {
+      filterVariant(childNode)
+    }
+  }
+  if (node.trail) {
+    for (const childNode of node.trail) {
+      filterVariant(childNode)
+    }
+  }
+}
+
+export function filterVariants(nodes: ParticleEmitterChainNodeData[]) {
+  for (const node of nodes) {
+    filterVariant(node)
   }
 }
