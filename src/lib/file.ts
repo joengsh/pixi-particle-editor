@@ -145,7 +145,7 @@ async function addTexturesToZip(
 }
 
 async function addParticleProjectToZip(zip: JSZip, project: ProjectData) {
-  const outputFolder = zip.folder('outputs')
+  const outputFolder = zip.folder('particles')
   const configFolder = zip.folder('configs')
 
   if (!outputFolder || !configFolder) {
@@ -235,7 +235,7 @@ async function loadProjects(
   zip: JSZip,
 ): Promise<Pick<ProjectData, 'name' | 'configUI'>[]> {
   const configFolderPath = 'configs/'
-  const outputFolderPath = 'outputs/'
+  const outputFolderPath = 'particles/'
 
   const projects: Pick<ProjectData, 'name' | 'configUI'>[] = []
 
