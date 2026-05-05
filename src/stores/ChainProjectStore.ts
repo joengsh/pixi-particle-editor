@@ -115,7 +115,7 @@ const useChainProjectStore = create<ChainProjectStore>((set) => ({
       id: 'default',
       name: 'chain',
       ...DEFAULT_CHAIN_CONFIG,
-      pools: ['particle'],
+      pools: [],
       containerPos: { x: 0, y: 0 },
       fixSpawnPos: false,
     },

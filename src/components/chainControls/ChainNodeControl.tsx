@@ -371,21 +371,20 @@ function NodeControl({
   const [isOpen, setIsOpen] = React.useState(depth === 0)
   const projects = useProjectStore(useShallow((state) => state.projects))
 
-  const particleIds = useMemo(
-    () => Object.values(projects).map((project) => project.name),
+  const particleProjects = useMemo(
+    () => Object.values(projects),
     [projects],
   )
-  const finiteParticleIds = useMemo(
+  const finiteParticleProjects = useMemo(
     () =>
       Object.values(projects)
-        .filter((project) => project.configUI.emitterLifetime > 0)
-        .map((project) => project.name),
+        .filter((project) => project.configUI.emitterLifetime > 0),
     [projects],
   )
 
   const particleSelections = useMemo(
-    () => (depth === 0 || isTrail ? particleIds : finiteParticleIds),
-    [depth, isTrail, particleIds, finiteParticleIds],
+    () => (depth === 0 || isTrail ? particleProjects : finiteParticleProjects),
+    [depth, isTrail, particleProjects, finiteParticleProjects],
   )
 
   const borderColor = useMemo(
@@ -443,9 +442,9 @@ function NodeControl({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {particleSelections.map((name) => (
-                      <SelectItem key={name} value={name}>
-                        {name}
+                    {particleSelections.map((project) => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.name}
                       </SelectItem>
                     ))}
                   </SelectGroup>

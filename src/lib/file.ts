@@ -9,7 +9,10 @@ import type JSZip from 'jszip'
 import type { ProjectData } from '@/stores/ProjectStore'
 import { convertParticleConfigToConfigUI } from './particle-config'
 import type { ChainProjectData } from '@/stores/ChainProjectStore'
-import { mapPoolsData } from './chain-config'
+import {
+  convertIdsToNames,
+  convertNamesToIds,
+} from './chain-config'
 
 // Polyfill for showOpenFilePicker
 async function showOpenFilePicker(options: any): Promise<File[]> {
@@ -173,6 +176,8 @@ async function addChainProjectToZip(
     throw new Error('Cannot create folder in zip')
   }
 
+  const clonedNodes = JSON.parse(JSON.stringify(project.nodes))
+  convertIdsToNames(clonedNodes, particleProjects)
   const chainData = {
     pools: project.pools.reduce((result, particleDataId) => {
       result[particleDataId] = {
@@ -181,7 +186,7 @@ async function addChainProjectToZip(
       }
       return result
     }, {} as any),
-    nodes: project.nodes,
+    nodes: clonedNodes,
     extraConfig: {
       containerPos: project.containerPos,
       fixSpawnPos: project.fixSpawnPos,
@@ -273,6 +278,7 @@ async function loadProjects(
 
 async function loadChainProjects(
   zip: JSZip,
+  particleProjects: Record<string, ProjectData>,
 ): Promise<
   Pick<ChainProjectData, 'name' | 'nodes' | 'containerPos' | 'fixSpawnPos'>[]
 > {
@@ -296,10 +302,12 @@ async function loadChainProjects(
       const chainJsonText =
         await zip.files[`${outputFolderPath}${filename}`].async('string')
       const chainData = JSON.parse(chainJsonText)
+      const nodes = chainData.nodes
+      convertNamesToIds(nodes, particleProjects)
 
       projects.push({
         name: chainName,
-        nodes: chainData.nodes,
+        nodes: nodes,
         containerPos: chainData.extraConfig?.containerPos ?? { x: 0, y: 0 },
         fixSpawnPos: chainData.extraConfig?.fixSpawnPos ?? false,
       })

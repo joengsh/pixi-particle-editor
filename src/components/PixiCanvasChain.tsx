@@ -6,7 +6,7 @@ import useTextureStore from '@/stores/TextureStore'
 import ParticleEmitterChain from '@/pixiComponents/ParticleEmitterChain'
 import useChainProjectStore from '@/stores/ChainProjectStore'
 import useProjectStore from '@/stores/ProjectStore'
-import { mapPoolsData } from '@/lib/chain-config'
+import { convertIdsToNames, mapPoolsData } from '@/lib/chain-config'
 
 type PixiCanvasProp = {
   onStatsUpdate?: (fps: number, particleCount: number) => void
@@ -45,6 +45,16 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
   const particleProjects = useProjectStore(
     useShallow((state) => state.projects),
   )
+
+  const mappedNodes = useMemo(
+    () => {
+        const clonedNodes = JSON.parse(JSON.stringify(nodes))
+        convertIdsToNames(clonedNodes, particleProjects)
+        return clonedNodes
+    },
+    [nodes, particleProjects],
+  )
+
   const mappedPools = useMemo(
     () => mapPoolsData(pools, particleProjects),
     [pools, particleProjects],
@@ -120,7 +130,7 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
     const chain = new ParticleEmitterChain('chain', {
       textureInstances,
       pools: mappedPools,
-      nodes,
+      nodes: mappedNodes,
       emit: true,
     })
     emitterContainer.addChild(chain)
@@ -151,7 +161,7 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
         chainRef.current = null
       }
     }
-  }, [nodes])
+  }, [mappedNodes])
 
   useEffect(() => {
     const app = pixiAppRef.current

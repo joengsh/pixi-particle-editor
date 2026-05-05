@@ -295,7 +295,8 @@ const useFileManager = () => {
       const projects = await loadProjects(zip)
       addProjects(projects, true)
 
-      const chainProjects = await loadChainProjects(zip)
+      const updatedProjects = useProjectStore.getState().projects
+      const chainProjects = await loadChainProjects(zip, updatedProjects)
       addChainProjects(chainProjects, true)
     } catch (err: any) {
       if (err.name === 'AbortError') {
