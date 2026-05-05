@@ -245,6 +245,8 @@ async function loadProjects(
         const configJsonText =
           await zip.files[`${configFolderPath}${filename}`].async('string')
         const configData = JSON.parse(configJsonText)
+        configData.containerPos = configData.containerPos ?? { x: 0, y: 0 }
+        configData.fixSpawnPos = configData.fixSpawnPos ?? false
         projects.push({
           name: particleName,
           configUI: configData,

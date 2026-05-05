@@ -300,8 +300,8 @@ export function convertParticleConfigToConfigUI(
     particleType: convertParticleTypeToUI(textureConfig, emitterConfig),
     emit: true,
     pos: { x: 0, y: 0 },
-    containerPos: extraData.containerPos ?? { x: 0, y: 0 },
-    fixSpawnPos: extraData.fixSpawnPos ?? false,
+    containerPos: extraData?.containerPos ?? { x: 0, y: 0 },
+    fixSpawnPos: extraData?.fixSpawnPos ?? false,
   }
 
   return config

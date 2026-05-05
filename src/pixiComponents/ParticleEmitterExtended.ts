@@ -248,7 +248,7 @@ class ParticleEmitterExtended extends PIXI.Container {
 
   private _mappedEmitterConfigData(emitterConfig: any): any {
     const mapEase = (block: any) =>
-      block?.ease ? Easing[block.ease as EasingName] : undefined
+      block?.ease ? Easing[block.ease as EasingName]() : undefined
 
     return {
       ...emitterConfig,

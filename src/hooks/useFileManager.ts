@@ -254,7 +254,7 @@ const useFileManager = () => {
         console.error('Error saving workspace:', err)
       }
     }
-  }, [projects, stageConfigStore, textureData])
+  }, [projects, chainProjects, stageConfigStore, textureData])
 
   // load everything, all particle system project, all chains, all textures, stage config
   const loadWorkspace = useCallback(async () => {
@@ -308,6 +308,7 @@ const useFileManager = () => {
   }, [
     addTextures,
     addProjects,
+    addChainProjects,
     setBackgroundScale,
     setBackgroundColor,
     setBackgroundTextureUrl,
