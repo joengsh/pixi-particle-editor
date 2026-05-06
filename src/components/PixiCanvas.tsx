@@ -8,7 +8,7 @@ import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
 import usePolygonChainEditStore from '@/stores/PolygonChainEditStore'
 import { Easing } from '@/lib/easing'
 import useProjectStore from '@/stores/ProjectStore'
-import {parseSVG} from "svg-path-parser"
+import { parseSVG } from 'svg-path-parser'
 
 const mapAnimatedArtTextures = (
   config: AnimatedArtConfig,
@@ -134,25 +134,25 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     if (emitterConfig.extraData?.path) {
       const path = emitterConfig.extraData?.path
       try {
-        var matches = parseSVG(path);
+        const matches = parseSVG(path)
         if (matches.length > 0) {
           if (pathRef.current) {
             pathRef.current.parentNode?.removeChild(pathRef.current)
             pathRef.current = null
           }
-          const svgEl = svgRef.current!;
+          const svgEl = svgRef.current!
 
           const pathEl = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "path"
-          );
-          pathEl.setAttribute("d", path);
+            'http://www.w3.org/2000/svg',
+            'path',
+          )
+          pathEl.setAttribute('d', path)
 
-          svgEl.appendChild(pathEl);
+          svgEl.appendChild(pathEl)
 
-          const pathLength = pathEl.getTotalLength();
+          const pathLength = pathEl.getTotalLength()
 
-          pathRef.current = pathEl;
+          pathRef.current = pathEl
 
           output.extraData.path = pathEl.getPointAtLength.bind(pathEl)
           output.extraData.pathLength = pathLength
@@ -417,12 +417,17 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
 
   return (
     <>
-    <div
-      ref={containerRef}
-      className={`w-full h-full flex justify-center items-center ${isEdit && editIndex !== undefined && 'cursor-crosshair'}`}
-      style={{ touchAction: 'none' }}
-    />
-    <svg ref={svgRef} width="0" height="0" className="absolute invisible"></svg>
+      <div
+        ref={containerRef}
+        className={`w-full h-full flex justify-center items-center ${isEdit && editIndex !== undefined && 'cursor-crosshair'}`}
+        style={{ touchAction: 'none' }}
+      />
+      <svg
+        ref={svgRef}
+        width="0"
+        height="0"
+        className="absolute invisible"
+      ></svg>
     </>
   )
 }

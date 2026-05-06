@@ -87,7 +87,10 @@ const ParticlePathTypeControl = () => {
     [textureData],
   )
   const [values, setValue] = useState<string[]>(particleType.art as string[])
-  const particlePath = useMemo(()=>(particleType as PathParticleType).path, [(particleType as PathParticleType).path])
+  const particlePath = useMemo(
+    () => (particleType as PathParticleType).path,
+    [(particleType as PathParticleType).path],
+  )
 
   useEffect(() => {
     setConfigUI((configUI) => ({
@@ -132,11 +135,9 @@ const ParticlePathTypeControl = () => {
           placeholder="Enter any svg path..."
         />
       </div>
-
     </div>
   )
 }
-
 
 type ParticleAnimatedTypeConfigItemProps = {
   index?: number
@@ -425,7 +426,7 @@ const ParticleTypeControl = () => {
             particleTypeData = {
               type: 'path',
               art: ['particle'],
-              path: "",
+              path: '',
               orderedArt: false,
             }
             break
@@ -460,7 +461,9 @@ const ParticleTypeControl = () => {
       <Separator />
       {particleTypeConfig.type === 'basic' && <ParticleBasicTypeControl />}
       {particleTypeConfig.type === 'path' && <ParticlePathTypeControl />}
-      {particleTypeConfig.type === 'animated' && <ParticleAnimatedTypeControl />}
+      {particleTypeConfig.type === 'animated' && (
+        <ParticleAnimatedTypeControl />
+      )}
     </>
   )
 }

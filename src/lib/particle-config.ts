@@ -143,9 +143,9 @@ export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
       emitterConfig.orderedArt = config.particleType.orderedArt
       emitterConfig.extraData = {
         ...emitterConfig.extraData,
-        path: config.particleType.path
+        path: config.particleType.path,
       }
-      break;
+      break
     case 'basic':
       emitterConfig.orderedArt = config.particleType.orderedArt
       break

@@ -37,12 +37,7 @@ const ControlPanel = () => {
         <div className="p-4">
           <Accordion
             type="multiple"
-            defaultValue={[
-              'particle',
-              'typeConfig',
-              'emitter',
-              'stage',
-            ]}
+            defaultValue={['particle', 'typeConfig', 'emitter', 'stage']}
             className="space-y-2"
           >
             {/* Texture Management */}

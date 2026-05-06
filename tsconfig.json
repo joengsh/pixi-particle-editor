@@ -9,8 +9,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "allowJs": true,       // Let TS compile .js files
-    "checkJs": true,       // Optional: type-check JS files using JSDoc
-    "declaration": true,   // Generate .d.ts files for TS sources
+    "allowJs": true, // Let TS compile .js files
+    "checkJs": true, // Optional: type-check JS files using JSDoc
+    "declaration": true // Generate .d.ts files for TS sources
   }
 }
