@@ -27,6 +27,7 @@ const AnimatedParticleTypeSchema = z.object({
 })
 
 const PathParticleTypeSchema = BasicParticleTypeSchema.extend({
+  type: z.literal('path'),
   path: z.string(),
 })
 
@@ -127,6 +128,7 @@ export const ParticleConfigUISchema = z.object({
 
 export type ParticleConfigUI = z.infer<typeof ParticleConfigUISchema>
 export type ParticleTypeData = z.infer<typeof ParticleTypeSchema>
+export type PathParticleType = z.infer<typeof PathParticleTypeSchema>
 export type AnimationParticleArtData = z.infer<
   typeof AnimationParticleArtSchema
 >

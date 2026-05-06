@@ -139,6 +139,13 @@ export function configToEmitterConfig(config: ParticleConfigUI): EmitterConfig {
   switch (config.particleType.type) {
     case 'animated':
       break
+    case 'path':
+      emitterConfig.orderedArt = config.particleType.orderedArt
+      emitterConfig.extraData = {
+        ...emitterConfig.extraData,
+        path: config.particleType.path
+      }
+      break;
     case 'basic':
       emitterConfig.orderedArt = config.particleType.orderedArt
       break
@@ -153,7 +160,7 @@ export function configToArtConfig(
   config: ParticleConfigUI,
   textureList: string[],
 ): ParticleArtConfig {
-  if (config.particleType.type === 'basic') {
+  if (config.particleType.type !== 'animated') {
     return config.particleType.art
   } else {
     const result: AnimatedArtConfig[] = []
@@ -353,6 +360,14 @@ function convertParticleTypeToUI(
 ): ParticleTypeData {
   // basic particle
   if (Array.isArray(textureConfig) === false) {
+    if (emitterConfig.extraData?.path) {
+      return {
+        type: 'path',
+        path: emitterConfig.extraData?.path,
+        art: textureConfig as string[],
+        orderedArt: emitterConfig.orderedArt ?? false,
+      }
+    }
     return {
       type: 'basic',
       art: textureConfig as string[],

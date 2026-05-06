@@ -12,6 +12,7 @@ import { Separator } from '../ui/separator'
 import type {
   AnimationParticleArtData,
   ParticleTypeData,
+  PathParticleType,
 } from '@/types/particleConfigUIData'
 import { MultiSelect } from '../MultiSelect'
 import useTextureStore from '@/stores/TextureStore'
@@ -22,8 +23,9 @@ import { Button } from '../ui/button'
 import { Trash2 } from 'lucide-react'
 import { SquarePlus } from 'lucide-react'
 import useProjectStore from '@/stores/ProjectStore'
+import { Textarea } from '../ui/textarea'
 
-const particleTypes = ['basic', 'animated']
+const particleTypes = ['basic', 'animated', 'path']
 
 const ParticleBasicTypeControl = () => {
   const textureData = useTextureStore((state) => state.textureData)
@@ -67,6 +69,74 @@ const ParticleBasicTypeControl = () => {
     </div>
   )
 }
+
+const ParticlePathTypeControl = () => {
+  const textureData = useTextureStore((state) => state.textureData)
+  const [particleType, setConfigUI] = useProjectStore(
+    useShallow((state) => [
+      state.projects[state.currentProject].configUI.particleType,
+      state.updateCurrentProjectConfig,
+    ]),
+  )
+  const options = useMemo(
+    () =>
+      Object.keys(textureData).map((textureName) => ({
+        value: textureName,
+        label: textureName,
+      })),
+    [textureData],
+  )
+  const [values, setValue] = useState<string[]>(particleType.art as string[])
+  const particlePath = useMemo(()=>(particleType as PathParticleType).path, [(particleType as PathParticleType).path])
+
+  useEffect(() => {
+    setConfigUI((configUI) => ({
+      ...configUI,
+      particleType: {
+        type: 'path',
+        path: particlePath,
+        art: values,
+        orderedArt: false,
+      },
+    }))
+  }, [values, particlePath, setConfigUI])
+
+  return (
+    <div className="relative space-y-3">
+      <div className="flex items-center gap-3">
+        <Label className="text-xs">Textures:</Label>
+        <MultiSelect
+          defaultValue={values}
+          options={options}
+          value={values}
+          onValueChange={setValue}
+          placeholder="Choose textures..."
+        />
+      </div>
+      <div className="flex items-center gap-3">
+        <Label className="text-xs">Path:</Label>
+        <Textarea
+          defaultValue={particlePath}
+          value={particlePath}
+          onChange={(e) => {
+            setConfigUI((configUI) => ({
+              ...configUI,
+              particleType: {
+                type: 'path',
+                path: e.target.value,
+                art: values,
+                orderedArt: false,
+              },
+            }))
+          }}
+          placeholder="Enter any svg path..."
+        />
+      </div>
+
+    </div>
+  )
+}
+
 
 type ParticleAnimatedTypeConfigItemProps = {
   index?: number
@@ -351,6 +421,14 @@ const ParticleTypeControl = () => {
               orderedArt: false,
             }
             break
+          case 'path':
+            particleTypeData = {
+              type: 'path',
+              art: ['particle'],
+              path: "",
+              orderedArt: false,
+            }
+            break
         }
         return {
           ...configUI,
@@ -380,11 +458,9 @@ const ParticleTypeControl = () => {
         </Select>
       </div>
       <Separator />
-      {particleTypeConfig.type === 'basic' ? (
-        <ParticleBasicTypeControl />
-      ) : (
-        <ParticleAnimatedTypeControl />
-      )}
+      {particleTypeConfig.type === 'basic' && <ParticleBasicTypeControl />}
+      {particleTypeConfig.type === 'path' && <ParticlePathTypeControl />}
+      {particleTypeConfig.type === 'animated' && <ParticleAnimatedTypeControl />}
     </>
   )
 }

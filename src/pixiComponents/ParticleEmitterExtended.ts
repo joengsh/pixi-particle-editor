@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-object-type */
 import * as PIXI from 'pixi.js'
-import * as particles from 'pixi-particles'
+import * as particles from '@/lib/pixi-particles'
 import EventBus, { type EventPayload } from './EventBus'
 import { Easing } from '@/lib/easing'
 import type { EasingName } from '@/types/Easing'

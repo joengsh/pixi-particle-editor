@@ -38,7 +38,6 @@ const ControlPanel = () => {
           <Accordion
             type="multiple"
             defaultValue={[
-              'texture',
               'particle',
               'typeConfig',
               'emitter',

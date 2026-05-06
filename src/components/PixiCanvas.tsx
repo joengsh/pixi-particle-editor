@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import * as particles from 'pixi-particles'
+import * as particles from '@/lib/pixi-particles'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import useStageConfigStore from '@/stores/StageConfigStore'
 import { useShallow } from 'zustand/shallow'
@@ -8,6 +8,7 @@ import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
 import usePolygonChainEditStore from '@/stores/PolygonChainEditStore'
 import { Easing } from '@/lib/easing'
 import useProjectStore from '@/stores/ProjectStore'
+import {parseSVG} from "svg-path-parser"
 
 const mapAnimatedArtTextures = (
   config: AnimatedArtConfig,
@@ -77,6 +78,17 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     useShallow((state) => [state.index, state.isEdit]),
   )
 
+  const containerRef = useRef<HTMLDivElement>(null)
+  const pixiAppRef = useRef<PIXI.Application>(null)
+  const emitterRef = useRef<particles.Emitter>(null)
+  const elapsedRef = useRef(0)
+  const particleCountRef = useRef(0)
+  const gameContainerRef = useRef<PIXI.Container>(null)
+  const emitterContainerRef = useRef<PIXI.Container>(null)
+  const backgroundSpriteRef = useRef<PIXI.Sprite>(null)
+  const svgRef = useRef<SVGSVGElement>(null)
+  const pathRef = useRef<SVGPathElement>(null)
+
   const mappedTextureData = useMemo(() => {
     // map all the texture names to texture instance
     return textureConfig
@@ -91,7 +103,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   }, [textureInstances, textureConfig])
 
   const mappedEmitterConfig: particles.EmitterConfig = useMemo(() => {
-    return {
+    const output = {
       ...emitterConfig,
       alpha: {
         ...emitterConfig.alpha!,
@@ -118,16 +130,37 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
           : undefined,
       },
     }
-  }, [emitterConfig])
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  const pixiAppRef = useRef<PIXI.Application>(null)
-  const emitterRef = useRef<particles.Emitter>(null)
-  const elapsedRef = useRef(0)
-  const particleCountRef = useRef(0)
-  const gameContainerRef = useRef<PIXI.Container>(null)
-  const emitterContainerRef = useRef<PIXI.Container>(null)
-  const backgroundSpriteRef = useRef<PIXI.Sprite>(null)
+    if (emitterConfig.extraData?.path) {
+      const path = emitterConfig.extraData?.path
+      try {
+        var matches = parseSVG(path);
+        if (matches.length > 0) {
+          if (pathRef.current) {
+            pathRef.current.parentNode?.removeChild(pathRef.current)
+            pathRef.current = null
+          }
+          const svgEl = svgRef.current!;
+
+          const pathEl = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+          );
+          pathEl.setAttribute("d", path);
+
+          svgEl.appendChild(pathEl);
+
+          const pathLength = pathEl.getTotalLength();
+
+          pathRef.current = pathEl;
+
+          output.extraData.path = pathEl.getPointAtLength.bind(pathEl)
+          output.extraData.pathLength = pathLength
+        }
+      } catch {}
+    }
+    return output
+  }, [emitterConfig])
 
   useEffect(() => {
     if (!containerRef.current || typeof window === 'undefined') return
@@ -194,7 +227,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     ) {
       emitter.particleConstructor = particles.AnimatedParticle
     } else {
-      emitter.particleConstructor = particles.Particle
+      emitter.particleConstructor = particles.PathParticle
     }
 
     emitter.emit = true
@@ -220,12 +253,11 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
       }
       const emitter = emitterRef.current
       if (emitter) {
-        emitter.destroy()
         emitterContainer?.removeChildren()
         emitterRef.current = null
       }
     }
-  }, [mappedTextureData])
+  }, [mappedEmitterConfig.extraData?.path, mappedTextureData])
 
   useEffect(() => {
     const app = pixiAppRef.current
@@ -384,11 +416,14 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
   }, [containerPos])
 
   return (
+    <>
     <div
       ref={containerRef}
       className={`w-full h-full flex justify-center items-center ${isEdit && editIndex !== undefined && 'cursor-crosshair'}`}
       style={{ touchAction: 'none' }}
     />
+    <svg ref={svgRef} width="0" height="0" className="absolute invisible"></svg>
+    </>
   )
 }
 
