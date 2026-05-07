@@ -24,6 +24,7 @@ import useProjectStore from '@/stores/ProjectStore'
 import { getTextureListFromTextureConfigArtData } from '@/lib/particle-config'
 import type { AnimatedArtConfig } from '@/types/particle/particleConfig'
 import useChainProjectStore from '@/stores/ChainProjectStore'
+import useGeneralSettingStore from '@/stores/GeneralSettingStore'
 
 const useFileManager = () => {
   const stageConfigStore = useStageConfigStore()
@@ -60,6 +61,8 @@ const useFileManager = () => {
   const [chainProjects, addChainProjects] = useChainProjectStore(
     useShallow((state) => [state.projects, state.addProjects]),
   )
+
+  const setMode = useGeneralSettingStore(useShallow(state => state.setMode))
 
   const saveProject = useCallback(async () => {
     const {
@@ -269,6 +272,7 @@ const useFileManager = () => {
         ],
       })
 
+      setMode('particle')
       const file = files[0]
       const zip = await JSZip.loadAsync(file)
 

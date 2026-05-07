@@ -42,8 +42,8 @@ class ParticleEmitterExtended extends PIXI.Container {
   private _target: PIXI.DisplayObject | null = null
   private _offset: PIXI.Point = new PIXI.Point(0, 0)
 
-  private _svgEl: SVGSVGElement | null = null
-  private _pathEl: SVGPathElement | null = null
+  static svgEl: SVGSVGElement | null = null
+  static pathEls: Record<string,SVGPathElement> = {}
 
   private _eb: EventBus
 
@@ -284,27 +284,33 @@ class ParticleEmitterExtended extends PIXI.Container {
     if (emitterConfig.extraData?.path) {
       const path = emitterConfig.extraData?.path
 
+      let svg = ParticleEmitterExtended.svgEl;
+      if (!svg) {
+        svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+        svg.setAttribute('width', '0')
+        svg.setAttribute('height', '0')
+        svg.style.position = 'absolute'
+        svg.style.visibility = 'hidden'
+        document.body.appendChild(svg)
+      }
+
+      let pathEl = ParticleEmitterExtended.pathEls[this.name]
+      if (!pathEl) {
+        pathEl = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'path',
+        )
+        svg.appendChild(pathEl)
+      }
       // Create hidden SVG + path for geometry calculations
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-      svg.setAttribute('width', '0')
-      svg.setAttribute('height', '0')
-      svg.style.position = 'absolute'
-      svg.style.visibility = 'hidden'
+      pathEl.setAttribute('d', path)
 
-      this._pathEl = document.createElementNS(
-        'http://www.w3.org/2000/svg',
-        'path',
-      )
-      this._pathEl.setAttribute('d', path)
 
-      svg.appendChild(this._pathEl)
-      document.body.appendChild(svg)
-      this._svgEl = svg
-      const pathLength = this._pathEl.getTotalLength()
+      const pathLength = pathEl.getTotalLength()
 
       output.extraData = {
         ...output.extraData,
-        path: this._pathEl.getPointAtLength.bind(this._pathEl),
+        path: pathEl.getPointAtLength.bind(pathEl),
         pathLength,
       }
     }

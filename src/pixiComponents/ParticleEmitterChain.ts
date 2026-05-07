@@ -84,14 +84,14 @@ class ParticleEmitterChain extends PIXI.Container {
   destroy() {
     this.stop()
     for (const emitter of this._activeEmitters) {
-      emitter.emitter.emit = false
-      emitter.emitter.cleanup()
+      emitter.emitter.destroy()
     }
     for (const pool of Object.values(this._pools)) {
       pool.destroy()
     }
     const ticker = PIXI.Ticker.system
     ticker.remove(this._updateEmitters)
+    super.destroy()
   }
 
   updateSpawnPos(x: number, y: number) {

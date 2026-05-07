@@ -156,7 +156,6 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
       if (pixiAppRef.current === app && ticker && updateFn) {
         ticker.remove(updateFn)
       }
-      const chain = chainRef.current
       if (chain) {
         chain.destroy()
         emitterContainer?.removeChildren()
