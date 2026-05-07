@@ -142,20 +142,20 @@ class ParticleEmitterExtended extends PIXI.Container {
       this._resolve = resolve
     })
 
-     const onParticleRemoved = async (
+    const onParticleRemoved = async (
       particle: particles.Particle,
       parent: PIXI.Container,
     ): Promise<void> => {
       if (parent.children.length === 0) {
         // keep track if the emission is completed
         while (this.emitter.emit && parent.children.length === 0) {
-          await new Promise(resolve=>setTimeout(resolve, 500))
+          await new Promise((resolve) => setTimeout(resolve, 500))
         }
         // only resolve when emission is completed and children length === 0, skip if children.length back to > 0
         if (!this.emitter.emit && parent.children.length === 0) {
           this.off('childRemoved', onParticleRemoved, this)
           this._resolve?.()
-          this._resolve = null;
+          this._resolve = null
         }
       }
     }
@@ -165,16 +165,15 @@ class ParticleEmitterExtended extends PIXI.Container {
   }
 
   stop(): Promise<void> {
-    this.emitter.emit = false;
+    this.emitter.emit = false
 
     if (this.children.length === 0 && !this.emitter.emit) {
       this._resolve?.()
-      this._resolve = null;
+      this._resolve = null
     }
 
     return this._promise ?? Promise.resolve()
   }
-
 
   follow(displayObject: PIXI.DisplayObject): void {
     this._target = displayObject
@@ -282,33 +281,33 @@ class ParticleEmitterExtended extends PIXI.Container {
       speed: { ...emitterConfig.speed, ease: mapEase(emitterConfig.speed) },
     }
 
-    if ( emitterConfig.extraData?.path ) {
-			const path = emitterConfig.extraData?.path;
+    if (emitterConfig.extraData?.path) {
+      const path = emitterConfig.extraData?.path
 
-			// Create hidden SVG + path for geometry calculations
-			const svg = document.createElementNS( "http://www.w3.org/2000/svg", "svg" );
-			svg.setAttribute( "width", "0" );
-			svg.setAttribute( "height", "0" );
-			svg.style.position = "absolute";
-			svg.style.visibility = "hidden";
+      // Create hidden SVG + path for geometry calculations
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      svg.setAttribute('width', '0')
+      svg.setAttribute('height', '0')
+      svg.style.position = 'absolute'
+      svg.style.visibility = 'hidden'
 
-			this._pathEl = document.createElementNS(
-				"http://www.w3.org/2000/svg",
-				"path"
-			);
-			this._pathEl.setAttribute( "d", path );
+      this._pathEl = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'path',
+      )
+      this._pathEl.setAttribute('d', path)
 
-			svg.appendChild( this._pathEl );
-      document.body.appendChild(svg);
-			this._svgEl = svg;
-			const pathLength = this._pathEl.getTotalLength();
+      svg.appendChild(this._pathEl)
+      document.body.appendChild(svg)
+      this._svgEl = svg
+      const pathLength = this._pathEl.getTotalLength()
 
       output.extraData = {
         ...output.extraData,
-        path: this._pathEl.getPointAtLength.bind( this._pathEl ),
-        pathLength
+        path: this._pathEl.getPointAtLength.bind(this._pathEl),
+        pathLength,
       }
-		}
+    }
 
     return output
   }
