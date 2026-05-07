@@ -63,7 +63,6 @@ export interface ParticleEmitterChainNodeSettings {
 
 class ParticleEmitterChainNode {
   private _settings: ParticleEmitterChainNodeSettings
-  private _props: ParticleProps
 
   private _pool: ObjectPool<ParticleEmitterExtended>
   private _chain: ParticleEmitterChain
@@ -80,7 +79,6 @@ class ParticleEmitterChainNode {
   ) {
     this._settings = settings
 
-    this._props = this._settings.props ?? {}
     this._pool = chain.pools[settings.id!]
     this._chain = chain
 

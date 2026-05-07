@@ -143,7 +143,7 @@ class ParticleEmitterExtended extends PIXI.Container {
     })
 
     const onParticleRemoved = async (
-      particle: particles.Particle,
+      _: particles.Particle,
       parent: PIXI.Container,
     ): Promise<void> => {
       if (parent.children.length === 0) {
