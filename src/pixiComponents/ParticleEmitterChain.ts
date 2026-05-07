@@ -134,7 +134,6 @@ class ParticleEmitterChain extends PIXI.Container {
       const emitter = node.getNewEmitter()
 
       emitter.emitPromise(false).then(() => {
-        emitter.emitter.autoUpdate = false
         node.releaseEmitter(emitter)
       })
 
@@ -168,7 +167,7 @@ class ParticleEmitterChain extends PIXI.Container {
         {
           amount: value.count,
           args: [
-            'emitterExtended',
+            key,
             {
               ...value,
               textureInstances: this._settings.textureInstances,

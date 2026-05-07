@@ -1776,8 +1776,8 @@ var PathParticle = /** @class */ (function (_super) {
         // standard init
         this.Particle_init();
         // set the path for the particle
-        this.path = this.extraData.path;
-        this.pathLength = this.extraData.pathLength;
+        this.path = this.extraData?.path;
+        this.pathLength = this.extraData?.pathLength;
         // cancel the normal movement behavior
         this._doNormalMovement = !this.path;
         // reset movement
@@ -1844,7 +1844,8 @@ var PathParticle = /** @class */ (function (_super) {
      * @return The parsed extra data.
      */
     PathParticle.parseData = function (extraData) {
-        var output = {};
+        return extraData;
+        var output = {...extraData};
         // customised update: path should be a getPointAtLength() function from SvgPathElement
         if (extraData && extraData.path && typeof extraData.path === 'function') {
             try {

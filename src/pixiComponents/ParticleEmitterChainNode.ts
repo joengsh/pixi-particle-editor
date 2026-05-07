@@ -266,7 +266,7 @@ class ParticleEmitterChainNode {
     if (particle.extraData?.trails) {
       for (const trail of particle.extraData.trails) {
         trail.cancelFollow()
-        trail.emitter.emit = false
+        trail.stop()
       }
     }
 

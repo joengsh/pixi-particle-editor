@@ -32,6 +32,8 @@ export interface ParticleEmitterExtendedSettings {
 /* -------------------------------------------------------------------------- */
 
 class ParticleEmitterExtended extends PIXI.Container {
+  private _promise: Promise<void> | null = null
+  private _resolve: (() => void) | null = null
   private _settings: ParticleEmitterExtendedSettings
   private _emitterConfig: any = null
   private _textureConfig: any = null
@@ -50,6 +52,7 @@ class ParticleEmitterExtended extends PIXI.Container {
 
   constructor(name: string, settings: ParticleEmitterExtendedSettings) {
     super()
+    this.name = name
 
     this._settings = settings
 
@@ -135,25 +138,43 @@ class ParticleEmitterExtended extends PIXI.Container {
     this._emitter.autoUpdate = autoUpdate
     this._emitter.emit = true
 
-    let resolveFn!: () => void
-
     const promise = new Promise<void>((resolve) => {
-      resolveFn = resolve
+      this._resolve = resolve
     })
 
-    const onParticleRemoved = (
+     const onParticleRemoved = async (
       particle: particles.Particle,
       parent: PIXI.Container,
-    ): void => {
+    ): Promise<void> => {
       if (parent.children.length === 0) {
-        this.off('childRemoved', onParticleRemoved, this)
-        resolveFn()
+        // keep track if the emission is completed
+        while (this.emitter.emit && parent.children.length === 0) {
+          await new Promise(resolve=>setTimeout(resolve, 500))
+        }
+        // only resolve when emission is completed and children length === 0, skip if children.length back to > 0
+        if (!this.emitter.emit && parent.children.length === 0) {
+          this.off('childRemoved', onParticleRemoved, this)
+          this._resolve?.()
+          this._resolve = null;
+        }
       }
     }
 
     this.on('childRemoved', onParticleRemoved, this)
     return promise
   }
+
+  stop(): Promise<void> {
+    this.emitter.emit = false;
+
+    if (this.children.length === 0 && !this.emitter.emit) {
+      this._resolve?.()
+      this._resolve = null;
+    }
+
+    return this._promise ?? Promise.resolve()
+  }
+
 
   follow(displayObject: PIXI.DisplayObject): void {
     this._target = displayObject
