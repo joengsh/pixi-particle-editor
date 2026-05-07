@@ -40,6 +40,9 @@ class ParticleEmitterExtended extends PIXI.Container {
   private _target: PIXI.DisplayObject | null = null
   private _offset: PIXI.Point = new PIXI.Point(0, 0)
 
+  private _svgEl: SVGSVGElement | null = null
+  private _pathEl: SVGPathElement | null = null
+
   private _eb: EventBus
 
   private _particleAddedPayload: ParticleEmitterEventAdded
@@ -142,7 +145,7 @@ class ParticleEmitterExtended extends PIXI.Container {
       particle: particles.Particle,
       parent: PIXI.Container,
     ): void => {
-      if (parent.children.length === 0 && !this._emitter!.emit) {
+      if (parent.children.length === 0) {
         this.off('childRemoved', onParticleRemoved, this)
         resolveFn()
       }
@@ -198,7 +201,7 @@ class ParticleEmitterExtended extends PIXI.Container {
       this._textureConfig.length > 0 &&
       !(this._textureConfig[0] instanceof PIXI.Texture)
         ? particles.AnimatedParticle
-        : particles.Particle
+        : particles.PathParticle
 
     this._emitter = emitter
 
@@ -250,13 +253,43 @@ class ParticleEmitterExtended extends PIXI.Container {
     const mapEase = (block: any) =>
       block?.ease ? Easing[block.ease as EasingName]() : undefined
 
-    return {
+    const output = {
       ...emitterConfig,
       alpha: { ...emitterConfig.alpha, ease: mapEase(emitterConfig.alpha) },
       scale: { ...emitterConfig.scale, ease: mapEase(emitterConfig.scale) },
       color: { ...emitterConfig.color, ease: mapEase(emitterConfig.color) },
       speed: { ...emitterConfig.speed, ease: mapEase(emitterConfig.speed) },
     }
+
+    if ( emitterConfig.extraData?.path ) {
+			const path = emitterConfig.extraData?.path;
+
+			// Create hidden SVG + path for geometry calculations
+			const svg = document.createElementNS( "http://www.w3.org/2000/svg", "svg" );
+			svg.setAttribute( "width", "0" );
+			svg.setAttribute( "height", "0" );
+			svg.style.position = "absolute";
+			svg.style.visibility = "hidden";
+
+			this._pathEl = document.createElementNS(
+				"http://www.w3.org/2000/svg",
+				"path"
+			);
+			this._pathEl.setAttribute( "d", path );
+
+			svg.appendChild( this._pathEl );
+      document.body.appendChild(svg);
+			this._svgEl = svg;
+			const pathLength = this._pathEl.getTotalLength();
+
+      output.extraData = {
+        ...output.extraData,
+        path: this._pathEl.getPointAtLength.bind( this._pathEl ),
+        pathLength
+      }
+		}
+
+    return output
   }
 
   private _updateFollow(): void {

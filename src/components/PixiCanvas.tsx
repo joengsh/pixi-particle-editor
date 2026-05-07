@@ -154,8 +154,11 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
 
           pathRef.current = pathEl
 
-          output.extraData.path = pathEl.getPointAtLength.bind(pathEl)
-          output.extraData.pathLength = pathLength
+          output.extraData = {
+            ...output.extraData,
+            path: pathEl.getPointAtLength.bind( pathEl ),
+            pathLength
+          } 
         }
       } catch {}
     }
@@ -391,6 +394,7 @@ const PixiCanvas = ({ onStatsUpdate }: PixiCanvasProp) => {
     setConfigUI,
     resolution,
     mappedTextureData,
+    mappedEmitterConfig.extraData?.path
   ])
 
   useEffect(() => {

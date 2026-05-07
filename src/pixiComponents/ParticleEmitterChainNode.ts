@@ -210,8 +210,9 @@ class ParticleEmitterChainNode {
     const { particle, container } = payload
 
     if (!particle.extraData) {
-      particle.extraData = { trails: [] }
+      particle.extraData = {}
     }
+    particle.extraData.trails = []
 
     // generate per-particle random props
     const props: ParticleProps = {}
