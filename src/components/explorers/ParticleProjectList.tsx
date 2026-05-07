@@ -73,7 +73,7 @@ export default function ParticleProjectList() {
   }, [setEditName, setEditingId])
 
   return (
-    <div className="flex flex-col h-full bg-card border-r border-border">
+    <div className="flex flex-col flex-1 bg-card border-r border-border overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-secondary/30">
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
