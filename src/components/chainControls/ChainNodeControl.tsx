@@ -512,7 +512,7 @@ function NodeControl({
               onChange={(zIndex) =>
                 onChange({ ...node, zIndex })}
             />
-            
+
             {/* Particle Variants */}
             <HasParticleVariantsControl
               value={node.hasParticleVariants ?? false}

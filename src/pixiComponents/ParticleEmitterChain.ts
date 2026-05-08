@@ -53,6 +53,7 @@ class ParticleEmitterChain extends PIXI.Container {
     super()
     this.name = name
     this._settings = settings
+    this.sortableChildren = true;
 
     this._initPools()
     this._setupNodes()

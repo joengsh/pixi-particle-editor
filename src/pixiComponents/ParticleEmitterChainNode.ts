@@ -53,7 +53,7 @@ export interface ParticleProps {
 
 export interface ParticleEmitterChainNodeSettings {
   id?: string
-  zindex?: number
+  zIndex?: number
   props?: ParticleProps
   particleVariants?: ParticleVariants
   emitterVariants?: EmitterVariants
@@ -114,8 +114,8 @@ class ParticleEmitterChainNode {
     if (!emitter.parent) this._chain.addChild(emitter)
     emitter.visible = true
     emitter.emitter.autoUpdate = false
-    if (this._settings.zindex&& this._settings.zindex !== emitter.zIndex) {
-      emitter.zIndex = this._settings.zindex
+    if (this._settings.zIndex && this._settings.zIndex !== emitter.zIndex) {
+      emitter.zIndex = this._settings.zIndex
     }
     const emitterConfig: any = {}
 
