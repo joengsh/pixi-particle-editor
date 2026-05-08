@@ -12,6 +12,7 @@ export interface ParticleEmitterPoolSettings extends ParticleEmitterExtendedSett
 
 export interface ParticleEmitterChainNodeData {
   id?: string
+  zIndex?: number
   hasParticleVariants?: boolean
   particleVariants?: {
     scale: MinMaxValue

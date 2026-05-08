@@ -164,6 +164,30 @@ function CollapsibleSection({
   )
 }
 
+// ZIndexControl - Edits hasParticleVariants
+interface ZIndexControlProps {
+  value: number
+  onChange: (value: number) => void
+}
+
+export const ZIndexControl = ({
+  value,
+  onChange,
+}: ZIndexControlProps) => {
+  return (
+    <div className="flex items-center gap-3">
+      <Label className="text-xs">ZIndex:</Label>
+      <Input
+        type='number'
+        className="h-8 p-0.5 cursor-pointer"
+        value={value}
+        onChange={(e) => onChange(parseInt(e.target.value, 10))}
+      />
+    </div>
+  )
+}
+
+
 // HasParticleVariantsControl - Edits hasParticleVariants
 interface HasParticleVariantsControlProps {
   value: boolean
@@ -483,6 +507,12 @@ function NodeControl({
               </Select>
             </div>
 
+            <ZIndexControl 
+              value={node.zIndex ?? 0}
+              onChange={(zIndex) =>
+                onChange({ ...node, zIndex })}
+            />
+            
             {/* Particle Variants */}
             <HasParticleVariantsControl
               value={node.hasParticleVariants ?? false}

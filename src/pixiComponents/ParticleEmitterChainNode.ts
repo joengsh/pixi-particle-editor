@@ -53,6 +53,7 @@ export interface ParticleProps {
 
 export interface ParticleEmitterChainNodeSettings {
   id?: string
+  zindex?: number
   props?: ParticleProps
   particleVariants?: ParticleVariants
   emitterVariants?: EmitterVariants
@@ -113,7 +114,9 @@ class ParticleEmitterChainNode {
     if (!emitter.parent) this._chain.addChild(emitter)
     emitter.visible = true
     emitter.emitter.autoUpdate = false
-
+    if (this._settings.zindex&& this._settings.zindex !== emitter.zIndex) {
+      emitter.zIndex = this._settings.zindex
+    }
     const emitterConfig: any = {}
 
     // scale
@@ -218,8 +221,10 @@ class ParticleEmitterChainNode {
       for (const [key, variant] of Object.entries(
         this._settings.particleVariants,
       )) {
-        props[key as keyof ParticleProps] =
-          variant.min + Math.random() * (variant.max - variant.min)
+        if (variant.max !==  variant.min) {
+          props[key as keyof ParticleProps] =
+            variant.min + Math.random() * (variant.max - variant.min)
+        }
       }
     }
 

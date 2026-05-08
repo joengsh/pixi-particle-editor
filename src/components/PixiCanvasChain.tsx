@@ -270,6 +270,7 @@ const PixiCanvasChain = ({ onStatsUpdate }: PixiCanvasProp) => {
     const app = pixiAppRef.current
     if (app) {
       app.ticker.speed = tickerSpeed
+      PIXI.Ticker.system.speed = tickerSpeed
     }
   }, [tickerSpeed])
 
