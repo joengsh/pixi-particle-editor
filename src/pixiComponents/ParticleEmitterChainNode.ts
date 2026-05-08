@@ -221,10 +221,12 @@ class ParticleEmitterChainNode {
       for (const [key, variant] of Object.entries(
         this._settings.particleVariants,
       )) {
-        if (variant.max !==  variant.min) {
-          props[key as keyof ParticleProps] =
-            variant.min + Math.random() * (variant.max - variant.min)
+        if (key === 'lightness' && (variant.min === 100 || variant.max === 0)) {
+          continue;
         }
+        props[key as keyof ParticleProps] =
+          variant.min + Math.random() * (variant.max - variant.min)
+        
       }
     }
 
