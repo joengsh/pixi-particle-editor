@@ -118,8 +118,8 @@ class ParticleEmitterExtended extends PIXI.Container {
       this._emitterConfig,
       {
         pos: {
-          x: this._emitter.spawnPos.x,
-          y: this._emitter.spawnPos.y,
+          x: this._emitter.spawnPos?.x ?? 0,
+          y: this._emitter.spawnPos?.y ?? 0,
         },
         startRotation: {
           min: this._emitterConfig.startRotation.min + rotationOffset,

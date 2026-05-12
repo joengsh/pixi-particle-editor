@@ -199,7 +199,7 @@ export function getTextureListFromAnimationName(
   const indexRanges = ranges.replace(/\s/g, '').split(',')
   const output: string[] | { texture: string; count: number }[] = []
   function findTexture(range: string | number) {
-    const regex = new RegExp(`${animationName}(-|_)?([0]*${range})`)
+    const regex = new RegExp(`${animationName}(-|_)?([0]*${range})$`)
     const result = textureList.filter((textureName) => textureName.match(regex))
     if (result.length > 0) {
       return result[0]
@@ -208,7 +208,7 @@ export function getTextureListFromAnimationName(
   }
   if (ranges === '') {
     // return all textures in textureList with animationName
-    const regex = new RegExp(`${animationName}(-|_)?([0]*\\d+)`)
+    const regex = new RegExp(`${animationName}(-|_)?([0]*\\d+)$`)
     return textureList
       .filter((textureName) => textureName.match(regex))
       .sort((a, b) => {
