@@ -72,5 +72,13 @@ npm run dev
   - [x] RandomAnimatedTexture
   - [x] SingleTexture
   - [x] SingleAnimatedTexture
-- [] add path particle settings
-  - [] Path
+- [x] add path particle settings
+  - [x] Path
+- [x] particle emitter workspace
+- [x] emitter chain workspace
+  - [x] create and config the emitter chains
+    - [x] random children emitter particle color
+    - [x] random children emitter container scale
+    - [x] random children emitter frequency
+    - [x] random children emitter spawn chance
+    - [x] random children emitter particle lifetime
